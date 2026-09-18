@@ -1,0 +1,12 @@
+{
+  "appId": "com.sarafi.app",
+  "appName": "Sarafi",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": false,
+    "backgroundColor": "#f6f7fb"
+  }
+}

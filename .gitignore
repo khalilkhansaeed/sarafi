@@ -1,0 +1,17 @@
+node_modules/
+_upload/
+.gradle/
+*.apk
+*.aab
+*.keystore
+*.jks
+
+# generated web bundle (produced by scripts/build-www.js)
+www/index.html
+
+# capacitor / android build output
+android/app/build/
+android/build/
+android/.gradle/
+android/local.properties
+android/app/src/main/assets/public/
