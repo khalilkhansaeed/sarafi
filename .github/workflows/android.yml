@@ -42,6 +42,26 @@ jobs:
       - name: Sync web assets into Android project
         run: npx cap sync android
 
+      - name: Verify required vendor assets are bundled
+        run: |
+          set -e
+          ASSETS=android/app/src/main/assets/public
+          for f in vendor/pdf-lib.min.js vendor/fontkit.umd.min.js vendor/firebase-app-compat.js vendor/firebase-auth-compat.js vendor/firebase-firestore-compat.js fonts.css index.html; do
+            if [ ! -f "$ASSETS/$f" ]; then
+              echo "ERROR: missing bundled asset: $f"
+              exit 1
+            fi
+          done
+          if grep -q "cdn.jsdelivr.net/npm/pdf-lib" "$ASSETS/index.html"; then
+            echo "ERROR: index.html still references remote pdf-lib CDN"
+            exit 1
+          fi
+          if grep -q "cdn.jsdelivr.net/npm/@pdf-lib/fontkit" "$ASSETS/index.html"; then
+            echo "ERROR: index.html still references remote fontkit CDN"
+            exit 1
+          fi
+          echo "All required vendor assets present and CDN URLs rewritten."
+
       - name: Build debug APK
         run: |
           cd android
