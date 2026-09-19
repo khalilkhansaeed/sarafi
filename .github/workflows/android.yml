@@ -39,6 +39,17 @@ jobs:
             npx cap add android
           fi
 
+      - name: Bump versionCode so Android always treats this as new
+        run: |
+          set -e
+          GRADLE=android/app/build.gradle
+          # make version unique: base 100000 + short commit as decimal
+          VC=$((100000 + 0x${GITHUB_SHA:0:6}))
+          VN="1.0.${GITHUB_SHA:0:7}"
+          sed -i -E "s/versionCode [0-9]+/versionCode ${VC}/" "$GRADLE"
+          sed -i -E "s/versionName \"[^\"]*\"/versionName \"${VN}\"/" "$GRADLE"
+          grep -E "versionCode|versionName|applicationId" "$GRADLE"
+
       - name: Sync web assets into Android project
         run: npx cap sync android
 
