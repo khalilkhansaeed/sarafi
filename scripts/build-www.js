@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 
 const root = path.join(__dirname, '..');
 const sourceFile = path.join(root, 'sarafi.html');
@@ -7,6 +8,19 @@ const outDir = path.join(root, 'www');
 const outFile = path.join(outDir, 'index.html');
 
 let html = fs.readFileSync(sourceFile, 'utf8');
+
+let buildId = '';
+try {
+  buildId = execSync('git rev-parse --short HEAD', { cwd: root }).toString().trim();
+} catch (e) {
+  buildId = String(Date.now());
+}
+if (process.env.GITHUB_SHA) buildId = process.env.GITHUB_SHA.slice(0, 7);
+if (html.includes('__BUILD_ID__')) {
+  html = html.split('__BUILD_ID__').join(buildId);
+} else {
+  console.warn('WARN: __BUILD_ID__ placeholder not found');
+}
 
 const replacements = [
   ['<link rel="preconnect" href="https://fonts.googleapis.com">', ''],
