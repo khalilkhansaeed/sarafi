@@ -78,11 +78,33 @@ jobs:
           unzip -l "$DEST" | grep -E "assets/public/vendor/(pdf-lib|fontkit)" || {
             echo "ERROR: packaged APK is missing PDF libraries"; exit 1; }
 
+      - name: Write build manifest (proves what is inside)
+        run: |
+          set -e
+          COMMIT="${GITHUB_SHA:0:7}"
+          MAN=android/app/build/outputs/apk/debug/BUILD-INFO.txt
+          {
+            echo "Sarafi app build"
+            echo "commit: $COMMIT"
+            echo "built:  $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "apk:    sarafi-app-debug.apk"
+            echo ""
+            echo "vendor assets packaged in the APK:"
+            unzip -l android/app/build/outputs/apk/debug/sarafi-app-debug.apk \
+              | grep "assets/public/vendor/" || true
+            echo ""
+            echo "BUILD_ID in html:"
+            grep -o "const BUILD_ID='[^']*'" android/app/src/main/assets/public/index.html
+          } > "$MAN"
+          cat "$MAN"
+
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: sarafi-app-debug-apk
-          path: android/app/build/outputs/apk/debug/sarafi-app-debug.apk
+          path: |
+            android/app/build/outputs/apk/debug/sarafi-app-debug.apk
+            android/app/build/outputs/apk/debug/BUILD-INFO.txt
 
       - name: Attach APK to Release
         if: startsWith(github.ref, 'refs/tags/')
