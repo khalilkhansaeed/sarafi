@@ -105,6 +105,7 @@ jobs:
       - name: Verify native PDF share plugins are registered
         run: |
           set -e
+          ASSETS=android/app/src/main/assets/public
           PLUGINS=android/app/src/main/assets/capacitor.plugins.json
           for p in "@capacitor/filesystem" "@capacitor/share"; do
             if ! grep -q "$p" "$PLUGINS"; then
