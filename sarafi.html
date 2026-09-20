@@ -772,7 +772,7 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
     </section>
 
     <section id="view-roz" class="view">
-      <div class="sechead"><div class="bar"></div><h2>Roznamcha</h2></div>
+      <div class="sechead"><div class="bar"></div><h2>Roznamcha</h2><button class="btn btn-p sm" style="margin-left:auto" onclick="downloadRozPdf()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>PDF</button></div>
       <div class="rozctl">
         <div class="field"><label>Date</label><input id="rozDate" type="date" onchange="clearRozPage();renderRoz()"></div>
         <div class="field"><label>Currency</label><select id="rozCur" onchange="clearRozPage();renderRoz()"></select></div>
@@ -816,6 +816,7 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
       <div class="s-b bad"><span id="rozLblDb">Debit</span><b id="rozDb">—</b></div>
       <div class="s-b"><span>Total Balance</span><b id="rozTot">—</b></div>
     </div>
+    <div class="mfoot"><button class="btn btn-p" onclick="downloadRozBalPdf()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>PDF</button></div>
   </div>
 </div>
 
@@ -1619,6 +1620,193 @@ function openRozBalance(){
   const te=$('#rozTot');te.textContent=fmtN(tot);te.style.color=tot>0?'var(--ok)':tot<0?'var(--bad)':'';
   openModal('m-rozbal');
 }
+/* ---------- roznamcha PDF ---------- */
+function rozPdfCols(){
+  const M=14,PW=PDF_A4[0];
+  const wDate=64,wAcct=96,wType=56,wCredit=84,wDebit=84;
+  const wDetail=PW-M*2-wDate-wAcct-wType-wCredit-wDebit;
+  const R=PW-M;
+  const rDate=R,rAcct=rDate-wDate,rType=rAcct-wAcct,rDetail=rType-wType,rCredit=rDetail-wDetail,rDebit=rCredit-wCredit;
+  return{M,PW,wAcct,wDetail,rDate,rAcct,rType,rDetail,rCredit,rDebit};
+}
+function rozPdfW(ctx,s,size){const runs=pdfRuns(s);return runs.reduce((a,r)=>a+(r.ar?ctx.fontAr:ctx.fontL).widthOfTextAtSize(r.t,size),0)}
+function rozPdfWrap(ctx,str,size,maxW,maxLines){
+  const words=String(str||'').split(' '),lines=[];let cur='';
+  for(const w of words){const test=cur?cur+' '+w:w;if(cur&&rozPdfW(ctx,test,size)>maxW){lines.push(cur);cur=w}else cur=test}
+  if(cur)lines.push(cur);
+  if(lines.length>maxLines){lines.length=maxLines;lines[maxLines-1]+='...'}
+  return lines;
+}
+function rozPdfFit(ctx,str,size,maxW){
+  let s=String(str||'');
+  if(rozPdfW(ctx,s,size)<=maxW)return s;
+  while(s.length>1&&rozPdfW(ctx,s+'...',size)>maxW)s=s.slice(0,-1);
+  return s+'...';
+}
+function rozPdfHead(ctx,yTop){
+  const p=ctx.page,PH=PDF_A4[1],{M,PW,rDate,rAcct,rType,rDetail,rCredit,rDebit}=rozPdfCols(),y=yt=>PH-yt,h=28;
+  p.drawRectangle({x:M,y:PH-(yTop+h),width:PW-M*2,height:h,color:pc(C.brand)});
+  pdfGrid(p,yTop,h,[M,rDebit,rCredit,rDetail,rType,rAcct,PW-M],C.white,0.3,0.8);
+  const b=y(yTop+18),o={size:10.5,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.white),align:'right'};
+  pdfText(p,'تاريخ',rDate-8,b,o);
+  pdfText(p,'حساب',rAcct-6,b,o);
+  pdfText(p,'جمع/بنام',rType-6,b,o);
+  pdfText(p,'تفصيل',rDetail-6,b,o);
+  pdfText(p,'جمع',rCredit-6,b,o);
+  pdfText(p,'بنام',rDebit-6,b,o);
+  return yTop+h;
+}
+function rozPdfRow(ctx,yTop,t,stripe,withCur){
+  const {page,fontAr,fontL}=ctx,PH=PDF_A4[1],{M,PW,wAcct,wDetail,rDate,rAcct,rType,rDetail,rCredit,rDebit}=rozPdfCols(),y=yt=>PH-yt;
+  const det=pdfCleanDetail(t)||'-';
+  const lines=rozPdfWrap(ctx,det,10.5,wDetail-14,4);
+  const accLines=rozPdfWrap(ctx,(getAcc(t.accountId)||{}).name||'-',10,wAcct-12,3);
+  const h=26+(Math.max(lines.length,accLines.length)-1)*13;
+  if(stripe)page.drawRectangle({x:M,y:PH-(yTop+h),width:PW-M*2,height:h,color:pc(C.zebra)});
+  page.drawLine({start:{x:M,y:PH-yTop},end:{x:PW-M,y:PH-yTop},thickness:1.3,color:pc(C.grid)});
+  page.drawLine({start:{x:M,y:PH-(yTop+h)},end:{x:PW-M,y:PH-(yTop+h)},thickness:1.3,color:pc(C.grid)});
+  pdfGrid(page,yTop,h,[M,rDebit,rCredit,rDetail,rType,rAcct,PW-M],C.grid,1,0.7);
+  const b=y(yTop+18),cr=isCr(t),amt=Number(t.amount)||0;
+  pdfText(page,pdfDate(t.date),rDate-8,b,{size:9,base:'ltr',fontAr,fontL,color:pc(C.mut),align:'right'});
+  accLines.forEach((ln,i)=>pdfText(page,ln,rAcct-6,b-i*13,{size:10,fontAr,fontL,color:pc(C.ink),align:'right'}));
+  pdfText(page,cr?'جمع':'بنام',rType-6,b,{size:10,fontAr,fontL,color:pc(cr?C.ok:C.bad),align:'right'});
+  const cv=(cr?pdfMoney(amt):'0')+(withCur?' '+(t.currency||'PKR'):'');
+  const dv=(cr?'0':pdfMoney(amt))+(withCur?' '+(t.currency||'PKR'):'');
+  pdfText(page,cv,rCredit-6,b,{size:10.5,base:'ltr',fontAr,fontL,color:pc(cr?C.ok:C.mut),align:'right'});
+  pdfText(page,dv,rDebit-6,b,{size:10.5,base:'ltr',fontAr,fontL,color:pc(cr?C.mut:C.bad),align:'right'});
+  lines.forEach((ln,i)=>pdfText(page,ln,rDetail-6,b-i*13,{size:10.5,fontAr,fontL,color:pc(C.ink),align:'right'}));
+  return yTop+h;
+}
+async function downloadRozPdf(){
+  try{
+    const page=($('#rozPage')?$('#rozPage').value.trim():'');
+    const date=$('#rozDate')&&$('#rozDate').value?$('#rozDate').value:todayLocalIso();
+    const curr=$('#rozCur')&&$('#rozCur').value?$('#rozCur').value:rozCurr;
+    const all=DATA.txns.filter(t=>t&&t.deleted!==true);
+    let rows;
+    if(page)rows=all.filter(t=>String(t.pageNo==null?'':t.pageNo).trim()===page);
+    else rows=all.filter(t=>String(t.date||'').slice(0,10)===date&&(t.currency||'PKR')===curr);
+    rows=rows.slice().sort((x,y)=>txCreated(x)-txCreated(y)||txTs(x)-txTs(y));
+    let ob=0,credit=0,debit=0;
+    if(page){
+      const p=Number(page);
+      ob=rozObAll();
+      all.forEach(t=>{const n=Number(t.pageNo);if(isNaN(n)||n>p)return;const a=Number(t.amount)||0;if(isCr(t))credit+=a;else debit+=a});
+    }else{
+      Object.keys(DATA.ob).forEach(id=>{ob+=Number((DATA.ob[id]||{})[curr]||0)});
+      all.forEach(t=>{
+        if((t.currency||'PKR')!==curr)return;
+        const d=String(t.date||'').slice(0,10),a=Number(t.amount)||0;
+        if(d&&d<date){ob+=isCr(t)?a:-a;return}
+        if(d&&d===date){if(isCr(t))credit+=a;else debit+=a}
+      });
+    }
+    const tot=ob+credit-debit;
+    toast('Building PDF...');
+    let ctx;try{ctx=await pdfMakeDoc()}catch(e){toast('PDF library: '+(e&&e.message?e.message:e),'err');return}
+    const PH=PDF_A4[1],PW=PDF_A4[0];
+    const title=page?('د صفحه '+page+' روزنامچه'):'روزنامچه';
+    const subtitle=page?['صفحه '+page,'ټولې نېټې · ټولې کرنسۍ']:[pdfDate(date),PDF_LBL.currency+' : '+currName(curr)];
+    pdfNewPage(ctx);pdfHeaderBar(ctx,title,subtitle);
+    let yTop=116;
+    yTop=rozPdfHead(ctx,yTop);
+    rows.forEach((t,i)=>{
+      if(yTop>PH-56){pdfNewPage(ctx);pdfHeaderBar(ctx,title,subtitle);yTop=116;yTop=rozPdfHead(ctx,yTop)}
+      yTop=rozPdfRow(ctx,yTop,t,i%2===1,!!page);
+    });
+    yTop+=18;
+    if(yTop>PH-106){pdfNewPage(ctx);pdfHeaderBar(ctx,title,subtitle);yTop=116}
+    pdfStatCards(ctx,yTop,[
+      {label:'زوړ بيلنس',value:pdfMoney(ob),color:C.brand,bg:C.brandSoft},
+      {label:'جمع',value:pdfMoney(credit),color:C.ok,bg:C.okBg},
+      {label:'بنام',value:pdfMoney(debit),color:C.bad,bg:C.badBg},
+      {label:PDF_LBL.balance,value:pdfMoney(tot),color:tot<0?C.bad:C.brand,bg:tot<0?C.badBg:C.brandSoft}
+    ]);
+    pdfFinishing(ctx);
+    const bytes=await ctx.doc.save();
+    const fname=page?('roznamcha-page-'+page+'-'+todayIso()+'.pdf'):('roznamcha-'+date+'-'+curr+'.pdf');
+    deliverBlob(fname,new Blob([bytes],{type:'application/pdf'}),'Roznamcha PDF ready');
+  }catch(e){console.error('roz pdf failed',e);toast('PDF error: '+(e&&e.message?e.message:e),'err');}
+}
+
+/* ---------- roznamcha balances PDF ---------- */
+function rozBalPdfHead(ctx,yTop){
+  const p=ctx.page,PH=PDF_A4[1],M=14,PW=PDF_A4[0],gap=12,y=yt=>PH-yt,h=28,half=(PW-M*2-gap)/2;
+  p.drawRectangle({x:PW-M-half,y:PH-(yTop+h),width:half,height:h,color:pc(C.ok)});
+  p.drawRectangle({x:M,y:PH-(yTop+h),width:half,height:h,color:pc(C.bad)});
+  const o={size:12,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.white),align:'right'};
+  pdfText(p,'جمع',PW-M-10,y(yTop+18),o);
+  pdfText(p,'بنام',M+half-10,y(yTop+18),o);
+  return yTop+h;
+}
+function rozBalPdfRow(ctx,side,yTop,it,rh,stripe){
+  const p=ctx.page,PH=PDF_A4[1],M=14,PW=PDF_A4[0],gap=12,y=yt=>PH-yt,half=(PW-M*2-gap)/2;
+  const x=side==='r'?PW-M-half:M,w=half;
+  if(stripe){p.drawRectangle({x,y:PH-(yTop+rh),width:w,height:rh,color:pc(C.zebra)})}
+  p.drawLine({start:{x,y:PH-yTop},end:{x:x+w,y:PH-yTop},thickness:1.2,color:pc(C.grid)});
+  p.drawLine({start:{x,y:PH-(yTop+rh)},end:{x:x+w,y:PH-(yTop+rh)},thickness:1.2,color:pc(C.grid)});
+  const lines=rozPdfWrap(ctx,it.n||'-',10,w-88,2);
+  const b=y(yTop+rh/2+4);
+  lines.forEach((ln,i)=>pdfText(p,ln,x+w-10,b-i*12,{size:10,fontAr:ctx.fontAr,fontL:ctx.fontL,color:pc(C.ink),align:'right'}));
+  pdfText(p,pdfMoney(it.b),x+10,b,{size:11,base:'ltr',fontAr:ctx.fontAr,fontL:ctx.fontL,color:pc(it.b>0?C.ok:C.bad),align:'left'});
+}
+async function downloadRozBalPdf(){
+  try{
+    const curr=$('#rozCur')&&$('#rozCur').value?$('#rozCur').value:rozCurr;
+    const accs=DATA.accounts.filter(a=>a.deleted!==true&&(!branchName||String(a.branch||'')===branchName));
+    const crList=[],dbList=[];let tc=0,td=0;
+    accs.forEach(a=>{
+      let b=obOf(a.id,curr);
+      DATA.txns.forEach(t=>{if(t.accountId!==a.id||(t.currency||'PKR')!==curr||t.deleted===true)return;b+=isCr(t)?Number(t.amount)||0:-(Number(t.amount)||0)});
+      if(b>0.0001){crList.push({n:a.name||'-',b});tc+=b}
+      else if(b<-0.0001){dbList.push({n:a.name||'-',b:b});td+=(-b)}
+    });
+    crList.sort((a,b)=>b.b-a.b);
+    dbList.sort((a,b)=>a.b-b.b);
+    const tot=tc-td;
+    toast('Building PDF...');
+    let ctx;try{ctx=await pdfMakeDoc()}catch(e){toast('PDF library: '+(e&&e.message?e.message:e),'err');return}
+    const PH=PDF_A4[1],PW=PDF_A4[0],M=14,y=yt=>PH-yt,gap=12,half=(PW-M*2-gap)/2;
+    const title='د حسابونو بيلنس';
+    const subtitle=[PDF_LBL.currency+' : '+currName(curr),branchName?branchName:''];
+    pdfNewPage(ctx);pdfHeaderBar(ctx,title,subtitle.filter(Boolean));
+    let yTop=116;
+    yTop=rozBalPdfHead(ctx,yTop);
+    let i=0,j=0;
+    while(i<crList.length||j<dbList.length){
+      const itR=crList[i],itL=dbList[j];
+      const lnR=itR?rozPdfWrap(ctx,itR.n,10,half-88,2):null;
+      const lnL=itL?rozPdfWrap(ctx,itL.n,10,half-88,2):null;
+      const rh=Math.max(itR?24+(lnR.length-1)*12:0,itL?24+(lnL.length-1)*12:0,26);
+      if(yTop+rh>PH-150){
+        pdfNewPage(ctx);pdfHeaderBar(ctx,title,subtitle.filter(Boolean));yTop=116;yTop=rozBalPdfHead(ctx,yTop);
+      }
+      if(itR)rozBalPdfRow(ctx,'r',yTop,itR,rh,i%2===1);
+      if(itL)rozBalPdfRow(ctx,'l',yTop,itL,rh,j%2===1);
+      yTop+=rh;i++;j++;
+    }
+    yTop+=2;
+    const h2=32;
+    if(yTop+h2*2+52>PH-60){pdfNewPage(ctx);pdfHeaderBar(ctx,title,subtitle.filter(Boolean));yTop=116}
+    ctx.page.drawRectangle({x:PW-M-half,y:PH-(yTop+h2),width:half,height:h2,color:pc(C.okBg)});
+    ctx.page.drawRectangle({x:PW-M-4,y:PH-(yTop+h2),width:4,height:h2,color:pc(C.ok)});
+    pdfText(ctx.page,'کل جمع',PW-M-14,y(yTop+21),{size:11,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.ok),align:'right'});
+    pdfText(ctx.page,pdfMoney(tc),PW-M-half+10,y(yTop+21),{size:12,base:'ltr',fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.ok),align:'left'});
+    ctx.page.drawRectangle({x:M,y:PH-(yTop+h2),width:half,height:h2,color:pc(C.badBg)});
+    ctx.page.drawRectangle({x:M,y:PH-(yTop+h2),width:4,height:h2,color:pc(C.bad)});
+    pdfText(ctx.page,'کل بنام',M+half-14,y(yTop+21),{size:11,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.bad),align:'right'});
+    pdfText(ctx.page,pdfMoney(td),M+10,y(yTop+21),{size:12,base:'ltr',fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.bad),align:'left'});
+    yTop+=h2+10;
+    const h3=36;
+    ctx.page.drawRectangle({x:M,y:PH-(yTop+h3),width:PW-M*2,height:h3,color:pc(C.brandSoft)});
+    ctx.page.drawRectangle({x:PW-M-4,y:PH-(yTop+h3),width:4,height:h3,color:pc(C.brand)});
+    pdfText(ctx.page,PDF_LBL.balance,PW-M-14,y(yTop+23),{size:12,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.brand),align:'right'});
+    pdfText(ctx.page,pdfMoney(tot),M+10,y(yTop+23),{size:14,base:'ltr',fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(tot<0?C.bad:C.brand),align:'left'});
+    pdfFinishing(ctx);
+    const bytes=await ctx.doc.save();
+    deliverBlob('roznamcha-balance-'+curr+'.pdf',new Blob([bytes],{type:'application/pdf'}),'Balance PDF ready');
+  }catch(e){console.error('roz bal pdf failed',e);toast('PDF error: '+(e&&e.message?e.message:e),'err');}
+}
 
 /* ---------- fetch ---------- */
 async function readAllDocs(col,mkQuery){
@@ -1852,10 +2040,9 @@ function pdfHeaderBar(ctx,title,subtitle){
   const cy=PH-HBAR/2,ly=cy-19;
   p.drawRectangle({x:M,y:ly,width:38,height:38,color:pc(C.brand)});
   p.drawText('S',{x:M+11,y:ly+11,size:19,font:ctx.boldL,color:pc(C.white)});
-  p.drawText('Sarafi',{x:M+50,y:cy+4,size:18,font:ctx.boldL,color:pc(C.white)});
-  p.drawText('Sami Jani Commission Accounts',{x:M+50,y:cy-13,size:9.5,font:ctx.boldL,color:pc(C.barSub)});
-  if(title)pdfText(p,title,PW-M,cy+7,{size:16,bold:true,base:'rtl',fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.white),align:'right'});
-  if(subtitle)pdfText(p,subtitle,PW-M,cy-13,{size:10.5,bold:true,base:'rtl',fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc([233,236,255]),align:'right'});
+  p.drawText('Sami Jani Commission Agent',{x:M+50,y:cy-5,size:10,font:ctx.boldL,color:pc(C.barSub)});
+  if(title)pdfText(p,title,PW-M,cy+16,{size:15,bold:true,base:'rtl',fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.white),align:'right'});
+  if(subtitle){const subs=Array.isArray(subtitle)?subtitle:[subtitle];subs.forEach((s,i)=>pdfText(p,s,PW-M,cy-8-i*17,{size:10,bold:true,base:'rtl',fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc([233,236,255]),align:'right'}))}
 }
 function pdfStatCards(ctx,yTop,cards){
   const p=ctx.page,PH=PDF_A4[1],M=14,PW=PDF_A4[0],gap=8,n=cards.length,w=(PW-M*2-gap*(n-1))/n,h=46;
@@ -1909,7 +2096,7 @@ async function downloadLedgerPdf(){
   let ctx;try{ctx=await pdfMakeDoc()}catch(e){toast('PDF library: '+(e&&e.message?e.message:e),'err');return}
   const PH=PDF_A4[1],M=14,PW=PDF_A4[0],y=yt=>PH-yt;
   const title='د '+(a.name||'-')+' کهاته';
-  const subtitle=new Date().toLocaleDateString('en-GB')+'              '+PDF_LBL.currency+' : '+currName(ledCurr);
+  const subtitle=[new Date().toLocaleDateString('en-GB'),PDF_LBL.currency+' : '+currName(ledCurr)];
   pdfNewPage(ctx);pdfHeaderBar(ctx,title,subtitle);
   let yTop=114;
   const metaParts=[a.contact,a.city].filter(Boolean);
@@ -2050,7 +2237,7 @@ window.openAllAccountsReport=openAllAccountsReport;window.closeAllAccountsReport
 window.openAccReport=openAccReport;window.closeAccReport=closeAccReport;window.toggleRptSort=toggleRptSort;window.renderAccReport=renderAccReport;
 window.toggleTheme=toggleTheme;
 window.doLogout=doLogout;window.closeConfirm=closeConfirm;
-window.renderRoz=renderRoz;window.clearRozPage=clearRozPage;window.openRozBalance=openRozBalance;window.toggleRozSort=toggleRozSort;
+window.renderRoz=renderRoz;window.clearRozPage=clearRozPage;window.openRozBalance=openRozBalance;window.toggleRozSort=toggleRozSort;window.downloadRozPdf=downloadRozPdf;window.downloadRozBalPdf=downloadRozBalPdf;
 window.go('dashboard');
 
 /* ---------- background canvas ---------- */
