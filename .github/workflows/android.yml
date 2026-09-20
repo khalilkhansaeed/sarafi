@@ -102,6 +102,22 @@ jobs:
           fi
           echo "All required vendor assets present, CDN URLs rewritten and cache-busted."
 
+      - name: Verify native PDF share plugins are registered
+        run: |
+          set -e
+          PLUGINS=android/app/src/main/assets/capacitor.plugins.json
+          for p in "@capacitor/filesystem" "@capacitor/share"; do
+            if ! grep -q "$p" "$PLUGINS"; then
+              echo "ERROR: native plugin not registered: $p (PDF save/share will fail)"
+              exit 1
+            fi
+          done
+          if ! grep -q "nativePromise" "$ASSETS/index.html"; then
+            echo "ERROR: index.html does not use the native bridge for PDF delivery"
+            exit 1
+          fi
+          echo "PDF Filesystem/Share plugins registered and used."
+
       - name: Build debug APK
         run: |
           cd android

@@ -1713,22 +1713,47 @@ async function runFetch(){
 }
 
 /* ---------- PDF ---------- */
+function blobToB64(blob){
+  return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(String(fr.result).split(',')[1]);fr.onerror=()=>rej(new Error('could not read file'));fr.readAsDataURL(blob)});
+}
+function nativePlugin(name,method,args){
+  if(!(window.Capacitor&&Capacitor.nativePromise))throw new Error('native bridge unavailable');
+  return Capacitor.nativePromise(name,method,args||{});
+}
 async function deliverBlob(name,blob,msg){
-  try{
-    if(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()&&Capacitor.Plugins&&Capacitor.Plugins.Filesystem&&Capacitor.Plugins.Share){
-      const b64=await new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(String(fr.result).split(',')[1]);fr.onerror=rej;fr.readAsDataURL(blob)});
-      const res2=await Capacitor.Plugins.Filesystem.writeFile({path:name,data:b64,directory:Capacitor.Plugins.Filesystem.Directory.Cache});
-      const uri=res2&&res2.uri;
-      if(uri){try{await Capacitor.Plugins.Share.share({title:name,url:uri})}catch(e){}}
+  const isNative=!!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform());
+  if(isNative){
+    let saved=null,shared=false,err=null;
+    try{
+      const b64=await blobToB64(blob);
+      // 1) user-visible copy in public Documents (falls back to ExternalStorage)
+      for(const dir of ['DOCUMENTS','EXTERNAL_STORAGE']){
+        try{ await nativePlugin('Filesystem','writeFile',{path:name,data:b64,directory:dir,recursive:true}); saved=dir==='DOCUMENTS'?'Documents':'Downloads'; break; }
+        catch(e){ err=e; }
+      }
+      // 2) share sheet (Cache is always readable via the app FileProvider)
+      try{
+        const res=await nativePlugin('Filesystem','writeFile',{path:name,data:b64,directory:'CACHE'});
+        const uri=res&&res.uri;
+        if(uri){ await nativePlugin('Share','share',{title:name,files:[uri],dialogTitle:name}); shared=true; }
+        else{ throw new Error('no file uri'); }
+      }catch(e){ if(!err)err=e; }
+      if(shared){ toast(saved?('Saved to '+saved+' · choose an app to share'):(msg||'PDF ready')); return; }
+      if(saved){ toast('Saved to '+saved); return; }
+      throw err||new Error('save failed');
+    }catch(e){
+      console.error('pdf deliver failed',e);
+      toast('PDF save failed: '+((e&&(e.message||e.errorMessage))||e),'err');
+      return;
     }
-  }catch(e){}
+  }
   try{
     const url=URL.createObjectURL(blob);
     const aEl=document.createElement('a');
     aEl.href=url;aEl.download=name;
     document.body.appendChild(aEl);aEl.click();aEl.remove();
     setTimeout(()=>URL.revokeObjectURL(url),4000);
-  }catch(e){}
+  }catch(e){ console.error('download failed',e); }
   toast(msg||'PDF ready');
 }
 /* ---------- PDF export (pdf-lib + fontkit, real Arabic/Pashto shaping) ---------- */
