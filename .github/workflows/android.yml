@@ -30,6 +30,22 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Verify bundled vendor libraries are intact
+        run: |
+          set -e
+          # pdf-lib must be the full distribution; a truncated file parses as
+          # invalid JS and leaves window.PDFLib undefined at runtime.
+          for f in www/vendor/pdf-lib.min.js www/vendor/fontkit.umd.min.js; do
+            size=$(wc -c < "$f")
+            if [ "$size" -lt 200000 ]; then
+              echo "ERROR: $f looks truncated ($size bytes)"
+              exit 1
+            fi
+            node --check "$f"
+          done
+          node -e "const s=require('fs').readFileSync('www/vendor/pdf-lib.min.js','utf8'); if(!/PDFLib/.test(s)){console.error('ERROR: pdf-lib missing PDFLib global');process.exit(1)}"
+          echo "Vendor libraries intact."
+
       - name: Build web assets
         run: npm run build:www
 
