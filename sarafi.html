@@ -791,7 +791,7 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
     <section id="view-ledger" class="view">
       <div class="ledgerhead">
         <div class="lrow">
-          <button class="iconbtn" onclick="go('accounts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+          <button class="iconbtn" onclick="go('accounts',true)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
           <div class="linfo"><h2 id="ledName">Account</h2></div>
           <div class="ledbal"><span>Balance</span><b id="ledBal">—</b></div>
           <button class="iconbtn" title="Ledger report" onclick="openAccReport()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg></button>
@@ -1285,7 +1285,7 @@ document.addEventListener('keydown',e=>{
   const open=$$('.modal.show');
   if(open.length){closeModal(open[open.length-1].id);return}
   if($('#view-ledger').classList.contains('active')){
-    if($('#view-ledger').classList.contains('reportmode'))closeAccReport();else go('accounts');return;
+    if($('#view-ledger').classList.contains('reportmode'))closeAccReport();else go('accounts',true);return;
   }
   if($('#view-accounts').classList.contains('active')&&$('#view-accounts').classList.contains('allrptmode')){closeAllAccountsReport();return}
   if($('#view-reports')&&$('#view-reports').classList.contains('submode')){closeRptSub();return}
@@ -1305,7 +1305,7 @@ try{
     CAPAPP.addListener('backButton',()=>{
       const open=$$('.modal.show');
       if(open.length){closeModal(open[open.length-1].id);return}
-      if($('#view-ledger').classList.contains('active')){go('accounts');return}
+      if($('#view-ledger').classList.contains('active')){go('accounts',true);return}
       if($('#view-accounts').classList.contains('active')&&$('#view-accounts').classList.contains('allrptmode')){closeAllAccountsReport();return}
       if($('#view-reports')&&$('#view-reports').classList.contains('submode')){closeRptSub();return}
       if(!$('#view-dashboard').classList.contains('active')){go('dashboard');return}
@@ -1315,7 +1315,7 @@ try{
 }catch(e){}
 
 /* ---------- navigation ---------- */
-function go(tab){
+function go(tab,instant){
   document.body.classList.toggle('on-ledger',tab==='ledger');
   if(tab!=='ledger'){
     document.body.classList.remove('txmode');document.body.classList.remove('reportmode');
@@ -1335,7 +1335,7 @@ function go(tab){
   if(tab==='roz')renderRoz();
   if(tab==='reports')renderReports();
   const kids=[...v.querySelectorAll('.stat,.panel,.sechead,.toolbar,.chips,.acccard,.ledgerhead,.tx,.empty,.rptcard,.krow,.txsub,.rpthead,.rptctrl,.rptbal,.bkcard')].filter(el=>!el.closest('#rptSub'));
-  if(A&&kids.length)A({targets:kids,translateY:[26,0],opacity:[0,1],duration:600,delay:A.stagger(55),easing:'easeOutQuart'});
+  if(!instant&&A&&kids.length)A({targets:kids,translateY:[26,0],opacity:[0,1],duration:600,delay:A.stagger(55),easing:'easeOutQuart'});
 }
 
 /* ---------- chips / filters ---------- */
