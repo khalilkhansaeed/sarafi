@@ -206,6 +206,7 @@ a{color:var(--acc3);text-decoration:none}
 .modal{position:fixed;inset:0;z-index:60;display:none;align-items:flex-end;justify-content:center;padding:0}
 @media(min-width:640px){.modal{align-items:center;padding:20px}}
 .modal.show{display:flex}
+#m-confirm{z-index:240}
 .modal .ovl{position:absolute;inset:0;background:rgba(15,23,42,.4);backdrop-filter:blur(6px)}
 .sheet{position:relative;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;background:var(--card);border:1px solid var(--brd);border-radius:22px 22px 0 0;padding:16px;box-shadow:0 24px 70px rgba(16,24,40,.22)}
 @media(min-width:640px){.sheet{border-radius:22px;max-height:88vh;animation:none}}
@@ -236,23 +237,26 @@ a{color:var(--acc3);text-decoration:none}
 #m-confirm .cfbody{text-align:center;margin-bottom:17px}
 #m-confirm .cfbody h3{font-family:var(--head);font-size:16px;font-weight:700;margin-bottom:6px}
 #m-confirm .cfbody p{font-size:12.5px;color:var(--mut);line-height:1.5}
-/* ---------- login lock ---------- */
-#loginLock{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
-#loginLock.show{display:flex}
-#loginLock .lovl{position:absolute;inset:0;background:rgba(15,23,42,.5);backdrop-filter:blur(10px)}
-[data-theme="dark"] #loginLock .lovl{background:rgba(3,6,15,.72)}
-#loginLock .lcard{position:relative;width:100%;max-width:390px;background:var(--card);border:1px solid var(--brd);border-radius:22px;padding:28px 22px 20px;box-shadow:0 30px 80px rgba(15,23,42,.4);animation:lpop .45s cubic-bezier(.34,1.56,.64,1)}
+/* ---------- login / setup lock ---------- */
+#loginLock,#setupLock{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+#loginLock.show,#setupLock.show{display:flex}
+#loginLock .lovl,#setupLock .lovl{position:absolute;inset:0;background:rgba(15,23,42,.5);backdrop-filter:blur(10px)}
+[data-theme="dark"] #loginLock .lovl,[data-theme="dark"] #setupLock .lovl{background:rgba(3,6,15,.72)}
+#loginLock .lcard,#setupLock .lcard{position:relative;width:100%;max-width:390px;background:var(--card);border:1px solid var(--brd);border-radius:22px;padding:28px 22px 20px;box-shadow:0 30px 80px rgba(15,23,42,.4);animation:lpop .45s cubic-bezier(.34,1.56,.64,1)}
 @keyframes lpop{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:none}}
-#loginLock .llogo{width:58px;height:58px;border-radius:17px;background:var(--grd);color:#fff;display:grid;place-items:center;font-family:var(--head);font-size:27px;font-weight:800;margin:0 auto 15px;box-shadow:0 10px 26px rgba(79,70,229,.35)}
-#loginLock .lhead{text-align:center;margin-bottom:19px}
-#loginLock .lhead h2{font-family:var(--head);font-size:19px;font-weight:800;margin-bottom:5px}
-#loginLock .lhead p{font-size:12px;color:var(--mut)}
-#loginLock .lerr{display:none;margin-bottom:12px;padding:9px 12px;border-radius:11px;background:rgba(251,113,133,.12);border:1px solid rgba(251,113,133,.35);color:var(--bad);font-size:12px;font-weight:600;text-align:center;line-height:1.4}
-#loginLock .lerr.show{display:block}
-#loginLock .field input{direction:ltr;text-align:left}
-#loginLock .lbtn{width:100%;margin-top:4px;padding:12px}
-#loginLock .lbtn:disabled{opacity:.65;cursor:default;transform:none}
-#loginLock .lbrand{text-align:center;font-size:10.5px;color:var(--mut2);margin-top:15px;letter-spacing:.4px}
+#loginLock .llogo,#setupLock .llogo{width:58px;height:58px;border-radius:17px;background:var(--grd);color:#fff;display:grid;place-items:center;font-family:var(--head);font-size:27px;font-weight:800;margin:0 auto 15px;box-shadow:0 10px 26px rgba(79,70,229,.35)}
+#loginLock .lhead,#setupLock .lhead{text-align:center;margin-bottom:19px}
+#loginLock .lhead h2,#setupLock .lhead h2{font-family:var(--head);font-size:19px;font-weight:800;margin-bottom:5px}
+#loginLock .lhead p,#setupLock .lhead p{font-size:12px;color:var(--mut);line-height:1.5}
+#loginLock .lerr,#setupLock .lerr{display:none;margin-bottom:12px;padding:9px 12px;border-radius:11px;background:rgba(251,113,133,.12);border:1px solid rgba(251,113,133,.35);color:var(--bad);font-size:12px;font-weight:600;text-align:center;line-height:1.4}
+#loginLock .lerr.show,#setupLock .lerr.show{display:block}
+#loginLock .field input,#setupLock .field input{direction:ltr;text-align:left}
+#loginLock .lbtn,#setupLock .lbtn{width:100%;margin-top:4px;padding:12px}
+#loginLock .lbtn:disabled,#setupLock .lbtn:disabled{opacity:.65;cursor:default;transform:none}
+#loginLock .lbrand,#setupLock .lbrand{text-align:center;font-size:10.5px;color:var(--mut2);margin-top:15px;letter-spacing:.4px}
+#setupLock .lhelp{text-align:center;font-size:11px;color:var(--mut2);margin-top:14px;line-height:1.6}
+#loginLock .lswitch{display:block;width:100%;margin-top:14px;background:none;border:none;color:var(--mut);font-size:11px;font-weight:600;cursor:pointer;padding:4px;transition:.2s}
+#loginLock .lswitch:hover{color:var(--acc)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:480px){.grid2{grid-template-columns:1fr}}
 .grid2.datetime{grid-template-columns:1fr 1fr;gap:8px}
@@ -429,6 +433,55 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
 #allRptList .tx .tinfo b{font-size:13px}
 #allRptList .tx .tinfo span{font-size:10.5px}
 #allRptList .tx .amt{font-size:14px}
+
+.rpgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:10px;direction:rtl}
+.rptcard{background:var(--card);border:1px solid var(--brd);border-radius:16px;padding:15px 14px;cursor:pointer;transition:.25s;text-align:right;position:relative;overflow:hidden}
+.rptcard:hover{border-color:rgba(79,70,229,.35);box-shadow:0 16px 40px rgba(16,24,40,.1);transform:translateY(-2px)}
+.rptcard .ric{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;margin-bottom:10px;color:#fff;box-shadow:0 6px 16px rgba(16,24,40,.14)}
+.rptcard .ric svg{width:20px;height:20px}
+.rptcard b{font-family:var(--head);font-size:15px;font-weight:700;display:block}
+.rptcard span{font-size:11px;color:var(--mut);display:block;margin-top:3px;line-height:1.4}
+#rptStage{display:none}
+#view-reports.submode .rpgrid,#view-reports.submode>.sechead{display:none}
+#view-reports.submode #rptStage{display:block}
+#rptStage{direction:rtl}
+.rpthead{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.rpthead .linfo{flex:1;min-width:0}
+.rpthead h2{font-family:var(--head);font-size:16.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rpthead p{font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rptctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin-bottom:10px;background:var(--card);border:1px solid var(--brd);border-radius:16px;padding:12px;direction:rtl}
+.rptctrl .field{margin-bottom:0;flex:1 1 130px;min-width:0}
+.rptctrl .field label{text-align:right;font-size:9px;margin-bottom:3px;color:var(--mut);text-transform:uppercase;letter-spacing:.4px;font-weight:700;display:block}
+.rptctrl .field input{padding:7px 9px;font-size:12px;border-radius:9px}
+.rptctrl .field input[type=number],.rptctrl .field input[type=text]{direction:ltr;text-align:right}
+.rptctrl .search{flex:1 1 170px;padding:0 11px;border-radius:10px;gap:7px}
+.rptctrl .search svg{width:14px;height:14px;color:var(--mut);flex:none}
+.rptctrl .search input{padding:8px 0;font-size:12.5px;background:none;border:none;flex:1;min-width:0;color:var(--txt);outline:none}
+.chips.rptchips .chip-f{padding:7px 14px;border-radius:99px;background:var(--card);border:1px solid var(--brd);color:var(--mut);font-size:12.5px;font-weight:600;white-space:nowrap;cursor:pointer;transition:.2s}
+.chips.rptchips .chip-f:hover{color:var(--txt);border-color:var(--brd2)}
+.chips.rptchips .chip-f.active{background:var(--accSoft);color:var(--acc);border-color:var(--accSoftBrd)}
+.krow{display:flex;align-items:center;gap:11px;background:var(--card);border:1px solid var(--brd);border-radius:14px;padding:10px 13px;margin-bottom:6px;cursor:pointer;direction:rtl;transition:.2s}
+.krow:hover{border-color:var(--brd2);transform:translateX(-3px)}
+.krow .kn{flex:1;min-width:0}
+.krow .kn b{font-family:var(--head);font-size:13.5px;font-weight:700;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.krow .kn span{font-size:10.5px;color:var(--mut)}
+.krow .kb{flex:none;direction:ltr;text-align:left;font-family:var(--head);font-weight:700;font-size:14px;white-space:nowrap}
+.krow .kb.ok{color:var(--ok)}.krow .kb.bad{color:var(--bad)}
+.kit{font-size:10px;padding:3px 9px;border-radius:99px;background:var(--accSoft2);border:1px solid var(--accSoftBrd);color:var(--acc);font-weight:700;white-space:nowrap;flex:none}
+.ptbl{direction:rtl}
+.ptbl>div{display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:var(--card);border:1px solid var(--brd);border-radius:14px;padding:9px 13px;margin-bottom:6px}
+.ptbl>div>span{font-size:10.5px;color:var(--mut);white-space:nowrap}
+.ptbl b{font-family:var(--head);font-size:13px;font-weight:700}
+.bkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;direction:rtl}
+.bkcard{background:var(--card);border:1px solid var(--brd);border-radius:16px;padding:13px 15px}
+.bkcard h5{font-family:var(--head);font-size:14px;font-weight:700;margin-bottom:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bkcard .bl{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px dashed var(--dash);direction:ltr}
+.bkcard .bl:last-child{border-bottom:none}
+.bkcard .bl span{font-size:11px;color:var(--mut);font-weight:600}
+.bkcard .bl b{font-family:var(--head);font-size:13px;white-space:nowrap}
+.bkcard .bl b.ok{color:var(--ok)}.bkcard .bl b.bad{color:var(--bad)}.bkcard .bl b.zero{color:var(--mut)}
+.stats.rstat .stat{background:var(--card);border-color:var(--brd)}
+
 #view-roz{direction:rtl}
 .rozctl{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin-bottom:10px;background:var(--card);border:1px solid var(--brd);border-radius:16px;padding:12px}
 .rozctl .field{margin-bottom:0;flex:1 1 130px;min-width:0}
@@ -661,7 +714,7 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
   <header class="topbar">
     <div class="brand">
       <div class="logo">S</div>
-      <div><h1 id="brandName">Sarafi</h1><p>Sami Jani Commission Accounts</p></div>
+      <div><h1 id="brandName">Sarafi</h1><p id="brandSub">Sami Jani Commission Accounts</p></div>
     </div>
     <div class="topctl">
       <button class="btn btn-g" id="themeBtn" onclick="toggleTheme()" title="Switch to dark mode"><svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
@@ -676,6 +729,7 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
       <button data-tab="dashboard" class="active" onclick="go('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>Dashboard</button>
       <button data-tab="accounts" onclick="go('accounts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Accounts</button>
       <button data-tab="roz" onclick="go('roz')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="15" y2="11"/></svg>Roznamcha</button>
+      <button data-tab="reports" onclick="go('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>راپورونه</button>
     </nav>
   </header>
 
@@ -789,11 +843,35 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
       </div>
       <div id="rozList"></div>
     </section>
+
+    <section id="view-reports" class="view">
+      <div class="sechead"><div class="bar"></div><h2>راپورونه</h2></div>
+      <div class="rpgrid">
+        <div class="rptcard" onclick="openRptSub('khat')">
+          <div class="ric" style="background:linear-gradient(135deg,#10b981,#34d399)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+          <b>جمع کهاتې</b><span>مثبت بيلنس لرونکي حسابونه</span>
+        </div>
+        <div class="rptcard" onclick="openRptSub('khatn')">
+          <div class="ric" style="background:linear-gradient(135deg,#e11d48,#fb7185)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg></div>
+          <b>بنام کهاتې</b><span>منفي بيلنس لرونکي حسابونه</span>
+        </div>
+        <div class="rptcard" onclick="openRptSub('banks')">
+          <div class="ric" style="background:linear-gradient(135deg,#0891b2,#22d3ee)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 1 2 6 22 6 12 1"/></svg></div>
+          <b>بينکونه</b><span>د بانکونو بيلنسونه</span>
+        </div>
+        <div class="rptcard" onclick="openRptSub('manafi')">
+          <div class="ric" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+          <b>منافع</b><span>ګټه او تاوان</span>
+        </div>
+      </div>
+      <div id="rptStage"></div>
+    </section>
   </main>
   <nav class="bottomnav" id="botnav">
     <button data-tab="dashboard" class="active" onclick="go('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>Home</button>
     <button data-tab="accounts" onclick="go('accounts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Accounts</button>
     <button data-tab="roz" onclick="go('roz')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="15" y2="11"/></svg>Roznamcha</button>
+    <button data-tab="reports" onclick="go('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>راپورونه</button>
   </nav>
 
 <div class="modal" id="m-act">
@@ -832,15 +910,28 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
   </div>
 </div>
 
+<div id="setupLock">
+  <div class="lovl"></div>
+  <form class="lcard" id="setupForm" autocomplete="off">
+    <div class="llogo">S</div>
+    <div class="lhead"><h2 id="setupTitle">Sarafi Setup</h2><p>Enter the access key you were given to connect this device.</p></div>
+    <div class="lerr" id="setupErr"></div>
+    <div class="field"><label>Access Key</label><input id="setupKey" type="text" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="your-access-key" required></div>
+    <button class="btn btn-p lbtn" id="setupBtn" type="submit">Connect</button>
+    <div class="lhelp">The key is saved on this device, so you only enter it once.</div>
+  </form>
+</div>
+
 <div id="loginLock">
   <div class="lovl"></div>
   <form class="lcard" id="loginForm" autocomplete="on">
     <div class="llogo">S</div>
-    <div class="lhead"><h2>Sarafi</h2><p>Sami Jani Commission Accounts</p></div>
+    <div class="lhead"><h2 id="loginTitle">Sarafi</h2><p id="loginSub">Sami Jani Commission Accounts</p></div>
     <div class="lerr" id="loginErr"></div>
     <div class="field"><label>Email</label><input id="loginEmail" type="email" autocomplete="username" placeholder="you@example.com" required></div>
     <div class="field"><label>Password</label><input id="loginPass" type="password" autocomplete="current-password" placeholder="••••••••" required></div>
     <button class="btn btn-p lbtn" id="loginBtn" type="submit">Sign In</button>
+    <button class="lswitch" type="button" onclick="changeAccessKey()">Use a different access key</button>
     <div class="lbrand" id="buildStamp">Sarafi · Sami Jani Commission Accounts</div>
   </form>
 </div>
@@ -881,9 +972,55 @@ const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;'
 const A=window.anime?window.anime:null;
 const BUILD_ID='__BUILD_ID__';
 
-const firebaseConfig={apiKey:"AIzaSyD39M5xb5CIFXFfJoIBwaAVugyR7QscM5g",authDomain:"samijani-a6fd8.firebaseapp.com",projectId:"samijani-a6fd8",storageBucket:"samijani-a6fd8.firebasestorage.app",messagingSenderId:"544244604618",appId:"1:544244604618:web:9d88d33d5665e955fcde33",measurementId:"G-SF7PVKKQRR"};
-try{firebase.initializeApp(firebaseConfig)}catch(e){}
-const fdb=firebase.firestore();
+/* ---------- multi-tenant Firebase: master registry resolves each client's config ---------- */
+const MASTER_CONFIG={apiKey:"AIzaSyA3_WJGYOXwP8-zIBVMMgizBGJ6cIts6VI",authDomain:"mastersarafi.firebaseapp.com",projectId:"mastersarafi",storageBucket:"mastersarafi.firebasestorage.app",messagingSenderId:"489442765767",appId:"1:489442765767:web:04b35529f195f34ea407e2"};
+const MASTER_COLLECTION='clients';
+const MASTER_APP_NAME='sarafi-master';
+const CLIENT_CFG_KEY='sarafi_client_cfg';
+let fdb=null;
+
+function getClientConfig(){
+  try{
+    const raw=localStorage.getItem(CLIENT_CFG_KEY);if(!raw)return null;
+    const o=JSON.parse(raw);if(!o||!o.cfg)return null;
+    const c=o.cfg;if(!c.apiKey||!c.projectId||!c.appId)return null;
+    return o;
+  }catch(e){return null}
+}
+function saveClientConfig(o){try{localStorage.setItem(CLIENT_CFG_KEY,JSON.stringify(o))}catch(e){}}
+function clearClientConfig(){try{localStorage.removeItem(CLIENT_CFG_KEY)}catch(e){}}
+function initFirebase(cfg){
+  if(!window.firebase)throw new Error('Firebase failed to load. Check your connection.');
+  try{firebase.app()}catch(e){firebase.initializeApp(cfg)}
+  fdb=firebase.firestore();
+}
+function masterApp(){
+  try{return firebase.app(MASTER_APP_NAME)}catch(e){return firebase.initializeApp(MASTER_CONFIG,MASTER_APP_NAME)}
+}
+async function lookupClient(key){
+  const app=masterApp();
+  try{
+    const snap=await firebase.firestore(app).collection(MASTER_COLLECTION).doc(key).get();
+    return snap.exists?(snap.data()||null):null;
+  }finally{
+    try{await app.delete()}catch(e){}
+  }
+}
+function applyBranding(c){
+  if(!c)return;
+  const name=String(c.name||'').trim(),sub=String(c.subtitle||'').trim();
+  if(name){
+    document.title=name+(sub?' — '+sub:'');
+    const lg=document.querySelector('.logo');if(lg)lg.textContent=name.charAt(0).toUpperCase();
+    const bn=$('#brandName');if(bn)bn.textContent=name;
+    const lt=$('#loginTitle');if(lt)lt.textContent=name;
+    const st=$('#setupTitle');if(st)st.textContent=name+' Setup';
+  }
+  if(sub){
+    const bs=$('#brandSub');if(bs)bs.textContent=sub;
+    const ls=$('#loginSub');if(ls)ls.textContent=sub;
+  }
+}
 
 /* ---------- authentication gate ---------- */
 const AUTH_KEY='sarafi_auth';
@@ -907,6 +1044,52 @@ function hideLogin(){
   const l=$('#loginLock');if(!l)return;
   l.classList.remove('show');setLoginErr('');
   if(!$$('.modal.show').length)document.body.classList.remove('locked');
+}
+function setSetupErr(msg){const e=$('#setupErr');if(!e)return;if(msg){e.textContent=msg;e.classList.add('show')}else{e.textContent='';e.classList.remove('show')}}
+function showSetup(){
+  const l=$('#setupLock');if(!l)return;
+  applyBuildStamp();
+  l.classList.add('show');document.body.classList.add('locked');
+  const i=$('#setupKey');if(i)setTimeout(()=>{try{if(!i.value)i.focus()}catch(e){}},250);
+}
+function hideSetup(){
+  const l=$('#setupLock');if(!l)return;
+  l.classList.remove('show');setSetupErr('');
+}
+function friendlySetupErr(e){
+  const c=String((e&&e.code)||'');
+  if(c==='permission-denied')return 'Access key lookup is not enabled. Please contact support.';
+  if(c==='unavailable'||c==='auth/network-request-failed')return 'Network error. Check your connection and try again.';
+  return (e&&e.message)||'Could not connect. Please try again.';
+}
+async function doConnect(ev){
+  if(ev&&ev.preventDefault)ev.preventDefault();
+  const keyEl=$('#setupKey'),btn=$('#setupBtn');
+  const key=((keyEl&&keyEl.value)||'').trim();
+  if(!key){setSetupErr('Enter your access key.');return}
+  setSetupErr('');if(btn){btn.disabled=true;btn.textContent='Connecting...'}
+  try{
+    if(!window.firebase||!firebase.firestore)throw new Error('Service is unavailable. Check your connection.');
+    const data=await lookupClient(key);
+    if(!data)throw new Error('That access key was not found. Check it and try again.');
+    const cfg={apiKey:data.apiKey,authDomain:data.authDomain,projectId:data.projectId,storageBucket:data.storageBucket,messagingSenderId:data.messagingSenderId,appId:data.appId};
+    if(data.measurementId)cfg.measurementId=data.measurementId;
+    if(!cfg.apiKey||!cfg.projectId||!cfg.appId)throw new Error('This access key is not configured correctly. Please contact support.');
+    saveClientConfig({key:key,cfg:cfg,name:data.name||'',subtitle:data.subtitle||''});
+    setTimeout(()=>{try{location.reload()}catch(e){}},200);
+  }catch(e){
+    if(btn){btn.disabled=false;btn.textContent='Connect'}
+    setSetupErr(friendlySetupErr(e));
+  }
+}
+function changeAccessKey(){
+  openConfirm('Change access key?','You will need to sign in again after connecting a different account.',()=>{
+    try{localStorage.removeItem(CLIENT_CFG_KEY);localStorage.removeItem(AUTH_KEY)}catch(e){}
+    setTimeout(()=>{try{location.reload()}catch(e){}},120);
+  },'Change');
+}
+function wireSetup(){
+  const f=$('#setupForm');if(f)f.addEventListener('submit',doConnect);
 }
 function authErrMsg(e){
   const c=String((e&&e.code)||'');
@@ -968,7 +1151,7 @@ let PAL=myDarkPalette();
 
 let DATA={accounts:[],txns:[],ob:{}};
 let branchSel='All',branchName='',typeSel='All',curSel='PKR';
-let curAccId=null,ledCurr='';
+let curAccId=null,ledCurr='';let accListScroll=null;
 let rptSort='desc',allRptSort='desc',rptReturnScroll=0;
 let rozCurr='PKR',rozSort='desc';
 
@@ -1105,6 +1288,7 @@ document.addEventListener('keydown',e=>{
     if($('#view-ledger').classList.contains('reportmode'))closeAccReport();else go('accounts');return;
   }
   if($('#view-accounts').classList.contains('active')&&$('#view-accounts').classList.contains('allrptmode')){closeAllAccountsReport();return}
+  if($('#view-reports')&&$('#view-reports').classList.contains('submode')){closeRptSub();return}
 });
 document.addEventListener('click',e=>{
   if($('#view-accounts').classList.contains('active')||$('#view-ledger').classList.contains('active'))return;
@@ -1123,6 +1307,7 @@ try{
       if(open.length){closeModal(open[open.length-1].id);return}
       if($('#view-ledger').classList.contains('active')){go('accounts');return}
       if($('#view-accounts').classList.contains('active')&&$('#view-accounts').classList.contains('allrptmode')){closeAllAccountsReport();return}
+      if($('#view-reports')&&$('#view-reports').classList.contains('submode')){closeRptSub();return}
       if(!$('#view-dashboard').classList.contains('active')){go('dashboard');return}
       CAPAPP.exitApp();
     });
@@ -1143,12 +1328,13 @@ function go(tab){
   const v=document.getElementById('view-'+tab);
   v.classList.add('active');
   $$('#topnav button,#botnav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===(tab==='ledger'?'accounts':tab)));
-  if(tab==='accounts'||tab==='ledger')jumpScroll(0);else window.scrollTo({top:0,behavior:'smooth'});
+  if(tab==='accounts'||tab==='ledger')jumpScroll(tab==='ledger'||accListScroll==null?0:accListScroll);else window.scrollTo({top:0,behavior:'smooth'});
   if(tab==='dashboard')renderDashboard();
-  if(tab==='accounts')renderAccounts();
+  if(tab==='accounts'){renderAccounts();if(accListScroll!=null){jumpScroll(accListScroll);accListScroll=null}}
   if(tab==='ledger')renderLedger();
   if(tab==='roz')renderRoz();
-  const kids=[...v.querySelectorAll('.stat,.panel,.sechead,.toolbar,.chips,.acccard,.ledgerhead,.tx,.empty')].filter(el=>!el.closest('#rptSub'));
+  if(tab==='reports')renderReports();
+  const kids=[...v.querySelectorAll('.stat,.panel,.sechead,.toolbar,.chips,.acccard,.ledgerhead,.tx,.empty,.rptcard,.krow,.txsub,.rpthead,.rptctrl,.rptbal,.bkcard')].filter(el=>!el.closest('#rptSub'));
   if(A&&kids.length)A({targets:kids,translateY:[26,0],opacity:[0,1],duration:600,delay:A.stagger(55),easing:'easeOutQuart'});
 }
 
@@ -1371,6 +1557,7 @@ function renderTypeChipsGuard(){renderTypeChips()}
 
 /* ---------- ledger ---------- */
 function openLedger(accId){
+  if($('#view-accounts')&&$('#view-accounts').classList.contains('active'))accListScroll=window.scrollY;
   curAccId=accId;
   const cs=acctCurrencies(accId);
   ledCurr=curSel&&cs.indexOf(curSel)>=0?curSel:(cs[0]||'PKR');
@@ -2187,6 +2374,199 @@ function pdfFinishing(ctx){
   });
 }
 
+/* ---------- reports tab ---------- */
+let rptSubTab=null;
+let rptKhatCur='PKR';
+const MN_CHIPS=[{k:'today',l:'نن ورځ'},{k:'month',l:'دا میاشت'},{k:'lmonth',l:'تېره میاشت'},{k:'six',l:'وروستی ۶ میاشتې'},{k:'year',l:'دا کال'},{k:'lyear',l:'تېر کال'}];
+const RPT_IC_BACK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+function rptRangeFor(key){
+  const p2=n=>String(n).padStart(2,'0');
+  const d=new Date();const iso=d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());
+  const y=d.getFullYear(),m=d.getMonth();
+  if(key==='month')return[y+'-'+p2(m+1)+'-01',iso];
+  if(key==='lmonth'){const s=new Date(y,m-1,1),e=new Date(y,m,0);return[s.getFullYear()+'-'+p2(s.getMonth()+1)+'-'+p2(s.getDate()),e.getFullYear()+'-'+p2(e.getMonth()+1)+'-'+p2(e.getDate())]}
+  if(key==='six'){const s=new Date(y,m-5,1);return[s.getFullYear()+'-'+p2(s.getMonth()+1)+'-01',iso]}
+  if(key==='year')return[y+'-01-01',iso];
+  if(key==='lyear')return[(y-1)+'-01-01',(y-1)+'-12-31'];
+  return[iso,iso];
+}
+function rptTxns(from,to){
+  let rows=DATA.txns.filter(t=>t&&t.accountId&&t.deleted!==true);
+  if(from)rows=rows.filter(t=>String(t.date)>=from);
+  if(to)rows=rows.filter(t=>String(t.date)<=to);
+  return rows;
+}
+function openRptSub(kind){
+  rptSubTab=kind;
+  $('#view-reports').classList.add('submode');
+  if(kind==='khat'||kind==='khatn'){const cs=allCurrencies();if(cs.indexOf(rptKhatCur)<0)rptKhatCur=cs.indexOf('PKR')>=0?'PKR':(cs[0]||'PKR')}
+  jumpScroll(0);
+  renderRptStage();
+}
+function closeRptSub(){
+  rptSubTab=null;
+  $('#view-reports').classList.remove('submode');
+  jumpScroll(0);
+}
+function renderRptStage(){
+  if(!rptSubTab)return;
+  if(rptSubTab==='khat'||rptSubTab==='khatn')renderRptKhat();
+  else if(rptSubTab==='banks')renderRptBanks();
+  else if(rptSubTab==='manafi')renderRptManafi();
+}
+function renderReports(){
+  if($('#view-reports').classList.contains('active'))renderRptStage();
+  else if(!rptSubTab)$('#view-reports').classList.remove('submode');
+}
+function setRptKhatCur(code){rptKhatCur=code;renderRptKhat()}
+function renderRptKhat(){
+  const pos=rptSubTab==='khat';
+  const cs=allCurrencies();
+  if(cs.indexOf(rptKhatCur)<0)rptKhatCur=cs.indexOf('PKR')>=0?'PKR':(cs[0]||'PKR');
+  const q=($('#ktSearch')?($('#ktSearch').value||''):'').trim().toLowerCase();
+  let rows=DATA.accounts.filter(a=>a.deleted!==true&&(a.type||'')!=='branch').map(a=>({a,v:Number(accBals(a.id)[rptKhatCur]||0)})).filter(x=>pos?x.v>0:x.v<0);
+  if(q)rows=rows.filter(x=>(String(x.a.name||'')+' '+String(x.a.contact||'')+' '+String(x.a.city||'')).toLowerCase().includes(q));
+  rows.sort((x,y)=>{
+    const t1=ORDERED_TYPES.indexOf(x.a.type||''),t2=ORDERED_TYPES.indexOf(y.a.type||'');
+    return (t1-t2)||String(x.a.name||'').localeCompare(String(y.a.name||''));
+  });
+  const total=rows.reduce((s,x)=>s+x.v,0);
+  const title=pos?'جمع کهاتې':'بنام کهاتې';
+  const sub=rows.length+' حسابونه · '+esc(rptKhatCur);
+  const list=rows.length?rows.map(x=>{
+    const t=TYPE_LBL[x.a.type]||x.a.type||'';
+    const cls=x.v>0?'ok':'bad';
+    return '<div class="krow" onclick="openLedger(\''+x.a.id+'\')"><div class="kn"><b>'+esc(x.a.name||'—')+'</b>'+(t?'<span>'+esc(t)+'</span>':'')+'</div><div class="kb '+cls+'">'+esc(rptKhatCur)+' '+fmtN(x.v)+'</div></div>';
+  }).join(''):'<div class="empty" style="padding:26px"><div class="eic">'+IC.wallet+'</div><p>'+(q?'هیڅ حساب پیدا نه شو':'په '+esc(rptKhatCur)+' کې '+(pos?'هېڅ مثبت':'هېڅ منفي')+' بيلنس نه لري')+'</p></div>';
+  $('#rptStage').innerHTML='<div class="rpthead"><button class="iconbtn" onclick="closeRptSub()">'+RPT_IC_BACK+'</button><div class="linfo"><h2>'+title+'</h2><p>'+sub+'</p></div></div>'+
+    '<div class="chips rptchips" id="ktChips">'+(cs.length>1?cs.map(c=>'<button class="chip-f'+(c===rptKhatCur?' active':'')+'" onclick="setRptKhatCur(\''+c+'\')">'+esc(c)+'</button>').join(''):'')+'</div>'+
+    '<div class="rptctrl"><div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input id="ktSearch" placeholder="لټون: نوم، اړیکه..." oninput="renderRptKhat()"></div></div>'+
+    '<div class="rptbal" style="direction:rtl"><span>ټوټل</span><b style="font-family:var(--head);font-size:15px;font-weight:800;color:'+(total>0?'var(--ok)':total<0?'var(--bad)':'var(--mut)')+'">'+esc(rptKhatCur)+' '+fmtN(total)+'</b></div>'+
+    '<div id="ktList">'+list+'</div>';
+  const si=$('#ktSearch');if(si)si.value=q;
+}
+function renderRptBanks(){
+  const banks=DATA.accounts.filter(a=>(a.type||'')==='cash'&&a.deleted!==true).sort((x,y)=>String(x.name||'').localeCompare(String(y.name||'')));
+  const cs=allCurrencies().filter(c=>c!=='branch');
+  const q=($('#bkSearch')?($('#bkSearch').value||''):'').trim().toLowerCase();
+  let fl=banks;
+  if(q)fl=fl.filter(a=>(String(a.name||'')+' '+String(a.contact||'')+' '+String(a.city||'')).toLowerCase().includes(q));
+  const totals={};
+  let cards='';
+  fl.forEach(a=>{
+    const b=accBals(a.id);
+    const lines=cs.map(c=>{
+      const v=Number(b[c]||0);if(!v)return'';
+      totals[c]=(totals[c]||0)+v;
+      return '<div class="bl"><span>'+esc(c)+'</span><b class="'+(v>0?'ok':v<0?'bad':'zero')+'">'+fmtN(v)+'</b></div>';
+    }).filter(Boolean).join('');
+    if(!lines)return;
+    cards+='<div class="bkcard" onclick="openLedger(\''+a.id+'\')" style="cursor:'+('pointer')+'"><h5>'+esc(a.name||'—')+'</h5>'+lines+'</div>';
+  });
+  const totLines=cs.map(c=>Number(totals[c]||0)).every(v=>!v)?'':cs.filter(c=>Number(totals[c]||0)).map(c=>'<div class="bl"><span>'+esc(c)+'</span><b class="'+(totals[c]>0?'ok':totals[c]<0?'bad':'zero')+'">'+fmtN(totals[c])+'</b></div>').join('');
+  $('#rptStage').innerHTML='<div class="rpthead"><button class="iconbtn" onclick="closeRptSub()">'+RPT_IC_BACK+'</button><div class="linfo"><h2>بينکونه</h2><p>'+fl.length+' بانکونه · '+esc(allCurrencies().length)+' اسعاره</p></div></div>'+
+    '<div class="rptctrl"><div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input id="bkSearch" placeholder="لټون: بانک نوم..." oninput="renderRptBanks()"></div></div>'+
+    (cards?'<div class="bkgrid">'+cards+'</div>':'<div class="empty" style="padding:26px"><div class="eic">'+IC.wallet+'</div><p>هېڅ بانک حساب نه لري</p></div>')+
+    (totLines?'<div class="panel" style="margin-top:12px"><h4>د بينکونو جامع بيلنس</h4><div class="bkcard">'+totLines+'</div></div>':'');
+  const si=$('#bkSearch');if(si)si.value=q;
+}
+function rptProfits(from,to){
+  const rows=rptTxns(from,to);
+  const per={};
+  rows.forEach(t=>{
+    if(!t)return;
+    const a=getAcc(t.accountId);
+    if(!a||(a.type||'')!=='currency')return;
+    const x=t.currExch||(a.linkedCurrency||'');
+    if(!x||x==='PKR')return;
+    const r=Number(t.rate)||0;
+    if(!(r>0))return;
+    let ca=Number(t.currAmount)||0;
+    if(!(ca>0))ca=(Number(t.amount)||0)/r;
+    if(!(ca>0))return;
+    const c=per[x]||(per[x]={bW:0,bA:0,sW:0,sA:0});
+    if(isCr(t)){c.sW+=r*ca;c.sA+=ca}
+    else{c.bW+=r*ca;c.bA+=ca}
+  });
+  const out=[];
+  Object.keys(per).sort((x,y)=>curOrder(x)-curOrder(y)).forEach(c=>{
+    const p=per[c];
+    if(!(p.bA>0&&p.sA>0))return;
+    const avgSell=p.sW/p.sA,avgBuy=p.bW/p.bA;
+    out.push({c,sold:p.bA,bought:p.sA,avgSell:avgSell,avgBuy:avgBuy,pnl:(avgSell-avgBuy)*p.bA});
+  });
+  return out;
+}
+function rptComm(from,to){
+  const ids=DATA.accounts.filter(a=>(a.type||'')==='manafi'&&a.deleted!==true);
+  const rows=[];
+  const trows=rptTxns(from,to);
+  ids.forEach(a=>{
+    const per={};
+    trows.forEach(t=>{
+      if(t.accountId!==a.id)return;
+      const c=t.currency||'PKR';
+      per[c]=per[c]||{a:a,c:c,inflow:0,outflow:0};
+      if(isCr(t))per[c].inflow+=Number(t.amount)||0;else per[c].outflow+=Number(t.amount)||0;
+    });
+    Object.keys(per).forEach(c=>{per[c].net=per[c].inflow-per[c].outflow;rows.push(per[c])});
+  });
+  rows.sort((x,y)=>y.net-x.net);
+  return rows;
+}
+function rptExp(from,to){
+  const ids=DATA.accounts.filter(a=>(a.type||'')==='masraf'&&a.deleted!==true);
+  const rows=[];
+  const trows=rptTxns(from,to);
+  ids.forEach(a=>{
+    const per={};
+    trows.forEach(t=>{
+      if(t.accountId!==a.id)return;
+      const c=t.currency||'PKR';
+      per[c]=per[c]||{a:a,c:c,spent:0,got:0};
+      if(isCr(t))per[c].got+=Number(t.amount)||0;else per[c].spent+=Number(t.amount)||0;
+    });
+    Object.keys(per).forEach(c=>{per[c].exp=per[c].spent-per[c].got;rows.push(per[c])});
+  });
+  rows.sort((x,y)=>y.exp-x.exp);
+  return rows;
+}
+function setRptMnChip(k){
+  const[r1,r2]=rptRangeFor(k);
+  $('#mnFrom').value=r1;$('#mnTo').value=r2;
+  renderRptManafi();
+}
+function renderRptManafi(){
+  const prevF=$('#mnFrom')?$('#mnFrom').value:'',prevT=$('#mnTo')?$('#mnTo').value:'';
+  let from=prevF,to=prevT;
+  if(!from&&!to){const r=rptRangeFor('today');from=r[0];to=r[1]}
+  const prof=rptProfits(from,to),pf=prof.reduce((s,r)=>s+r.pnl,0);
+  const comm=rptComm(from,to),cf=comm.reduce((s,r)=>s+r.net,0);
+  const exp=rptExp(from,to),ef=exp.reduce((s,r)=>s+Math.abs(r.exp),0);
+  const total=pf+cf-ef;
+  const chipHtml=key=>{
+    const[r1,r2]=rptRangeFor(key);
+    const act=(from===r1&&to===r2);
+    return '<button class="chip-f'+(act?' active':'')+'" onclick="setRptMnChip(\''+key+'\')">'+MN_CHIPS.find(x=>x.k===key).l+'</button>';
+  };
+  const statsHtml='<div class="stats rstat">'+
+    '<div class="stat" style="border-color:'+(total<0?'rgba(225,29,72,.35)':'rgba(5,150,105,.3)')+'"><div class="lbl" style="color:'+(total<0?'var(--bad)':'var(--ok)')+'">'+(total<0?'تاوان':'ګټه')+'</div><div class="val" style="color:'+(total<0?'var(--bad)':'var(--ok)')+'">'+fmtN(Math.abs(total))+'</div><div class="sub">نټه ګټه / تاوان</div></div>'+
+    '<div class="stat"><div class="lbl" style="color:var(--acc3)">اسعاره ګټه</div><div class="val">'+fmtN(pf)+'</div><div class="sub">فروش او خرید اوسط فرق · PKR</div></div>'+
+    '<div class="stat"><div class="lbl" style="color:var(--ok)">کمیشن</div><div class="val">'+fmtN(cf)+'</div><div class="sub">کمیشن حسابونه · نټه</div></div>'+
+    '<div class="stat"><div class="lbl" style="color:var(--bad)">مصارف</div><div class="val">'+fmtN(ef)+'</div><div class="sub">مصرف حسابونه</div></div>'+
+    '</div>';
+  const profRows=prof.length?prof.map(r=>'<div><span class="kit">'+esc(r.c)+'</span><span>بنام (خرید) '+esc(r.c)+' '+fmtN(r.sold)+'</span><span>جمع (فروش) '+esc(r.c)+' '+fmtN(r.bought)+'</span><span>اوسط فروش '+fmtN(r.avgSell)+'</span><span>اوسط خرید '+fmtN(r.avgBuy)+'</span><b style="margin-left:auto;direction:ltr;color:'+(r.pnl>=0?'var(--ok)':'var(--bad)')+'">'+'PKR '+fmtN(Math.abs(r.pnl))+'</b></div>').join(''):'<div class="empty" style="padding:20px"><div class="eic">'+IC.wallet+'</div><p>دې په نېټو کې هیڅ اسعارو معاملې ونه موندل شوې</p></div>';
+  const commRows=comm.length?comm.map(r=>'<div><b class="kn" style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block">'+esc(r.a.name||'—')+'</b><span>'+esc(r.c)+' '+fmtN(r.inflow)+' جمع</span><span>'+esc(r.c)+' '+fmtN(r.outflow)+' بنام</span><b style="margin-left:auto;direction:ltr;color:'+(r.net>=0?'var(--ok)':'var(--bad)')+'">'.concat(esc(r.c),' ',fmtN(Math.abs(r.net)),'</b></div>')).join(''):'<div class="empty" style="padding:20px"><div class="eic">'+IC.wallet+'</div><p>کمیشن حسابونه په دې نېټو کې معاملې نه لري</p></div>';
+  const expRows=exp.length?exp.map(r=>'<div><b class="kn" style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block">'+esc(r.a.name||'—')+'</b><span>'+esc(r.c)+' '+fmtN(r.spent)+' بنام</span>'+(r.got?'<span>'+esc(r.c)+' '+fmtN(r.got)+' جمع</span>':'')+'<b style="margin-left:auto;direction:ltr;color:var(--bad)">'.concat(esc(r.c),' ',fmtN(r.exp),'</b></div>')).join(''):'<div class="empty" style="padding:20px"><div class="eic">'+IC.wallet+'</div><p>په دې په نېټو کې مصارف ونه موندل شول</p></div>';
+  $('#rptStage').innerHTML='<div class="rpthead"><button class="iconbtn" onclick="closeRptSub()">'+RPT_IC_BACK+'</button><div class="linfo"><h2>منافع</h2><p>'+fdate(from)+' ← '+fdate(to)+'</p></div></div>'+
+    '<div class="chips rptchips" id="mnChips">'+MN_CHIPS.map(x=>chipHtml(x.k)).join('')+'</div>'+
+    '<div class="rptctrl"><div class="field"><label>له</label><input id="mnFrom" type="date" value="'+from+'" onchange="renderRptManafi()"></div><div class="field"><label>تر</label><input id="mnTo" type="date" value="'+to+'" onchange="renderRptManafi()"></div></div>'+
+    statsHtml+
+    '<div class="panel" style="margin-bottom:10px"><h4>د اسعارو ګټه / تاوان</h4><div class="ptbl">'+profRows+'</div></div>'+
+    '<div class="panel" style="margin-bottom:10px"><h4>کمیشن حسابونه</h4><div class="ptbl">'+commRows+'</div></div>'+
+    '<div class="panel"><h4>مصارف</h4><div class="ptbl">'+expRows+'</div></div>';
+}
+
 /* ---------- boot ---------- */
 function renderAll(){
   PAL=myDarkPalette();
@@ -2196,6 +2576,7 @@ function renderAll(){
   if($('#view-accounts').classList.contains('active'))renderAccounts();
   if($('#view-ledger').classList.contains('active')&&curAccId)renderLedger();
   if($('#view-roz').classList.contains('active'))renderRoz();
+  if($('#view-reports')&&$('#view-reports').classList.contains('active')&&rptSubTab)renderRptStage();
   updateStamp();
 }
 function applyBookData(){
@@ -2238,6 +2619,7 @@ window.openAccReport=openAccReport;window.closeAccReport=closeAccReport;window.t
 window.toggleTheme=toggleTheme;
 window.doLogout=doLogout;window.closeConfirm=closeConfirm;
 window.renderRoz=renderRoz;window.clearRozPage=clearRozPage;window.openRozBalance=openRozBalance;window.toggleRozSort=toggleRozSort;window.downloadRozPdf=downloadRozPdf;window.downloadRozBalPdf=downloadRozBalPdf;
+window.openRptSub=openRptSub;window.closeRptSub=closeRptSub;window.setRptKhatCur=setRptKhatCur;window.setRptMnChip=setRptMnChip;window.renderRptKhat=renderRptKhat;window.renderRptBanks=renderRptBanks;window.renderRptManafi=renderRptManafi;
 window.go('dashboard');
 
 /* ---------- background canvas ---------- */
@@ -2276,9 +2658,17 @@ function wireAuthGate(){
     }
   }catch(e){}
 }
-wireAuthGate();
-if(isLoggedIn()){hideLogin();startApp()}
-else{showLogin()}
+wireSetup();
+const CLIENT_OBJ=getClientConfig();
+if(CLIENT_OBJ){
+  applyBranding(CLIENT_OBJ);
+  try{initFirebase(CLIENT_OBJ.cfg)}catch(e){console.warn('firebase init error',e)}
+  wireAuthGate();
+  if(isLoggedIn()){hideLogin();startApp()}
+  else{showLogin()}
+}else{
+  showSetup();
+}
 
 </script>
 </body>

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Sarafi</string>
+    <string name="title_activity_main">Sarafi</string>
+    <string name="package_name">com.sarafi.app</string>
+    <string name="custom_url_scheme">com.sarafi.app</string>
+</resources>
