@@ -2493,10 +2493,8 @@ function pdfHeaderBar(ctx,title,subtitle){
   p.drawRectangle({x:0,y:PH-HBAR,width:PW,height:HBAR,color:pc(C.bar)});
   p.drawRectangle({x:0,y:PH-HBAR-3,width:PW,height:3,color:pc(C.accent)});
   const cy=PH-HBAR/2,ly=cy-19;
-  p.drawRectangle({x:M,y:ly,width:38,height:38,color:pc(C.brand)});
-  p.drawText('S',{x:M+11,y:ly+11,size:19,font:ctx.boldL,color:pc(C.white)});
   const bizTxt=bizName();
-  p.drawText(bizTxt,{x:M+50,y:cy-5,size:10,font:ctx.boldL,color:pc(C.barSub)});
+  pdfText(p,bizTxt,M+12,cy-5,{size:10,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.barSub),align:'left'});
   if(title)pdfText(p,title,PW-M,cy+16,{size:15,bold:true,base:'rtl',fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.white),align:'right'});
   if(subtitle){const subs=Array.isArray(subtitle)?subtitle:[subtitle];subs.forEach((s,i)=>pdfText(p,s,PW-M,cy-8-i*17,{size:10,bold:true,base:'rtl',fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc([233,236,255]),align:'right'}))}
 }
@@ -2639,6 +2637,7 @@ function pdfFinishing(ctx){
   pages.forEach((p,i)=>{
     p.drawLine({start:{x:M,y:34},end:{x:PW-M,y:34},thickness:0.5,color:pc(C.line)});
     p.drawText('Sarafi',{x:M,y:22,size:7.5,font:ctx.fontL,color:pc(C.mut)});
+    pdfText(p,'Powered by Paiwand Softwares',PW/2,22,{size:8,bold:true,fontAr:ctx.fontAr,fontL:ctx.fontL,color:pc([154,158,170]),align:'center'});
     pdfText(p,'صفحه '+(i+1)+' / '+pages.length,PW-M,22,{size:7.5,base:'rtl',fontAr:ctx.fontAr,fontL:ctx.fontL,color:pc(C.mut),align:'right'});
   });
 }
@@ -2837,7 +2836,7 @@ function renderRptManafi(){
     '<div class="chips rptchips" id="mnChips">'+MN_CHIPS.map(x=>chipHtml(x.k)).join('')+'</div>'+
     '<div class="rptctrl"><div class="field"><label>له</label><input id="mnFrom" type="date" value="'+from+'" onchange="renderRptManafi()"></div><div class="field"><label>تر</label><input id="mnTo" type="date" value="'+to+'" onchange="renderRptManafi()"></div></div>'+
     statsHtml+
-    '<div class="panel" style="margin-bottom:10px"><h4>د اسعارو ګټه / تاوان</h4><div class="ptbl">'+profRows+'</div></div>'+
+    '<div class="panel" style="margin-bottom:10px"><h4>د اسعارو ګټه  /  تاوان</h4><div class="ptbl">'+profRows+'</div></div>'+
     '<div class="panel" style="margin-bottom:10px"><h4>کمیشن حسابونه</h4><div class="ptbl">'+commRows+'</div></div>'+
     '<div class="panel"><h4>مصارف</h4><div class="ptbl">'+expRows+'</div></div>';
 }
@@ -2938,7 +2937,7 @@ async function downloadMnafiPdf(){
     {label:'مصارف',value:pdfMoney(ef),color:C.bad,bg:C.badBg}
   ]);
   yTop+=18;
-  pdfText(ctx.page,'د اسعارو ګټه / تاوان',PW-M,PH-yTop,{size:12,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.brand),align:'right'});
+  pdfText(ctx.page,'د اسعارو ګټه  /  تاوان',PW-M,PH-yTop,{size:12,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.brand),align:'right'});
   pdfText(ctx.page,prof.length+' اسعارو معاملې',M+16,PH-yTop,{size:9,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.mut),align:'left'});
   yTop+=9;
   if(prof.length){
@@ -2975,7 +2974,7 @@ async function downloadMnafiPdf(){
   if(yTop>PH-80){yTop=newPage()}
   pdfText(ctx.page,'مصارف',PW-M,PH-yTop,{size:13,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.brand),align:'right'});
   yTop+=22;
-  const cols3=[{t:'حساب',w:210},{t:'کرنسي',w:56},{t:'بنام (مصرف)',w:120},{t:'جمع (دوباره)',w:120},{t:'صافي مصرف',w:130}];
+  const cols3=[{t:'حساب',w:210},{t:'کرنسي',w:56},{t:'بنام مصرف',w:120},{t:'جمع دوباره',w:120},{t:'صافي مصرف',w:130}];
   yTop=mnPdfHead(ctx,yTop,cols3);
   if(exp.length){
     exp.forEach((r,i)=>{
