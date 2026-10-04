@@ -2854,11 +2854,44 @@ function mnPdfNormalize(cols){
 }
 function mnPdfHead(ctx,yTop,cols){
   mnPdfNormalize(cols);
-  const p=ctx.page,PH=PDF_A4[1],M=14,PW=PDF_A4[0],h=26;
-  p.drawRectangle({x:M,y:PH-(yTop+h),width:PW-M*2,height:h,color:pc(C.brand)});
-  const b=PH-(yTop+17);
-  cols.forEach(c=>pdfText(p,c.t,c.right,b,{size:9.5,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.white),align:'right'}));
+  const p=ctx.page,PH=PDF_A4[1],M=14,PW=PDF_A4[0],h=24;
+  p.drawRectangle({x:M,y:PH-(yTop+h),width:PW-M*2,height:h,color:pc(C.brandSoft)});
+  p.drawRectangle({x:PW-M-4,y:PH-(yTop+h),width:4,height:h,color:pc(C.brand)});
+  const b=PH-(yTop+16);
+  cols.forEach(c=>pdfText(p,c.t,c.right,b,{size:8.8,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.brand),align:'right'}));
+  p.drawLine({start:{x:M,y:PH-(yTop+h)},end:{x:PW-M,y:PH-(yTop+h)},thickness:1,color:pc(C.brand)});
   return yTop+h;
+}
+function pdfRoundPath(w,h,r){
+  return 'M '+r+' 0 L '+(w-r)+' 0 Q '+w+' 0 '+w+' '+r+' L '+w+' '+(h-r)+' Q '+w+' '+h+' '+(w-r)+' '+h+' L '+r+' '+h+' Q 0 '+h+' 0 '+(h-r)+' L 0 '+r+' Q 0 0 '+r+' 0 Z';
+}
+function mnPdfCard(ctx,yTop,r){
+  const p=ctx.page,PH=PDF_A4[1],M=14,PW=PDF_A4[0],w=PW-M*2;
+  const head=26,body=42,H=head+body;
+  const x=M,yTopPx=PH-yTop;
+  const pos=r.pnl>=0?{fg:C.ok,bg:C.okBg}:r.pnl<0?{fg:C.bad,bg:C.badBg}:{fg:C.mut,bg:C.card};
+  p.drawSvgPath(pdfRoundPath(w,H,9),{x,y:yTopPx,color:pc(C.white),borderColor:pc(C.line),borderWidth:1.2});
+  p.drawSvgPath('M 9 0 L '+(w-9)+' 0 Q '+w+' 0 '+w+' 9 L '+w+' '+head+' L 0 '+head+' L 0 9 Q 0 0 9 0 Z',{x,y:yTopPx,color:pc(C.brandSoft)});
+  const nameRuns=pdfRuns(currName(r.c)+' ('+r.c+')');
+  const nameW=nameRuns.reduce((s,q)=>s+(q.ar?ctx.fontAr:ctx.boldL).widthOfTextAtSize(q.t,10.5),0);
+  pdfText(p,currName(r.c)+' ('+r.c+')',PW-M-12,PH-(yTop+17.5),{size:10.5,bold:true,base:'rtl',fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.brand),align:'right'});
+  const pillText=(r.pnl>=0?'ګټه ':'تاوان ')+'PKR '+pdfMoney(Math.abs(r.pnl)),sz=8.5;
+  const pillRuns=pdfRuns(pillText);
+  const pw=pillRuns.reduce((s,q)=>s+(q.ar?ctx.fontAr:ctx.boldL).widthOfTextAtSize(q.t,sz),0)+16;
+  p.drawRectangle({x:x+10,y:PH-(yTop+21.5),width:pw,height:16,color:pc(pos.bg)});
+  pdfText(p,pillText,x+10+pw-8,PH-(yTop+16.5),{size:sz,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(pos.fg),align:'right'});
+  const A=PW-M-16,B=M+(w/2)+10;
+  const row1=PH-(yTop+head+15),row2=PH-(yTop+head+32);
+  pdfText(p,'بنام (خرید)',A,row1,{size:7.8,fontAr:ctx.fontAr,fontL:ctx.fontL,color:pc(C.mut),align:'right'});
+  pdfText(p,pdfMoney(r.sold)+' '+r.c,A-110,row1,{size:9.5,bold:true,base:'ltr',fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.ink),align:'right'});
+  pdfText(p,'جمع (فروش)',A,row2,{size:7.8,fontAr:ctx.fontAr,fontL:ctx.fontL,color:pc(C.mut),align:'right'});
+  pdfText(p,pdfMoney(r.bought)+' '+r.c,A-110,row2,{size:9.5,bold:true,base:'ltr',fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.ink),align:'right'});
+  pdfText(p,'اوسط فروش',B,row1,{size:7.8,fontAr:ctx.fontAr,fontL:ctx.fontL,color:pc(C.mut),align:'right'});
+  pdfText(p,r.avgSell>0?pdfMoney(Math.round(r.avgSell*100)/100):'—',B-90,row1,{size:9.5,bold:true,base:'rtl',fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.ink),align:'right'});
+  pdfText(p,'اوسط خرید',B,row2,{size:7.8,fontAr:ctx.fontAr,fontL:ctx.fontL,color:pc(C.mut),align:'right'});
+  pdfText(p,r.avgBuy>0?pdfMoney(Math.round(r.avgBuy*100)/100):'—',B-90,row2,{size:9.5,bold:true,base:'rtl',fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.ink),align:'right'});
+  p.drawLine({start:{x:x+12,y:PH-(yTop+head)},end:{x:x+w-12,y:PH-(yTop+head)},thickness:0.7,color:pc(C.line)});
+  return yTop+H;
 }
 function mnPdfRow(ctx,yTop,cols,cells,stripe){
   const p=ctx.page,PH=PDF_A4[1],M=14,PW=PDF_A4[0],h=19;
@@ -2904,27 +2937,18 @@ async function downloadMnafiPdf(){
     {label:'کمیشن',value:pdfMoney(cf),color:C.ok,bg:C.okBg},
     {label:'مصارف',value:pdfMoney(ef),color:C.bad,bg:C.badBg}
   ]);
-  yTop+=20;
-  pdfText(ctx.page,'د اسعارو ګټه / تاوان',PW-M,PH-yTop,{size:13,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.brand),align:'right'});
-  yTop+=22;
-  if(yTop>PH-70)yTop=newPage();
-  const cols1=[{t:'اسعار',w:62},{t:'بنام (خرید)',w:104},{t:'جمع (فروش)',w:104},{t:'اوسط خرید',w:84},{t:'اوسط فروش',w:84},{t:'ګټه / تاوان',w:130}];
-  yTop=mnPdfHead(ctx,yTop,cols1);
+  yTop+=18;
+  pdfText(ctx.page,'د اسعارو ګټه / تاوان',PW-M,PH-yTop,{size:12,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.brand),align:'right'});
+  pdfText(ctx.page,prof.length+' اسعارو معاملې',M+16,PH-yTop,{size:9,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.mut),align:'left'});
+  yTop+=9;
   if(prof.length){
-    prof.forEach((r,i)=>{
-      if(yTop>PH-60){yTop=newPage();yTop=mnPdfHead(ctx,yTop,cols1)}
-      yTop=mnPdfRow(ctx,yTop,cols1,[
-        {t:r.c,bold:true},
-        {t:pdfMoney(r.sold)+' '+r.c},
-        {t:pdfMoney(r.bought)+' '+r.c},
-        {t:r.avgBuy>0?pdfMoney(Math.round(r.avgBuy*100)/100):'-'},
-        {t:r.avgSell>0?pdfMoney(Math.round(r.avgSell*100)/100):'-'},
-        {t:'PKR '+pdfMoney(Math.abs(r.pnl)),c:r.pnl<0?C.bad:r.pnl>0?C.ok:C.mut,bold:true}
-      ],i%2===1);
+    prof.forEach(r=>{
+      if(yTop>PH-100){yTop=newPage()}
+      yTop=mnPdfCard(ctx,yTop,r)+5;
     });
   }else{
-    if(yTop>PH-60){yTop=newPage();yTop=mnPdfHead(ctx,yTop,cols1)}
-    yTop=mnPdfEmpty(ctx,yTop+19,'دې په نېټو کې هیڅ اسعارو معاملې ونه موندل شوې');
+    if(yTop>PH-60){yTop=newPage()}
+    yTop=mnPdfEmpty(ctx,yTop+8,'دې په نېټو کې هیڅ اسعارو معاملې ونه موندل شوې');
   }
   yTop+=20;
   if(yTop>PH-80){yTop=newPage()}
@@ -2968,13 +2992,15 @@ async function downloadMnafiPdf(){
     if(yTop>PH-60){yTop=newPage();yTop=mnPdfHead(ctx,yTop,cols3)}
     yTop=mnPdfEmpty(ctx,yTop+19,'په دې په نېټو کې مصارف ونه موندل شول');
   }
-  yTop+=24;
-  if(yTop>PH-96){yTop=newPage()}
-  const h=46;
-  ctx.page.drawRectangle({x:M,y:PH-(yTop+h),width:PW-M*2,height:h,color:pc(total<0?C.badBg:C.okBg)});
-  ctx.page.drawRectangle({x:PW-M-4,y:PH-(yTop+h),width:4,height:h,color:pc(total<0?C.bad:C.ok)});
-  pdfText(ctx.page,total<0?'صافي تاوان':'صافي ګټه',PW-M-16,PH-(yTop+18),{size:10,base:'rtl',fontAr:ctx.fontAr,fontL:ctx.fontL,color:pc(C.mut),align:'right'});
-  pdfText(ctx.page,(total<0?'-':'')+'PKR '+pdfMoney(Math.abs(total)),PW-M-16,PH-(yTop+38),{size:15,base:'rtl',fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(total<0?C.bad:C.ok),align:'right'});
+  yTop+=20;
+  if(yTop>PH-110){yTop=newPage()}
+  const h=62,wB=PW-M*2;
+  const bg=total<0?C.badBg:C.okBg,fg=total<0?C.bad:C.ok;
+  ctx.page.drawSvgPath(pdfRoundPath(wB,h,10),{x:M,y:PH-yTop,color:pc(bg)});
+  pdfText(ctx.page,total<0?'صافي تاوان':'صافي ګټه',PW-M-18,PH-(yTop+21),{size:9.5,base:'rtl',fontAr:ctx.fontAr,fontL:ctx.fontL,color:pc(C.mut),align:'right'});
+  pdfText(ctx.page,(total<0?'-':'')+'PKR '+pdfMoney(Math.abs(total)),PW-M-18,PH-(yTop+45),{size:16,base:'rtl',fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(fg),align:'right'});
+  pdfText(ctx.page,'اسعاره ګټه '+pdfMoney(pf),M+16,PH-(yTop+21),{size:8,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.ok),align:'left'});
+  pdfText(ctx.page,'کمیشن '+pdfMoney(cf)+'  ·  مصرف '+pdfMoney(ef),M+16,PH-(yTop+40),{size:8,bold:true,fontAr:ctx.fontAr,fontL:ctx.fontL,color:pc(C.mut),align:'left'});
   pdfFinishing(ctx);
   const bytes=await ctx.doc.save();
   deliverBlob('manafi-report-'+pdfDate(from).replace(/ /g,'-')+'_'+pdfDate(to).replace(/ /g,'-')+'.pdf',new Blob([bytes],{type:'application/pdf'}),'منافع PDF ready');
