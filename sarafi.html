@@ -472,6 +472,28 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
 .ptbl>div{display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:var(--card);border:1px solid var(--brd);border-radius:14px;padding:9px 13px;margin-bottom:6px}
 .ptbl>div>span{font-size:10.5px;color:var(--mut);white-space:nowrap}
 .ptbl b{font-family:var(--head);font-size:13px;font-weight:700}
+.ptbl>div.mnclick{cursor:pointer;transition:.2s}
+.ptbl>div.mnclick:hover{border-color:var(--brd2);transform:translateX(-3px)}
+.ptbl .pchev{display:inline-flex;flex:none;color:var(--mut);opacity:.6}
+.ptbl .pchev svg{width:13px;height:13px}
+.pcur{display:flex;flex-wrap:wrap;gap:9px;direction:rtl;margin-bottom:6px}
+.pcur .tinfo{flex:1;min-width:0}
+.pcur .tinfo b{font-family:var(--head);font-size:13px;font-weight:700;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pcur .tinfo span{font-size:10.5px;color:var(--mut)}
+.mncl2 .tinfo .sub{display:block;font-size:10.5px;color:var(--mut);margin-top:2px}
+.pcur .kit.ok{color:var(--ok);background:rgba(5,150,105,.1);border-color:rgba(5,150,105,.25)}
+.mncard{background:var(--card);border:1px solid var(--brd);border-radius:14px;padding:10px 13px;margin-bottom:7px;direction:rtl}
+.mncard .mncl1{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}
+.mncard .mdate{font-size:10.5px;color:var(--mut);font-weight:700;direction:ltr;unicode-bidi:isolate}
+.mncard .mncl2{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.mncard .tinfo{flex:1;min-width:0;padding-top:1px}
+.mncard .tinfo b{font-family:var(--head);font-size:12.5px;font-weight:700;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mncard .tinfo span{display:block;font-size:10.5px;color:var(--mut);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mncard .mnamt{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:2px;direction:ltr;text-align:left}
+.mncard .mnamt b{font-family:var(--head);font-size:13.5px;font-weight:800;white-space:nowrap}
+.mncard .mnamt span{font-size:10px;color:var(--mut);white-space:nowrap}
+.pcur .kit.ok{color:var(--ok);background:rgba(5,150,105,.1);border-color:rgba(5,150,105,.25)}
+.pcur .kit.buy{color:var(--acc3);background:rgba(2,132,199,.08);border-color:rgba(2,132,199,.2)}
 .bkgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;direction:rtl}
 .bkcard{background:var(--card);border:1px solid var(--brd);border-radius:16px;padding:13px 15px}
 .bkcard h5{font-family:var(--head);font-size:14px;font-weight:700;margin-bottom:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -704,6 +726,167 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
 [data-theme="dark"] .syncbadge{color:#0a0e1a}
 [data-theme="dark"] .nav,[data-theme="dark"] .bottomnav{background:rgba(20,27,45,.82)}
 [data-theme="dark"] .bottomnav{box-shadow:0 12px 34px rgba(0,0,0,.55)}
+
+/* ---------- summary tab ---------- */
+.sumchips{margin-bottom:9px}
+.sumchips .chip-f{padding:6px 13px;border-radius:99px;background:var(--card);border:1px solid var(--brd);color:var(--mut);font-size:11.5px;font-weight:600;white-space:nowrap;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:6px}
+.sumchips .chip-f:hover{color:var(--txt);border-color:var(--brd2)}
+.sumchips .chip-f.active{background:var(--accSoft);color:var(--acc);border-color:var(--accSoftBrd)}
+.sumchips#sumModeChips .chip-f.mode-best.active{background:rgba(5,150,105,.12);color:var(--ok);border-color:rgba(5,150,105,.35)}
+.sumchips#sumModeChips .chip-f.mode-bad.active{background:rgba(225,29,72,.1);color:var(--bad);border-color:rgba(225,29,72,.35)}
+.sumchips .chip-f .cd{width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.75}
+.sumctl{margin-bottom:10px}
+.sumpodium{position:relative;overflow:hidden;background:linear-gradient(160deg,#fffbeb,#fef3c7 42%,#fde68a 100%);border:1px solid rgba(217,119,6,.35);border-radius:22px;padding:16px 18px 14px;margin-bottom:14px;cursor:pointer;transition:.25s;box-shadow:0 10px 34px rgba(180,83,9,.22),inset 0 1px 0 rgba(255,255,255,.6)}
+.sumpodium::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#d97706 30%,#fbbf24 50%,#d97706 70%,transparent)}
+.sumpodium:hover{transform:translateY(-3px);box-shadow:0 16px 44px rgba(180,83,9,.34)}
+.sumpodium .pshine{position:absolute;top:-40%;left:-30%;width:60%;height:180%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.55),transparent);transform:rotate(12deg);animation:pshine 4.5s ease-in-out infinite;pointer-events:none}
+@keyframes pshine{0%,60%{left:-35%}90%,100%{left:110%}}
+.sumpodium.bad{background:linear-gradient(160deg,#fff1f2,#ffe4e6 42%,#fecdd3 100%);border-color:rgba(225,29,72,.35);box-shadow:0 10px 34px rgba(190,18,60,.2),inset 0 1px 0 rgba(255,255,255,.6)}
+.sumpodium.bad::before{background:linear-gradient(90deg,transparent,#e11d48 30%,#fb7185 50%,#e11d48 70%,transparent)}
+.sumpodium.bad .pprog{stroke:#fb7185!important}
+.sumpodium .ptop{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;position:relative;z-index:1}
+.sumpodium .pkick{font-family:var(--head);font-size:10px;font-weight:800;letter-spacing:1.2px;color:#92400e;background:rgba(217,119,6,.14);border:1px solid rgba(217,119,6,.3);padding:4px 10px;border-radius:99px}
+.sumpodium.bad .pkick{color:#be123c;background:rgba(225,29,72,.12);border-color:rgba(225,29,72,.3)}
+.sumpodium .prange{font-size:10.5px;font-weight:700;color:#92400e;opacity:.8}
+.sumpodium.bad .prange{color:#be123c}
+.sumpodium .pmain{display:flex;align-items:center;gap:14px;position:relative;z-index:1}
+.sumpodium .pmedal{width:76px;height:76px;flex:none;position:relative}
+.sumpodium .pmedal svg{width:100%;height:100%;transform:rotate(-90deg)}
+.sumpodium .ptrack{fill:none;stroke:rgba(217,119,6,.14);stroke-width:5}
+.sumpodium .pprog{fill:none;stroke:#f59e0b;stroke-width:5;stroke-linecap:round}
+.sumpodium .pcen{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.sumpodium .pcen b{font-family:var(--head);font-size:20px;font-weight:800;color:#92400e;display:block;line-height:1}
+.sumpodium .pbal{margin-top:8px;min-width:0}
+.sumpodium .pbal b{font-family:var(--head);font-size:18px;font-weight:800;color:#065f46;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:inline-block;max-width:100%;line-height:1.15}
+.sumpodium .pbal b.j{color:#047857}
+.sumpodium .pbal b.y{color:#be123c}
+.sumpodium.bad .pbal b{color:#9f1239}
+.sumpodium .pbal span{display:block;font-size:10px;font-weight:800;color:#92400e;letter-spacing:.6px;text-transform:uppercase;margin-top:2px}
+.sumpodium.bad .pbal span{color:#be123c}
+.sumpodium .pname,.sumpodium .psub,.sumpodium .pbal,.sumpodium .ptags,.sumpodium .pcell,.sumpodium .pfoot{font-family:'SarafiPashto','Sora','Inter',system-ui,sans-serif}
+.sumcard .sname,.sumcard .smeta,.sumcard .sg span,.sumcard .sg b,.sumcard .badges{font-family:'SarafiPashto','Sora','Inter',system-ui,sans-serif}
+.sumpodium .pcen span{font-size:10px;font-weight:800;color:#b45309;letter-spacing:.4px}
+.sumpodium.bad .pcen b{color:#be123c}.sumpodium.bad .pcen span{color:#e11d48}
+.sumpodium.bad .ptrack{stroke:rgba(225,29,72,.14)}
+.sumpodium .pcen{grid-template-rows:auto auto;row-gap:2px}
+.sumpodium .pinfo{flex:1;min-width:0}
+.sumpodium .pname{font-family:var(--head);font-weight:800;font-size:19px;color:#7c2d12;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
+.sumpodium.bad .pname{color:#881337}
+.sumpodium .psub{font-size:11px;font-weight:600;color:#92400e;opacity:.85;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sumpodium.bad .psub{color:#be123c}
+.sumpodium .ptags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.sumpodium .flag{font-size:9.5px;font-weight:700;padding:3px 9px;border-radius:99px}
+.sumpodium .flag.green{background:rgba(5,150,105,.14);color:#047857;border:1px solid rgba(5,150,105,.35)}
+.sumpodium .flag.red{background:rgba(225,29,72,.12);color:#be123c;border:1px solid rgba(225,29,72,.35)}
+.sumpodium .curb{font-size:9.5px;font-weight:700;padding:3px 9px;border-radius:99px;background:rgba(6,182,212,.12);color:#0e7490;border:1px solid rgba(6,182,212,.35)}
+.sumpodium .pgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:13px;position:relative;z-index:1}
+.sumpodium .pcell{background:rgba(255,255,255,.65);border:1px solid rgba(217,119,6,.18);border-radius:12px;padding:8px 6px;min-width:0;text-align:center}
+.sumpodium.bad .pcell{border-color:rgba(225,29,72,.18)}
+.sumpodium .pcell span{font-size:8.5px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:.3px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sumpodium.bad .pcell span{color:#be123c}
+.sumpodium .pcell b{font-family:var(--head);font-size:11.5px;font-weight:800;color:#78350f;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.sumpodium.bad .pcell b{color:#9f1239}
+.sumpodium .pcell b.ok{color:#047857}.sumpodium .pcell b.bad{color:#e11d48}
+.sumpodium .pbar{margin-top:12px;position:relative;z-index:1}
+.sumpodium .pbar .plabels{display:flex;justify-content:space-between;font-size:10px;font-weight:700;margin-bottom:4px}
+.sumpodium .pbar .plabels .ok{color:#047857}.sumpodium .pbar .plabels .bad{color:#e11d48}
+.sumpodium .pbar .rail{height:8px;border-radius:99px;background:rgba(255,255,255,.8);border:1px solid rgba(217,119,6,.2);overflow:hidden;display:flex}
+.sumpodium.bad .pbar .rail{border-color:rgba(225,29,72,.2)}
+.sumpodium .pbar .rail i{display:block;height:100%;transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.sumpodium .pbar .rj{background:linear-gradient(90deg,#10b981,#34d399)}
+.sumpodium .pbar .rb{background:linear-gradient(90deg,#e11d48,#fb7185)}
+.sumpodium .pfoot{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(217,119,6,.28);font-size:10.5px;color:#92400e;position:relative;z-index:1}
+.sumpodium.bad .pfoot{color:#be123c;border-top-color:rgba(225,29,72,.28)}
+.sumpodium .pfoot b{font-family:var(--head);font-weight:800}
+[data-theme="dark"] .sumpodium{background:linear-gradient(160deg,rgba(180,83,9,.16),rgba(69,26,3,.25) 60%,rgba(30,15,4,.4));border-color:rgba(245,158,11,.4);box-shadow:0 10px 34px rgba(0,0,0,.5),inset 0 1px 0 rgba(251,191,36,.15)}
+[data-theme="dark"] .sumpodium::before{background:linear-gradient(90deg,transparent,#b45309 30%,#f59e0b 50%,#b45309 70%,transparent)}
+[data-theme="dark"] .sumpodium .pkick{color:#fcd34d;background:rgba(245,158,11,.14);border-color:rgba(245,158,11,.35)}
+[data-theme="dark"] .sumpodium.bad .pkick{color:#fda4af;background:rgba(225,29,72,.15);border-color:rgba(225,29,72,.4)}
+[data-theme="dark"] .sumpodium .prange{color:#fcd34d}
+[data-theme="dark"] .sumpodium.bad .prange{color:#fda4af}
+[data-theme="dark"] .sumpodium.bad{background:linear-gradient(160deg,rgba(190,18,60,.18),rgba(76,5,25,.3) 60%,rgba(25,3,10,.45));border-color:rgba(225,29,72,.4)}
+[data-theme="dark"] .sumpodium .ptrack{stroke:rgba(251,191,36,.15)}
+[data-theme="dark"] .sumpodium.bad .ptrack{stroke:rgba(251,113,133,.15)}
+[data-theme="dark"] .sumpodium .pcen b{color:#fcd34d}
+[data-theme="dark"] .sumpodium.bad .pcen b{color:#fda4af}
+[data-theme="dark"] .sumpodium .pcen span{color:#fbbf24}
+[data-theme="dark"] .sumpodium.bad .pcen span{color:#fb7185}
+[data-theme="dark"] .sumpodium .pname{color:#fef3c7}
+[data-theme="dark"] .sumpodium.bad .pname{color:#fecdd3}
+[data-theme="dark"] .sumpodium .psub,[data-theme="dark"] .sumpodium .pcell span{color:#fcd34d}
+[data-theme="dark"] .sumpodium .pbal b{color:#6ee7b7}
+[data-theme="dark"] .sumpodium .pbal b.y{color:#fda4af}
+[data-theme="dark"] .sumpodium .pbal span{color:#fcd34d}
+[data-theme="dark"] .sumpodium.bad .pbal b{color:#fda4af}
+[data-theme="dark"] .sumpodium.bad .pbal span{color:#fda4af}
+[data-theme="dark"] .sumpodium.bad .psub,[data-theme="dark"] .sumpodium.bad .pcell span{color:#fda4af}
+[data-theme="dark"] .sumpodium .pcell{background:rgba(255,255,255,.05);border-color:rgba(245,158,11,.22)}
+[data-theme="dark"] .sumpodium.bad .pcell{border-color:rgba(225,29,72,.22)}
+[data-theme="dark"] .sumpodium .pcell b{color:#fde68a}
+[data-theme="dark"] .sumpodium.bad .pcell b{color:#fecdd3}
+[data-theme="dark"] .sumpodium .pbar .rail{background:rgba(255,255,255,.08);border-color:rgba(245,158,11,.25)}
+[data-theme="dark"] .sumpodium.bad .pbar .rail{border-color:rgba(225,29,72,.25)}
+[data-theme="dark"] .sumpodium .pfoot{border-top-color:rgba(245,158,11,.25);color:#fcd34d}
+[data-theme="dark"] .sumpodium.bad .pfoot{color:#fda4af;border-top-color:rgba(225,29,72,.25)}
+@media(max-width:560px){.sumpodium .pgrid{grid-template-columns:repeat(3,1fr)}.sumpodium .pfoot{gap:10px;font-size:10px}.sumpodium .pname{font-size:17px}.sumpodium .pmedal{width:66px;height:66px}}
+
+.sumcard{background:var(--card);border:1px solid var(--brd);border-radius:17px;padding:14px 15px;margin-bottom:10px;cursor:pointer;transition:.25s}
+.sumcard:hover{transform:translateY(-2px);border-color:var(--brd2);box-shadow:var(--sh)}
+.sumcard .srow{display:flex;align-items:center;gap:11px}
+.sumcard .rank{width:32px;height:32px;border-radius:11px;display:grid;place-items:center;font-family:var(--head);font-weight:800;font-size:13px;flex:none;background:var(--inset);border:1px solid var(--brd);color:var(--mut)}
+.sumcard.r1 .rank{background:linear-gradient(135deg,#f59e0b,#d97706);border-color:transparent;color:#fff;box-shadow:0 5px 14px rgba(217,119,6,.4)}
+.sumcard.r2 .rank{background:linear-gradient(135deg,#94a3b8,#64748b);border-color:transparent;color:#fff}
+.sumcard.r3 .rank{background:linear-gradient(135deg,#d97706,#b45309);border-color:transparent;color:#fff}
+.sumcard .sav{width:38px;height:38px;border-radius:13px;background:var(--accSoft);border:1px solid var(--accSoftBrd);color:var(--acc);display:grid;place-items:center;font-family:var(--head);font-weight:800;font-size:15px;flex:none}
+.sumcard .sinfo{flex:1;min-width:0}
+.sumcard .sname{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sumcard .smeta{font-size:10.5px;color:var(--mut);display:flex;gap:9px;flex-wrap:wrap;margin-top:2px}
+.sumcard .sscore{text-align:right;flex:none}
+.sumcard .sscore b{font-family:var(--head);font-size:17px;font-weight:800}
+.sumcard .sscore span{display:block;font-size:9px;color:var(--mut2);text-transform:uppercase;letter-spacing:.4px}
+.sumcard.best .sscore b{color:var(--ok)}
+.sumcard.bad .sscore b{color:var(--bad)}
+.sumcard .ratio{height:7px;border-radius:99px;background:var(--track);overflow:hidden;display:flex;margin:11px 2px 8px}
+.sumcard .ratio i{display:block;height:100%;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.sumcard .ratio .rj{background:var(--ok)}
+.sumcard .ratio .rb{background:var(--bad)}
+.sumcard .sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.sumcard .sg{background:var(--inset);border:1px solid var(--brd);border-radius:10px;padding:6px 7px;min-width:0}
+.sumcard .sg span{font-size:8.5px;color:var(--mut2);text-transform:uppercase;letter-spacing:.3px;display:block;white-space:nowrap;overflow:hidden}
+.sumcard .sg{min-width:0}
+.sumcard .sg b{font-family:'SarafiPashto','Sora','Inter',system-ui,sans-serif;font-size:12px;font-weight:700;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sumcard .sg b.ok{color:var(--ok)!important}
+.sumcard .sg b.bad{color:var(--bad)!important}
+.sumcard .sg span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sumcard .sname{font-family:'SarafiPashto','Sora','Inter',system-ui,sans-serif}
+.sumpodium .pcell.ta,.sumcard .sg.ta{cursor:pointer;position:relative}
+.sumpodium .pcell.ta:hover,.sumcard .sg.ta:hover{border-color:rgba(6,182,212,.55)}
+.sumpodium .pcell.ta::after,.sumcard .sg.ta::after{content:'';position:absolute;top:7px;right:7px;width:6px;height:6px;border-radius:50%;background:rgba(6,182,212,.5)}
+.termlist .trow{display:flex;align-items:center;gap:12px;padding:10px 2px;border-bottom:1px dashed var(--dash)}
+.termlist .trow:last-of-type{border-bottom:none}
+.termlist .tnum{width:34px;height:34px;border-radius:11px;background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.3);color:var(--ok);display:grid;place-items:center;font-family:var(--head);font-weight:800;font-size:12.5px;flex:none}
+.termlist .trow.b .tnum{background:rgba(225,29,72,.08);border-color:rgba(225,29,72,.3);color:var(--bad)}
+.termlist .tinfo{flex:1;min-width:0}
+.termlist .tinfo b{font-family:'SarafiPashto','Sora','Inter',system-ui,sans-serif;font-size:14px;font-weight:800;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.termlist .tinfo span{font-size:11px;color:var(--mut);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.termlist .tdays{flex:none;font-family:var(--head);font-weight:800;font-size:13px}
+.termlist .tdays b{color:var(--ok)}
+.termlist .trow.b .tdays b{color:var(--bad)}
+.termlist .tfoot{display:flex;justify-content:space-between;align-items:center;padding:11px 2px 4px;margin-top:4px;border-top:2px solid var(--brd);font-size:11px;color:var(--mut);font-weight:700}
+.termlist .tfoot b{font-family:var(--head);font-size:12.5px;color:var(--txt)}
+[data-theme="dark"] .termlist .trow{border-bottom-color:var(--dash)}
+.sumcard .sg b.ok{color:var(--ok)}.sumcard .sg b.bad{color:var(--bad)}
+.sumcard .badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.sumcard .curb{font-size:9.5px;font-weight:700;padding:2.5px 8px;border-radius:99px;background:rgba(6,182,212,.1);color:#0891b2;border:1px solid rgba(6,182,212,.3)}
+.sumcard .flag{font-size:9.5px;font-weight:700;padding:2.5px 8px;border-radius:99px}
+.sumcard .flag.red{background:rgba(225,29,72,.09);color:var(--bad);border:1px solid rgba(225,29,72,.3)}
+.sumcard .flag.green{background:rgba(5,150,105,.1);color:var(--ok);border:1px solid rgba(5,150,105,.3)}
+
+
+[data-theme="dark"] .sumcard{background:var(--card2)}
+[data-theme="dark"] .sumcard .sg{background:rgba(255,255,255,.03)}
+[data-theme="dark"] .sumcard .curb{background:rgba(6,182,212,.14)}
+@media(max-width:560px){.sumcard .sgrid{grid-template-columns:repeat(2,1fr)}.sumcard .sscore b{font-size:15px}}
 </style>
 </head>
 <body>
@@ -730,6 +913,7 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
       <button data-tab="accounts" onclick="go('accounts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Accounts</button>
       <button data-tab="roz" onclick="go('roz')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="15" y2="11"/></svg>Roznamcha</button>
       <button data-tab="reports" onclick="go('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>راپورونه</button>
+      <button data-tab="summary" onclick="go('summary')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10h-10z"/></svg>Summary</button>
     </nav>
   </header>
 
@@ -844,6 +1028,22 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
       <div id="rozList"></div>
     </section>
 
+    <section id="view-summary" class="view">
+      <div class="sechead"><div class="bar"></div><h2>Customer Summary</h2><button class="btn btn-p sm" style="margin-left:auto" onclick="downloadSummaryPdf()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>PDF</button></div>
+      <div class="stats" id="sumStats"></div>
+      <div id="sumHero"></div>
+      <div class="chips sumchips" id="sumModeChips"></div>
+      <div class="chips sumchips" id="sumTimeChips"></div>
+      <div class="rptctrl sumctl" id="sumCustom" style="display:none">
+        <div class="field"><label>From</label><input id="sumFrom" type="date" onchange="setSumCustom()"></div>
+        <div class="field"><label>To</label><input id="sumTo" type="date" onchange="setSumCustom()"></div>
+      </div>
+      <div class="chips sumchips" id="sumCurChips"></div>
+      <div class="accfilters" id="sumTypeWrap"><select id="sumTypeSel" class="fsel" title="Account type" onchange="setSumType(this.value)"></select></div>
+      <div class="rptbar"><span id="sumCount">0</span><span id="sumSub" style="color:var(--mut);font-size:11px"></span></div>
+      <div id="sumList"></div>
+    </section>
+
     <section id="view-reports" class="view">
       <div class="sechead"><div class="bar"></div><h2>راپورونه</h2></div>
       <div class="rpgrid">
@@ -872,6 +1072,7 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
     <button data-tab="accounts" onclick="go('accounts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Accounts</button>
     <button data-tab="roz" onclick="go('roz')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="15" y2="11"/></svg>Roznamcha</button>
     <button data-tab="reports" onclick="go('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>راپورونه</button>
+    <button data-tab="summary" onclick="go('summary')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10h-10z"/></svg>Summary</button>
   </nav>
 
 <div class="modal" id="m-act">
@@ -879,6 +1080,16 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
   <div class="sheet" style="max-width:470px">
     <div class="mhead"><h3>All Activity</h3><button class="x" onclick="closeModal('m-act')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     <div id="allActList" style="max-height:62vh;overflow-y:auto"></div>
+  </div>
+</div>
+
+
+<div class="modal" id="m-term">
+  <div class="ovl" onclick="closeModal('m-term')"></div>
+  <div class="sheet" style="max-width:420px">
+    <div class="mhead"><h3 id="termTitle">Terms</h3><button class="x" onclick="closeModal('m-term')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <p class="rozbal-sub" id="termSub"></p>
+    <div id="termList" class="termlist" style="max-height:56vh;overflow-y:auto"></div>
   </div>
 </div>
 
@@ -1005,6 +1216,16 @@ async function lookupClient(key){
   }finally{
     try{await app.delete()}catch(e){}
   }
+}
+function bizName(){
+  const c=getClientConfig();
+  const n=c&&String(c.name||'').trim();
+  return n||'Sarafi';
+}
+function bizSub(){
+  const c=getClientConfig();
+  const s=c&&String(c.subtitle||'').trim();
+  return s||'';
 }
 function applyBranding(c){
   if(!c)return;
@@ -1170,16 +1391,22 @@ function fmtN(n){
 }
 const money=(code,n)=>(code||'')+' '+fmtN(n);
 const fdate=d=>{if(!d)return'—';const dt=new Date(d&&d.length<=10?d+'T00:00:00':d);return isNaN(dt)?d:dt.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})};
+const _tsMemo=new WeakMap();
 function txTs(t){
   if(!t)return 0;
-  if(t.updatedAt){const v=Date.parse(t.updatedAt);if(v)return v}
-  const d=String(t.date||'');if(!d)return 0;
-  const v=Date.parse(d.length<=10?d+'T00:00:00':d);
-  return isNaN(v)?0:v;
+  const sig=(t.updatedAt||'')+'|'+(t.date||'')+'|'+(t.createdAt||'');
+  const m=_tsMemo.get(t);
+  if(m&&m.sig===sig)return m.v;
+  let v=0;
+  if(t.updatedAt){const p=Date.parse(t.updatedAt);if(p)v=p}
+  if(!v){const d=String(t.date||'');
+    if(d){const p=Date.parse(d.length<=10?d+'T00:00:00':d);if(!isNaN(p))v=p}}
+  _tsMemo.set(t,{sig,v});
+  return v;
 }
 function txCreated(t){
   if(!t)return 0;
-  if(t.createdAt){const v=Date.parse(t.createdAt);if(v)return v}
+  if(t.createdAt){const p=Date.parse(t.createdAt);if(p&&!isNaN(p))return p}
   return txTs(t);
 }
 function txHay(t){
@@ -1188,60 +1415,85 @@ function txHay(t){
 }
 
 /* ---------- data access ---------- */
-const getAcc=id=>DATA.accounts.find(a=>a.id===id);
-const accTx=id=>DATA.txns.filter(t=>t.accountId===id);
 const JAMA='جمع',BANAM='بنام';
 const isCr=t=>t.entryType===JAMA;
+const curOrder=c=>{const i=CURRS.findIndex(x=>x.code===c);return i<0?99:i};
 function obRaw(id){const o=DATA.ob[id]||{};return o}
 function obOf(id,code){return Number((DATA.ob[id]||{})[code]||0)}
+let _IX=null,_sCK=null,_sC=null;
+function buildIdx(){
+  _sCK=null;
+  const accts={};DATA.accounts.forEach(a=>{accts[a.id]=a});
+  const okB={};DATA.accounts.forEach(b=>{if((b.type||'')==='branch')okB[String(b.name||'')]=b});
+  const by={},byKey={},bal={},lastTs={},lastTx={},curSet={};
+  const net={},obTot={},branchC={},branchD={},branchOb={};
+  const allCurSet=new Set();
+  for(const id in DATA.ob){
+    const m=DATA.ob[id]||{},a=accts[id];
+    for(const c in m){
+      if(c==='branch')continue;
+      const v=Number(m[c])||0;
+      if(!v)continue;
+      allCurSet.add(c);obTot[c]=(obTot[c]||0)+v;
+      if(!a)continue;
+      (curSet[id]||(curSet[id]=new Set())).add(c);
+      const b=okB[String(a.branch||'')];
+      if(b&&a.id!==b.id)branchOb[b.name]=(branchOb[b.name]||0)+v;
+    }
+  }
+  const tx=DATA.txns;
+  for(let i=0;i<tx.length;i++){
+    const t=tx[i];
+    if(!t||t.deleted===true)continue;
+    const id=t.accountId,c=t.currency||'PKR',amt=Number(t.amount)||0,cr=isCr(t);
+    (by[id]||(by[id]=[])).push(t);
+    if(t.currency)allCurSet.add(t.currency);
+    if(id){(curSet[id]||(curSet[id]=new Set())).add(c);
+      const a=accts[id],b=a?okB[String(a.branch||'')]:null;
+      if(b&&a.id!==b.id){if(cr)branchC[b.name]=(branchC[b.name]||0)+amt;else branchD[b.name]=(branchD[b.name]||0)+amt}}
+    ((bal[id]||(bal[id]={}))[c]||(bal[id][c]={c:0,d:0}))[cr?'c':'d']+=amt;
+    net[c]=(net[c]||0)+(cr?amt:-amt);
+    (byKey[id+'|'+c]||(byKey[id+'|'+c]=[])).push(t);
+    const ts=txTs(t);
+    if(ts>=(lastTs[id]||0)){lastTs[id]=ts;lastTx[id]=t}
+  }
+  for(const k in byKey)byKey[k].sort((x,y)=>txCreated(x)-txCreated(y)||String(x.date||'').localeCompare(String(y.date||'')));
+  const allCurs=[...allCurSet].sort((a,b)=>curOrder(a)-curOrder(b));
+  const curOf={};
+  for(const id in curSet)curOf[id]=[...curSet[id]].sort((a,b)=>curOrder(a)-curOrder(b));
+  _IX={accts,by,byKey,bal,curOf,allCurs,net,obTot,branchC,branchD,branchOb,lastTs,lastTx};
+  return _IX;
+}
+function IX(){return _IX||buildIdx()}
+const getAcc=id=>(_IX&&_IX.accts[id])||DATA.accounts.find(a=>a.id===id)||null;
+const accTx=id=>IX().by[id]||[];
 function accBals(id){
-  const m={};
-  DATA.txns.forEach(t=>{
-    if(t.accountId!==id)return;
-    const c=t.currency||'PKR',a=Number(t.amount)||0;
-    m[c]=(m[c]||0)+(isCr(t)?a:-a);
-  });
-  Object.keys(DATA.ob[id]||{}).forEach(c=>{if(c==='branch')return;const v=Number(DATA.ob[id][c]||0);m[c]=(m[c]||0)+v});
+  const ix=IX(),m={},s=ix.bal[id]||{},om=DATA.ob[id]||{};
+  for(const c in s)m[c]=(s[c].c-s[c].d)+(Number(om[c])||0);
+  for(const c in om){if(c==='branch'||c in m)continue;if(Number(om[c]))m[c]=Number(om[c])}
   return m;
 }
 function accStat(id,code){
-  let c=0,d=0;
-  DATA.txns.forEach(t=>{
-    if(t.accountId!==id||(t.currency||'PKR')!==code)return;
-    const a=Number(t.amount)||0;
-    if(isCr(t))c+=a;else d+=a;
-  });
+  const s=(IX().bal[id]||{})[code]||{c:0,d:0};
   const ob=obOf(id,code);
-  return {c,d,ob,bal:c-d+ob};
+  return {c:s.c,d:s.d,ob,bal:s.c-s.d+ob};
 }
 function acctCurrencies(id){
-  const m=DATA.ob[id]||{};
-  const s=new Set();
-  DATA.txns.forEach(t=>{if(t.accountId===id&&t.currency)s.add(t.currency)});
-  Object.keys(m).forEach(c=>{if(c!=='branch'&&(Number(m[c])||0))s.add(c)});
-  const arr=[...s];
-  arr.sort((a,b)=>curOrder(a)-curOrder(b));
-  return arr;
+  return (IX().curOf[id]||[]).slice();
 }
-const curOrder=c=>{const i=CURRS.findIndex(x=>x.code===c);return i<0?99:i};
-const allCurrencies=()=>{
-  const s=new Set();
-  DATA.txns.forEach(t=>{if(t.currency)s.add(t.currency)});
-  Object.keys(DATA.ob).forEach(id=>{const m=DATA.ob[id];Object.keys(m).forEach(c=>{if(c!=='branch'&&Number(m[c]))s.add(c)})});
-  const arr=[...s];
-  arr.sort((a,b)=>curOrder(a)-curOrder(b));
-  return arr;
-};
+const allCurrencies=()=>IX().allCurs;
 function primCurr(){
-  const cs=allCurrencies();
+  const cs=IX().allCurs;
   if(cs.indexOf('PKR')>=0)return'PKR';
   if(cs.length)return cs[0];
   return'PKR';
 }
 const branches=()=>DATA.accounts.filter(a=>(a.type||'')==='branch').sort((a,b)=>String(a.name||'').localeCompare(String(b.name||'')));
 function acctHasCurrency(id,code){
-  if(DATA.ob[id]&&code in DATA.ob[id])return true;
-  return DATA.txns.some(t=>t.accountId===id&&(t.currency||'PKR')===code);
+  const om=DATA.ob[id];
+  if(om&&code in om)return true;
+  const cs=IX().curOf[id];
+  return cs?cs.indexOf(code)>=0:false;
 }
 function visibleAccounts(){
   return DATA.accounts.filter(a=>{
@@ -1288,8 +1540,9 @@ document.addEventListener('keydown',e=>{
     if($('#view-ledger').classList.contains('reportmode'))closeAccReport();else go('accounts',true);return;
   }
   if($('#view-accounts').classList.contains('active')&&$('#view-accounts').classList.contains('allrptmode')){closeAllAccountsReport();return}
-  if($('#view-reports')&&$('#view-reports').classList.contains('submode')){closeRptSub();return}
+  if($('#view-reports')&&$('#view-reports').classList.contains('submode')){if(rptMnCur){closeRptMnCur();return}closeRptSub();return}
 });
+
 document.addEventListener('click',e=>{
   if($('#view-accounts').classList.contains('active')||$('#view-ledger').classList.contains('active'))return;
   const b=e.target.closest('.btn,.iconbtn,.fab,.pill,.seg button,.chip-f,.nav button,.bottomnav button');
@@ -1307,7 +1560,7 @@ try{
       if(open.length){closeModal(open[open.length-1].id);return}
       if($('#view-ledger').classList.contains('active')){go('accounts',true);return}
       if($('#view-accounts').classList.contains('active')&&$('#view-accounts').classList.contains('allrptmode')){closeAllAccountsReport();return}
-      if($('#view-reports')&&$('#view-reports').classList.contains('submode')){closeRptSub();return}
+      if($('#view-reports')&&$('#view-reports').classList.contains('submode')){if(rptMnCur){closeRptMnCur();return}closeRptSub();return}
       if(!$('#view-dashboard').classList.contains('active')){go('dashboard');return}
       CAPAPP.exitApp();
     });
@@ -1332,10 +1585,13 @@ function go(tab,instant){
   if(tab==='dashboard')renderDashboard();
   if(tab==='accounts'){renderAccounts();if(accListScroll!=null){jumpScroll(accListScroll);accListScroll=null}}
   if(tab==='ledger')renderLedger();
+  if(tab==='ledger')jumpScroll(0);else if(tab==='accounts'&&accListScroll!=null){jumpScroll(accListScroll);accListScroll=null}
   if(tab==='roz')renderRoz();
   if(tab==='reports')renderReports();
-  const kids=[...v.querySelectorAll('.stat,.panel,.sechead,.toolbar,.chips,.acccard,.ledgerhead,.tx,.empty,.rptcard,.krow,.txsub,.rpthead,.rptctrl,.rptbal,.bkcard')].filter(el=>!el.closest('#rptSub'));
-  if(!instant&&A&&kids.length)A({targets:kids,translateY:[26,0],opacity:[0,1],duration:600,delay:A.stagger(55),easing:'easeOutQuart'});
+  if(tab==='summary')renderSummary();
+  let kids=[...v.querySelectorAll('.stat,.panel,.sechead,.toolbar,.chips,.acccard,.ledgerhead,.empty,.rptcard,.krow,.txsub,.rpthead,.rptctrl,.rptbal,.bkcard,.sumpodium,.sumcard')].filter(el=>!el.closest('#rptSub'));
+  if(kids.length>30)kids=kids.slice(0,30);
+  if(!instant&&A&&kids.length)A({targets:kids,translateY:[26,0],opacity:[0,1],duration:600,delay:kids.length>10?A.stagger(26):A.stagger(55),easing:'easeOutQuart'});
 }
 
 /* ---------- chips / filters ---------- */
@@ -1440,17 +1696,10 @@ function renderBranchCards(){
   const el=$('#bizGrid');if(!el)return;
   const bs=branches(),c0=primCurr();
   if(!bs.length){el.innerHTML='<p style="color:var(--mut);font-size:13px">No branch accounts yet.</p>';return}
+  const _ix=IX();
   el.innerHTML=bs.map(b=>{
     const list=branchAccounts(b);
-    let tc=0,td=0,ob=0;
-    DATA.txns.forEach(t=>{
-      if(t.currency!==c0)return;
-      const acc=getAcc(t.accountId);
-      if(!acc||String(acc.branch||'')!==b.name||acc.id===b.id)return;
-      const amt=Number(t.amount)||0;
-      if(isCr(t))tc+=amt;else td+=amt;
-    });
-    list.forEach(a=>{ob+=obOf(a.id,c0)});
+    const tc=_ix.branchC[b.name]||0,td=_ix.branchD[b.name]||0,ob=_ix.branchOb[b.name]||0;
     const bal=tc-td+ob;
     const balTxt=bal>0?'+'+money(c0,bal):money(c0,bal);
     return '<div class="bizcard'+(branchSel===b.id?' active':'')+'" onclick="setBranch(\''+b.id+'\');go(\'accounts\')"><div class="bn">'+esc(b.name)+(branchSel===b.id?'<span class="tag">Active</span>':'')+'</div><div class="bv" style="color:'+(bal>0?'var(--ok)':bal<0?'var(--bad)':'var(--mut)')+'">'+balTxt+'</div><div class="bs">'+list.length+' accounts · '+c0+' '+fmtN(tc)+' credit · '+fmtN(td)+' debit</div></div>';
@@ -1459,10 +1708,9 @@ function renderBranchCards(){
 function renderCurrencyPanel(){
   const el=$('#curBars');
   if(!el)return;
-  let rows=allCurrencies().map(c=>{
-    let net=0;
-    DATA.txns.forEach(t=>{if(t.currency!==c)return;const a=Number(t.amount)||0;net+=isCr(t)?a:-a});
-    Object.keys(DATA.ob).forEach(id=>{if(c!=='branch')net+=Number(DATA.ob[id][c]||0)});
+  const _ix2=IX();
+  let rows=_ix2.allCurs.map(c=>{
+    const net=(_ix2.net[c]||0)+(_ix2.obTot[c]||0);
     return {c,net};
   }).filter(r=>r.net!==0);
   if(!rows.length){el.innerHTML='<p style="color:var(--mut);font-size:13px">No balances yet.</p>';return}
@@ -1488,13 +1736,14 @@ function renderRecent(){
   el.innerHTML=top.length?top.map(actRow).join(''):'<div class="empty" style="padding:26px"><div class="eic" style="width:60px;height:60px">'+IC.wallet+'</div><p>No transactions yet — tap Fetch to pull your data.</p></div>';
 }
 function openAllActivity(){
-  const items=DATA.txns.slice().sort((a,b)=>txTs(b)-txTs(a)).map(t=>{
+  const _CAP=500;
+  const items=DATA.txns.slice(0,_CAP).map(t=>{
     const a=getAcc(t.accountId);
     return {date:t.date,amt:Number(t.amount)||0,currency:t.currency||'PKR',type:isCr(t)?'credit':'debit',
       label:(isCr(t)?'Credit — ':'Debit — ')+((a&&a.name)||'—'),
       sub:t.detail||(t.hawalaNo?'حواله #'+t.hawalaNo:'')||fdate(t.date)};
   });
-  $('#allActList').innerHTML=items.length?items.map(actRow).join(''):'<div class="empty" style="padding:26px"><div class="eic" style="width:60px;height:60px">'+IC.wallet+'</div><p>Nothing yet.</p></div>';
+  $('#allActList').innerHTML=items.length?items.map(actRow).join('')+(DATA.txns.length>_CAP?'<div class="txsub" style="text-align:center;color:var(--mut);padding:10px">Showing latest '+Math.min(_CAP,DATA.txns.length)+' of '+DATA.txns.length+' entries</div>':''):'<div class="empty" style="padding:26px"><div class="eic" style="width:60px;height:60px">'+IC.wallet+'</div><p>Nothing yet.</p></div>';
   openModal('m-act');
 }
 
@@ -1517,13 +1766,8 @@ function renderAccounts(){
   const list=visibleAccounts();
   const listSet=new Set(list.map(a=>a.id));
   let tc=0,td=0,ob=0;
-  DATA.txns.forEach(t=>{
-    if((t.currency||'PKR')!==curSel)return;
-    const a=getAcc(t.accountId);
-    if(!a||!listSet.has(a.id))return;
-    const amt=Number(t.amount)||0;
-    if(isCr(t))tc+=amt;else td+=amt;
-  });
+  const _bals=IX().bal;
+  list.forEach(a=>{const s=_bals[a.id]&&_bals[a.id][curSel];if(s){tc+=s.c;td+=s.d}});
   list.forEach(a=>{ob+=obOf(a.id,curSel)});
   const tb=tc-td+ob;
   $('#sumCredit').textContent=money(curSel,tc);
@@ -1532,8 +1776,8 @@ function renderAccounts(){
   $('#sumBalance').style.color=tb>0?'var(--ok)':tb<0?'var(--bad)':'var(--mut)';
   const q=($('#accSearch').value||'').toLowerCase();
   const lastAct=id=>{
-    const ts=DATA.txns.filter(t=>t.accountId===id);
-    if(ts.length)return Math.max.apply(null,ts.map(t=>txTs(t)));
+    const v=IX().lastTs[id];
+    if(v!=null)return v;
     const a=getAcc(id)||{};
     return Date.parse(a.createdAt||0)||0;
   };
@@ -1546,9 +1790,8 @@ function renderAccounts(){
   g.innerHTML=fl.map(accCard).join('');
 }
 function lastEntryOf(id){
-  const ts=DATA.txns.filter(t=>t.accountId===id);
-  if(!ts.length)return 'No entries';
-  const t=ts.slice().sort((a,b)=>txTs(b)-txTs(a))[0];
+  const t=IX().lastTx[id];
+  if(!t)return 'No entries';
   const c=t.updatedAt?new Date(t.updatedAt):null;
   const tm=(c&&!isNaN(c))?c.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true}):'';
   return fdate(t.date)+(tm?' · '+tm:'');
@@ -1580,14 +1823,15 @@ function renderLedger(){
   const st=accStat(a.id,ledCurr);
   const q=($('#txSearch')?$('#txSearch').value:'').trim().toLowerCase();
   $('#ledName').textContent=a.name||'—';
-  const txs=DATA.txns.filter(t=>t.accountId===a.id&&(t.currency||'PKR')===ledCurr&&(!q||txHay(t).includes(q))).slice().sort((x,y)=>txCreated(y)-txCreated(x));
-  const totalTx=DATA.txns.filter(t=>t.accountId===a.id&&(t.currency||'PKR')===ledCurr).length;
+  const _bk=(IX().byKey[a.id+'|'+ledCurr])||[];
+  const txs=_bk.filter(t=>!q||txHay(t).includes(q)).slice().reverse();
+  const totalTx=_bk.length;
   $('#ledBal').textContent=fmtN(st.bal);
   $('#ledBal').style.color=st.bal>0?'var(--ok)':st.bal<0?'var(--bad)':'var(--mut)';
   renderLedCurChips(a);
   let run=st.ob;
   const balMap={};
-  DATA.txns.filter(t=>t.accountId===a.id&&(t.currency||'PKR')===ledCurr&&!t.deleted).slice().sort((a,b)=>txCreated(a)-txCreated(b)).forEach(t=>{
+  _bk.forEach(t=>{
     run+=isCr(t)?Number(t.amount)||0:-(Number(t.amount)||0);
     balMap[t.id]=run;
   });
@@ -1596,7 +1840,8 @@ function renderLedger(){
     wrap.innerHTML='<div class="empty"><div class="eic">'+IC.wallet+'</div><h3>'+(q?'No matches found':'No entries in '+ledCurr)+'</h3><p>'+(q?'Try a different search.':'This currency has no transactions')+'</p></div>';
     return;
   }
-  wrap.innerHTML=txs.map(t=>{
+  const view=txs.length>400?txs.slice(0,400):txs;
+  let html=view.map(t=>{
     const cr=isCr(t);
     const rb=balMap[t.id]||0;
     let det=String(t.detail||'');
@@ -1606,8 +1851,14 @@ function renderLedger(){
     if(t.linkedFromTxnId)meta+='<span class="plink">linked entry</span>';
     return '<div class="tx"><div class="tinfo"><span>'+ftstampLocal(t)+'</span><b>'+(det?esc(det):(cr?'Credit':'Debit'))+'</b>'+(meta?'<div class="tmeta">'+meta+'</div>':'')+'</div><div class="amts"><div class="amt '+(cr?'credit':'debit')+'">'+(cr?'+':'−')+fmtN(Number(t.amount)||0)+'</div><div class="rbal '+(rb>0?'pos':rb<0?'neg':'zero')+'">Bal '+fmtN(rb)+'</div></div></div>';
   }).join('');
+  if(txs.length>view.length)html+='<div class="txsub" style="text-align:center;color:var(--mut);padding:10px">Showing latest '+view.length+' of '+txs.length+' entries — use search or the report for older ones</div>';
+  wrap.innerHTML=html;
 }
+const _stampMemo=new WeakMap();
 function ftstampLocal(t){
+  const sig=String(t.date||'')+'|'+String(t.updatedAt||'');
+  const m0=_stampMemo.get(t);
+  if(m0&&m0.sig===sig)return m0.v;
   const d=String(t.date||'');
   let day='',ds='',ts='';
   if(d){
@@ -1619,7 +1870,9 @@ function ftstampLocal(t){
   }
   const c=t.updatedAt?new Date(t.updatedAt):null;
   if(c&&!isNaN(c))ts=c.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true});
-  return ((day?day+', ':'')+ds+(ts?' · '+ts:''))||'—';
+  const v=((day?day+', ':'')+ds+(ts?' · '+ts:''))||'—';
+  _stampMemo.set(t,{sig,v});
+  return v;
 }
 function ledgerLastEntry(id){
   return lastEntryOf(id);
@@ -1646,11 +1899,12 @@ function closeAccReport(){
 }
 function toggleRptSort(){rptSort=rptSort==='desc'?'asc':'desc';$('#rptSortLbl').textContent=rptSort==='desc'?'Newest first':'Oldest first';renderAccReport()}
 function reportRows(accId,curr,from,to,q){
-  let rows=DATA.txns.filter(t=>t.accountId===accId&&(t.currency||'PKR')===curr&&(t.deleted!==true));
+  let rows=((IX().byKey[accId+'|'+curr])||[]).filter(t=>t.deleted!==true);
   if(from)rows=rows.filter(t=>String(t.date)>=from);
   if(to)rows=rows.filter(t=>String(t.date)<=to);
   if(q)rows=rows.filter(t=>(String(t.detail||'')+' '+String(t.hawalaNo||'')+' '+fmtN(Number(t.amount)||0)+' '+String(t.pageNo||'')).toLowerCase().includes(q));
-  rows.sort((x,y)=>rptSort==='desc'?txTs(y)-txTs(x):txTs(x)-txTs(y));
+  rows=rows.slice();
+  if(rptSort==='desc')rows.reverse();
   return rows;
 }
 function renderAccReport(){
@@ -1668,7 +1922,7 @@ function renderAccReport(){
   }
   let run=ob;
   const balMap={};
-  reportRows(a.id,ledCurr,'','','').slice().sort((x,y)=>txTs(x)-txTs(y)).forEach(t=>{
+  ((IX().byKey[a.id+'|'+ledCurr])||[]).forEach(t=>{
     run+=isCr(t)?Number(t.amount)||0:-(Number(t.amount)||0);
     balMap[t.id]=run;
   });
@@ -2067,6 +2321,7 @@ async function runFetch(){
     if(cs.length&&cs.indexOf(curSel)<0)curSel=cs.indexOf('PKR')>=0?'PKR':cs[0];
     DATA.txns.sort((a,b)=>txTs(b)-txTs(a)||String(b.date||'').localeCompare(String(a.date||'')));
     DATA.accounts.sort((a,b)=>String(a.name||'').localeCompare(String(b.name||'')));
+    buildIdx();
     // persist cache
     await Promise.all([
       idbClear('accounts').then(()=>idbPut('accounts',DATA.accounts)),
@@ -2141,6 +2396,19 @@ function pashtoFontBytes(){
   const b64=el?String(el.textContent||'').replace(/\s+/g,''):'';
   if(!b64||b64.indexOf('__PASHTO')===0)throw new Error('Embedded PDF font missing');
   PASHTO_FONT=b64ToBytes(b64);return PASHTO_FONT;
+}
+let _pFontTried=false;
+function ensurePashtoFont(){
+  if(_pFontTried)return;_pFontTried=true;
+  try{
+    if(typeof FontFace==='undefined')return;
+    const el=document.getElementById('pdfFontB64');if(!el)return;
+    const b64=String(el.textContent||'').replace(/\s+/g,'');
+    if(!b64||b64.indexOf('__PASHTO')===0)return;
+    new FontFace('SarafiPashto','url(data:font/truetype;base64,'+b64+')',{weight:'400 700'}).load().then(f=>{
+      if(document.fonts){document.fonts.add(f);renderAll()}
+    }).catch(()=>{});
+  }catch(e){}
 }
 const PDF_A4=[595.28,841.89];
 const pc=a=>window.PDFLib.rgb(a[0]/255,a[1]/255,a[2]/255);
@@ -2227,7 +2495,8 @@ function pdfHeaderBar(ctx,title,subtitle){
   const cy=PH-HBAR/2,ly=cy-19;
   p.drawRectangle({x:M,y:ly,width:38,height:38,color:pc(C.brand)});
   p.drawText('S',{x:M+11,y:ly+11,size:19,font:ctx.boldL,color:pc(C.white)});
-  p.drawText('Sami Jani Commission Agent',{x:M+50,y:cy-5,size:10,font:ctx.boldL,color:pc(C.barSub)});
+  const bizTxt=bizName();
+  p.drawText(bizTxt,{x:M+50,y:cy-5,size:10,font:ctx.boldL,color:pc(C.barSub)});
   if(title)pdfText(p,title,PW-M,cy+16,{size:15,bold:true,base:'rtl',fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.white),align:'right'});
   if(subtitle){const subs=Array.isArray(subtitle)?subtitle:[subtitle];subs.forEach((s,i)=>pdfText(p,s,PW-M,cy-8-i*17,{size:10,bold:true,base:'rtl',fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc([233,236,255]),align:'right'}))}
 }
@@ -2290,7 +2559,7 @@ async function downloadLedgerPdf(){
   if(metaParts.length){pdfText(ctx.page,metaParts.join('   -   '),PW-M,y(yTop),{size:9,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.mut),align:'right'});yTop+=18}
   yTop+=6;
   let run=st.ob;const balMap={};
-  DATA.txns.filter(t=>t.accountId===a.id&&(t.currency||'PKR')===ledCurr&&!t.deleted).slice().sort((x,y)=>txCreated(x)-txCreated(y)).forEach(t=>{run+=isCr(t)?Number(t.amount)||0:-(Number(t.amount)||0);balMap[t.id]=run});
+  ((IX().byKey[a.id+'|'+ledCurr])||[]).forEach(t=>{run+=isCr(t)?Number(t.amount)||0:-(Number(t.amount)||0);balMap[t.id]=run});
   yTop=pdfLedgerHead(ctx,yTop);
   rows.forEach((t,i)=>{
     if(yTop>PH-56){pdfNewPage(ctx);pdfHeaderBar(ctx,title,subtitle);yTop=116;yTop=pdfLedgerHead(ctx,yTop)}
@@ -2377,6 +2646,7 @@ function pdfFinishing(ctx){
 /* ---------- reports tab ---------- */
 let rptSubTab=null;
 let rptKhatCur='PKR';
+let rptMnCur=null,rptMnFrom='',rptMnTo='';
 const MN_CHIPS=[{k:'today',l:'نن ورځ'},{k:'month',l:'دا میاشت'},{k:'lmonth',l:'تېره میاشت'},{k:'six',l:'وروستی ۶ میاشتې'},{k:'year',l:'دا کال'},{k:'lyear',l:'تېر کال'}];
 const RPT_IC_BACK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
 function rptRangeFor(key){
@@ -2398,6 +2668,7 @@ function rptTxns(from,to){
 }
 function openRptSub(kind){
   rptSubTab=kind;
+  if(kind==='manafi'){rptMnCur=null;rptMnFrom='';rptMnTo=''}
   $('#view-reports').classList.add('submode');
   if(kind==='khat'||kind==='khatn'){const cs=allCurrencies();if(cs.indexOf(rptKhatCur)<0)rptKhatCur=cs.indexOf('PKR')>=0?'PKR':(cs[0]||'PKR')}
   jumpScroll(0);
@@ -2405,6 +2676,7 @@ function openRptSub(kind){
 }
 function closeRptSub(){
   rptSubTab=null;
+  rptMnCur=null;
   $('#view-reports').classList.remove('submode');
   jumpScroll(0);
 }
@@ -2412,7 +2684,7 @@ function renderRptStage(){
   if(!rptSubTab)return;
   if(rptSubTab==='khat'||rptSubTab==='khatn')renderRptKhat();
   else if(rptSubTab==='banks')renderRptBanks();
-  else if(rptSubTab==='manafi')renderRptManafi();
+  else if(rptSubTab==='manafi'){if(rptMnCur)renderRptMnCur();else renderRptManafi()}
 }
 function renderReports(){
   if($('#view-reports').classList.contains('active'))renderRptStage();
@@ -2479,6 +2751,7 @@ function rptProfits(from,to){
     if(!a||(a.type||'')!=='currency')return;
     const x=t.currExch||(a.linkedCurrency||'');
     if(!x||x==='PKR')return;
+    if((t.currency||'PKR')===x)return;
     const r=Number(t.rate)||0;
     if(!(r>0))return;
     let ca=Number(t.currAmount)||0;
@@ -2491,9 +2764,9 @@ function rptProfits(from,to){
   const out=[];
   Object.keys(per).sort((x,y)=>curOrder(x)-curOrder(y)).forEach(c=>{
     const p=per[c];
-    if(!(p.bA>0&&p.sA>0))return;
-    const avgSell=p.sW/p.sA,avgBuy=p.bW/p.bA;
-    out.push({c,sold:p.bA,bought:p.sA,avgSell:avgSell,avgBuy:avgBuy,pnl:(avgSell-avgBuy)*p.bA});
+    if(!(p.bA>0||p.sA>0))return;
+    const avgSell=p.sA>0?p.sW/p.sA:0,avgBuy=p.bA>0?p.bW/p.bA:0;
+    out.push({c,sold:p.bA,bought:p.sA,avgSell:avgSell,avgBuy:avgBuy,pnl:(p.sA>0&&p.bA>0)?(avgSell-avgBuy)*Math.min(p.sA,p.bA):0});
   });
   return out;
 }
@@ -2539,7 +2812,9 @@ function setRptMnChip(k){
 function renderRptManafi(){
   const prevF=$('#mnFrom')?$('#mnFrom').value:'',prevT=$('#mnTo')?$('#mnTo').value:'';
   let from=prevF,to=prevT;
+  if(!from&&!to&&rptMnFrom){from=rptMnFrom;to=rptMnTo}
   if(!from&&!to){const r=rptRangeFor('today');from=r[0];to=r[1]}
+  rptMnFrom=from;rptMnTo=to;
   const prof=rptProfits(from,to),pf=prof.reduce((s,r)=>s+r.pnl,0);
   const comm=rptComm(from,to),cf=comm.reduce((s,r)=>s+r.net,0);
   const exp=rptExp(from,to),ef=exp.reduce((s,r)=>s+Math.abs(r.exp),0);
@@ -2550,15 +2825,15 @@ function renderRptManafi(){
     return '<button class="chip-f'+(act?' active':'')+'" onclick="setRptMnChip(\''+key+'\')">'+MN_CHIPS.find(x=>x.k===key).l+'</button>';
   };
   const statsHtml='<div class="stats rstat">'+
-    '<div class="stat" style="border-color:'+(total<0?'rgba(225,29,72,.35)':'rgba(5,150,105,.3)')+'"><div class="lbl" style="color:'+(total<0?'var(--bad)':'var(--ok)')+'">'+(total<0?'تاوان':'ګټه')+'</div><div class="val" style="color:'+(total<0?'var(--bad)':'var(--ok)')+'">'+fmtN(Math.abs(total))+'</div><div class="sub">نټه ګټه / تاوان</div></div>'+
+    '<div class="stat" style="border-color:'+(total<0?'rgba(225,29,72,.35)':'rgba(5,150,105,.3)')+'"><div class="lbl" style="color:'+(total<0?'var(--bad)':'var(--ok)')+'">'+(total<0?'تاوان':'ګټه')+'</div><div class="val" style="color:'+(total<0?'var(--bad)':'var(--ok)')+'">'+fmtN(Math.abs(total))+'</div><div class="sub">صافي ګټه / تاوان</div></div>'+
     '<div class="stat"><div class="lbl" style="color:var(--acc3)">اسعاره ګټه</div><div class="val">'+fmtN(pf)+'</div><div class="sub">فروش او خرید اوسط فرق · PKR</div></div>'+
-    '<div class="stat"><div class="lbl" style="color:var(--ok)">کمیشن</div><div class="val">'+fmtN(cf)+'</div><div class="sub">کمیشن حسابونه · نټه</div></div>'+
+    '<div class="stat"><div class="lbl" style="color:var(--ok)">کمیشن</div><div class="val">'+fmtN(cf)+'</div><div class="sub">کمیشن حسابونه · صافي</div></div>'+
     '<div class="stat"><div class="lbl" style="color:var(--bad)">مصارف</div><div class="val">'+fmtN(ef)+'</div><div class="sub">مصرف حسابونه</div></div>'+
     '</div>';
-  const profRows=prof.length?prof.map(r=>'<div><span class="kit">'+esc(r.c)+'</span><span>بنام (خرید) '+esc(r.c)+' '+fmtN(r.sold)+'</span><span>جمع (فروش) '+esc(r.c)+' '+fmtN(r.bought)+'</span><span>اوسط فروش '+fmtN(r.avgSell)+'</span><span>اوسط خرید '+fmtN(r.avgBuy)+'</span><b style="margin-left:auto;direction:ltr;color:'+(r.pnl>=0?'var(--ok)':'var(--bad)')+'">'+'PKR '+fmtN(Math.abs(r.pnl))+'</b></div>').join(''):'<div class="empty" style="padding:20px"><div class="eic">'+IC.wallet+'</div><p>دې په نېټو کې هیڅ اسعارو معاملې ونه موندل شوې</p></div>';
+  const profRows=prof.length?prof.map(r=>'<div class="mnclick" onclick="openRptMnCur(\''+r.c+'\')"><span class="kit">'+esc(r.c)+'</span><span>بنام (خرید) '+esc(r.c)+' '+fmtN(r.sold)+'</span><span>جمع (فروش) '+esc(r.c)+' '+fmtN(r.bought)+'</span><span>اوسط فروش '+(r.avgSell>0?fmtN(r.avgSell):'—')+'</span><span>اوسط خرید '+(r.avgBuy>0?fmtN(r.avgBuy):'—')+'</span><b style="margin-left:auto;direction:ltr;color:'+(r.pnl>=0?'var(--ok)':'var(--bad)')+'">'+'PKR '+fmtN(Math.abs(r.pnl))+'</b><span class="pchev">'+RPT_IC_BACK+'</span></div>').join(''):'<div class="empty" style="padding:20px"><div class="eic">'+IC.wallet+'</div><p>دې په نېټو کې هیڅ اسعارو معاملې ونه موندل شوې</p></div>';
   const commRows=comm.length?comm.map(r=>'<div><b class="kn" style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block">'+esc(r.a.name||'—')+'</b><span>'+esc(r.c)+' '+fmtN(r.inflow)+' جمع</span><span>'+esc(r.c)+' '+fmtN(r.outflow)+' بنام</span><b style="margin-left:auto;direction:ltr;color:'+(r.net>=0?'var(--ok)':'var(--bad)')+'">'.concat(esc(r.c),' ',fmtN(Math.abs(r.net)),'</b></div>')).join(''):'<div class="empty" style="padding:20px"><div class="eic">'+IC.wallet+'</div><p>کمیشن حسابونه په دې نېټو کې معاملې نه لري</p></div>';
   const expRows=exp.length?exp.map(r=>'<div><b class="kn" style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block">'+esc(r.a.name||'—')+'</b><span>'+esc(r.c)+' '+fmtN(r.spent)+' بنام</span>'+(r.got?'<span>'+esc(r.c)+' '+fmtN(r.got)+' جمع</span>':'')+'<b style="margin-left:auto;direction:ltr;color:var(--bad)">'.concat(esc(r.c),' ',fmtN(r.exp),'</b></div>')).join(''):'<div class="empty" style="padding:20px"><div class="eic">'+IC.wallet+'</div><p>په دې په نېټو کې مصارف ونه موندل شول</p></div>';
-  $('#rptStage').innerHTML='<div class="rpthead"><button class="iconbtn" onclick="closeRptSub()">'+RPT_IC_BACK+'</button><div class="linfo"><h2>منافع</h2><p>'+fdate(from)+' ← '+fdate(to)+'</p></div></div>'+
+  $('#rptStage').innerHTML='<div class="rpthead"><button class="iconbtn" onclick="closeRptSub()">'+RPT_IC_BACK+'</button><div class="linfo"><h2>منافع</h2><p>'+fdate(from)+' ← '+fdate(to)+'</p></div><button class="btn btn-p sm" onclick="downloadMnafiPdf()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>PDF</button></div>'+
     '<div class="chips rptchips" id="mnChips">'+MN_CHIPS.map(x=>chipHtml(x.k)).join('')+'</div>'+
     '<div class="rptctrl"><div class="field"><label>له</label><input id="mnFrom" type="date" value="'+from+'" onchange="renderRptManafi()"></div><div class="field"><label>تر</label><input id="mnTo" type="date" value="'+to+'" onchange="renderRptManafi()"></div></div>'+
     statsHtml+
@@ -2566,7 +2841,550 @@ function renderRptManafi(){
     '<div class="panel" style="margin-bottom:10px"><h4>کمیشن حسابونه</h4><div class="ptbl">'+commRows+'</div></div>'+
     '<div class="panel"><h4>مصارف</h4><div class="ptbl">'+expRows+'</div></div>';
 }
+function mnPdfNormalize(cols){
+  const M=14,PW=PDF_A4[0];
+  let sum=0;cols.forEach(c=>sum+=c.w);
+  const scale=(PW-M*2)/sum;
+  let x=PW-M;
+  cols.forEach(c=>{
+    const w=c.w*scale;
+    c.right=x-(c.pad==null?8:c.pad);
+    x-=w;
+  });
+}
+function mnPdfHead(ctx,yTop,cols){
+  mnPdfNormalize(cols);
+  const p=ctx.page,PH=PDF_A4[1],M=14,PW=PDF_A4[0],h=26;
+  p.drawRectangle({x:M,y:PH-(yTop+h),width:PW-M*2,height:h,color:pc(C.brand)});
+  const b=PH-(yTop+17);
+  cols.forEach(c=>pdfText(p,c.t,c.right,b,{size:9.5,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.white),align:'right'}));
+  return yTop+h;
+}
+function mnPdfRow(ctx,yTop,cols,cells,stripe){
+  const p=ctx.page,PH=PDF_A4[1],M=14,PW=PDF_A4[0],h=19;
+  if(stripe)p.drawRectangle({x:M,y:PH-(yTop+h),width:PW-M*2,height:h,color:pc(C.zebra)});
+  p.drawLine({start:{x:M,y:PH-(yTop+h)},end:{x:PW-M,y:PH-(yTop+h)},thickness:0.5,color:pc(C.line)});
+  mnPdfNormalize(cols);
+  const b=PH-(yTop+13.5);
+  cells.forEach((cell,i)=>{
+    const c=cols[i];
+    if(String(cell.t||'').match(/^[0-9.\-]+[0-9.,:\- ]*$/)){
+      pdfRight(p,String(cell.t),c.right,b,cell.bold?ctx.boldL:ctx.fontL,pc(cell.c||C.ink),cell.size||8.3);
+    }else{
+      pdfText(p,cell.t||'-',c.right,b,{size:cell.size||8.3,bold:cell.bold,fontAr:ctx.fontAr,fontL:cell.bold?ctx.boldL:ctx.fontL,color:pc(cell.c||C.ink),align:'right'});
+    }
+  });
+  return yTop+h;
+}
+function mnPdfEmpty(ctx,yTop,msg){
+  pdfText(ctx.page,msg,PDF_A4[0]/2,PDF_A4[1]-yTop,{size:9,fontAr:ctx.fontAr,fontL:ctx.fontL,color:pc(C.mut),align:'center'});
+  return yTop+19;
+}
+async function downloadMnafiPdf(){
+  try{
+  const prevF=$('#mnFrom')?$('#mnFrom').value:'',prevT=$('#mnTo')?$('#mnTo').value:'';
+  let from=prevF,to=prevT;
+  if(!from&&!to&&rptMnFrom){from=rptMnFrom;to=rptMnTo}
+  if(!from&&!to){const r=rptRangeFor('today');from=r[0];to=r[1]}
+  const prof=rptProfits(from,to),pf=prof.reduce((s,r)=>s+r.pnl,0);
+  const comm=rptComm(from,to),cf=comm.reduce((s,r)=>s+r.net,0);
+  const exp=rptExp(from,to),ef=exp.reduce((s,r)=>s+Math.abs(r.exp),0);
+  const total=pf+cf-ef;
+  toast('Building PDF...');
+  let ctx;try{ctx=await pdfMakeDoc()}catch(e){toast('PDF library: '+(e&&e.message?e.message:e),'err');return}
+  const PH=PDF_A4[1],M=14,PW=PDF_A4[0];
+  const title='د منافع راپور';
+  const subtitle=['له '+pdfDate(from)+' تر '+pdfDate(to),new Date().toLocaleDateString('en-GB')];
+  const newPage=()=>{pdfNewPage(ctx);pdfHeaderBar(ctx,title,subtitle);return 118};
+  pdfNewPage(ctx);pdfHeaderBar(ctx,title,subtitle);
+  let yTop=116;
+  yTop=pdfStatCards(ctx,yTop,[
+    {label:total<0?'صافي تاوان':'صافي ګټه',value:pdfMoney(Math.abs(total)),color:total<0?C.bad:C.ok,bg:total<0?C.badBg:C.okBg},
+    {label:'اسعاره ګټه',value:pdfMoney(pf),color:C.ok,bg:C.okBg},
+    {label:'کمیشن',value:pdfMoney(cf),color:C.ok,bg:C.okBg},
+    {label:'مصارف',value:pdfMoney(ef),color:C.bad,bg:C.badBg}
+  ]);
+  yTop+=20;
+  pdfText(ctx.page,'د اسعارو ګټه / تاوان',PW-M,PH-yTop,{size:13,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.brand),align:'right'});
+  yTop+=22;
+  if(yTop>PH-70)yTop=newPage();
+  const cols1=[{t:'اسعار',w:62},{t:'بنام (خرید)',w:104},{t:'جمع (فروش)',w:104},{t:'اوسط خرید',w:84},{t:'اوسط فروش',w:84},{t:'ګټه / تاوان',w:130}];
+  yTop=mnPdfHead(ctx,yTop,cols1);
+  if(prof.length){
+    prof.forEach((r,i)=>{
+      if(yTop>PH-60){yTop=newPage();yTop=mnPdfHead(ctx,yTop,cols1)}
+      yTop=mnPdfRow(ctx,yTop,cols1,[
+        {t:r.c,bold:true},
+        {t:pdfMoney(r.sold)+' '+r.c},
+        {t:pdfMoney(r.bought)+' '+r.c},
+        {t:r.avgBuy>0?pdfMoney(Math.round(r.avgBuy*100)/100):'-'},
+        {t:r.avgSell>0?pdfMoney(Math.round(r.avgSell*100)/100):'-'},
+        {t:'PKR '+pdfMoney(Math.abs(r.pnl)),c:r.pnl<0?C.bad:r.pnl>0?C.ok:C.mut,bold:true}
+      ],i%2===1);
+    });
+  }else{
+    if(yTop>PH-60){yTop=newPage();yTop=mnPdfHead(ctx,yTop,cols1)}
+    yTop=mnPdfEmpty(ctx,yTop+19,'دې په نېټو کې هیڅ اسعارو معاملې ونه موندل شوې');
+  }
+  yTop+=20;
+  if(yTop>PH-80){yTop=newPage()}
+  pdfText(ctx.page,'کمیشن حسابونه',PW-M,PH-yTop,{size:13,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.brand),align:'right'});
+  yTop+=22;
+  const cols2=[{t:'حساب',w:210},{t:'کرنسي',w:56},{t:'جمع',w:104},{t:'بنام',w:104},{t:'صافي',w:130}];
+  yTop=mnPdfHead(ctx,yTop,cols2);
+  if(comm.length){
+    comm.forEach((r,i)=>{
+      if(yTop>PH-60){yTop=newPage();yTop=mnPdfHead(ctx,yTop,cols2)}
+      yTop=mnPdfRow(ctx,yTop,cols2,[
+        {t:r.a.name||'-',bold:true},
+        {t:r.c},
+        {t:pdfMoney(r.inflow)},
+        {t:pdfMoney(r.outflow)},
+        {t:r.c+' '+pdfMoney(Math.abs(r.net)),c:r.net<0?C.bad:r.net>0?C.ok:C.mut,bold:true}
+      ],i%2===1);
+    });
+  }else{
+    if(yTop>PH-60){yTop=newPage();yTop=mnPdfHead(ctx,yTop,cols2)}
+    yTop=mnPdfEmpty(ctx,yTop+19,'کمیشن حسابونه په دې نېټو کې معاملې نه لري');
+  }
+  yTop+=20;
+  if(yTop>PH-80){yTop=newPage()}
+  pdfText(ctx.page,'مصارف',PW-M,PH-yTop,{size:13,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.brand),align:'right'});
+  yTop+=22;
+  const cols3=[{t:'حساب',w:210},{t:'کرنسي',w:56},{t:'بنام (مصرف)',w:120},{t:'جمع (دوباره)',w:120},{t:'صافي مصرف',w:130}];
+  yTop=mnPdfHead(ctx,yTop,cols3);
+  if(exp.length){
+    exp.forEach((r,i)=>{
+      if(yTop>PH-60){yTop=newPage();yTop=mnPdfHead(ctx,yTop,cols3)}
+      yTop=mnPdfRow(ctx,yTop,cols3,[
+        {t:r.a.name||'-',bold:true},
+        {t:r.c},
+        {t:pdfMoney(r.spent)},
+        {t:r.got?pdfMoney(r.got):'-'},
+        {t:r.c+' '+pdfMoney(Math.abs(r.exp)),c:C.bad,bold:true}
+      ],i%2===1);
+    });
+  }else{
+    if(yTop>PH-60){yTop=newPage();yTop=mnPdfHead(ctx,yTop,cols3)}
+    yTop=mnPdfEmpty(ctx,yTop+19,'په دې په نېټو کې مصارف ونه موندل شول');
+  }
+  yTop+=24;
+  if(yTop>PH-96){yTop=newPage()}
+  const h=46;
+  ctx.page.drawRectangle({x:M,y:PH-(yTop+h),width:PW-M*2,height:h,color:pc(total<0?C.badBg:C.okBg)});
+  ctx.page.drawRectangle({x:PW-M-4,y:PH-(yTop+h),width:4,height:h,color:pc(total<0?C.bad:C.ok)});
+  pdfText(ctx.page,total<0?'صافي تاوان':'صافي ګټه',PW-M-16,PH-(yTop+18),{size:10,base:'rtl',fontAr:ctx.fontAr,fontL:ctx.fontL,color:pc(C.mut),align:'right'});
+  pdfText(ctx.page,(total<0?'-':'')+'PKR '+pdfMoney(Math.abs(total)),PW-M-16,PH-(yTop+38),{size:15,base:'rtl',fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(total<0?C.bad:C.ok),align:'right'});
+  pdfFinishing(ctx);
+  const bytes=await ctx.doc.save();
+  deliverBlob('manafi-report-'+pdfDate(from).replace(/ /g,'-')+'_'+pdfDate(to).replace(/ /g,'-')+'.pdf',new Blob([bytes],{type:'application/pdf'}),'منافع PDF ready');
+  }catch(e){console.error('manafi pdf failed',e);toast('PDF error: '+(e&&e.message?e.message:e),'err');}
+}
+function openRptMnCur(c){rptMnCur=c;jumpScroll(0);renderRptStage()}
+function closeRptMnCur(){rptMnCur=null;jumpScroll(0);renderRptStage()}
+function rptMnCurTxns(c,from,to){
+  const rows=[];
+  rptTxns(from,to).forEach(t=>{
+    if(!t)return;
+    const a=getAcc(t.accountId);
+    if(!a||(a.type||'')!=='currency')return;
+    const x=t.currExch||(a.linkedCurrency||'');
+    if(x!==c)return;
+    if((t.currency||'PKR')===x)return;
+    const r=Number(t.rate)||0;
+    if(!(r>0))return;
+    let ca=Number(t.currAmount)||0;
+    if(!(ca>0))ca=(Number(t.amount)||0)/r;
+    if(!(ca>0))return;
+    rows.push({t:t,a:a,r:r,ca:ca,pkr:r*ca,cr:isCr(t)});
+  });
+  return rows;
+}
+function renderRptMnCur(){
+  const c=rptMnCur;
+  if(!c){renderRptManafi();return}
+  const from=rptMnFrom,to=rptMnTo;
+  const s=rptProfits(from,to).find(x=>x.c===c)||{c:c,sold:0,bought:0,avgSell:0,avgBuy:0,pnl:0};
+  const rows=rptMnCurTxns(c,from,to).sort((x,y)=>txTs(y.t)-txTs(x.t));
+  const nm=CURRS.find(x=>x.code===c),nTxt=nm?nm.name:c;
+  const pnlOk=s.pnl>=0;
+  const statsHtml='<div class="stats rstat">'+
+    '<div class="stat" style="border-color:'+(pnlOk?'rgba(5,150,105,.3)':'rgba(225,29,72,.35)')+'"><div class="lbl" style="color:'+(pnlOk?'var(--ok)':'var(--bad)')+'">'+(pnlOk?'ګټه':'تاوان')+'</div><div class="val" style="color:'+(pnlOk?'var(--ok)':'var(--bad)')+'">'+fmtN(Math.abs(s.pnl))+'</div><div class="sub">صافي ګټه / تاوان · PKR</div></div>'+
+    '<div class="stat"><div class="lbl" style="color:var(--acc3)">اوسط فروش</div><div class="val">'+(s.avgSell>0?fmtN(s.avgSell):'—')+'</div><div class="sub"> د '+esc(c)+' اوسط فروش · PKR</div></div>'+
+    '<div class="stat"><div class="lbl" style="color:var(--acc3)">اوسط خرید</div><div class="val">'+(s.avgBuy>0?fmtN(s.avgBuy):'—')+'</div><div class="sub">د '+esc(c)+' اوسط خرید · PKR</div></div>'+
+    '<div class="stat"><div class="lbl">معاملې</div><div class="val">'+rows.length+'</div><div class="sub">'+fdate(from)+' ← '+fdate(to)+'</div></div>'+
+    '</div>';
+  const list=rows.length?rows.map(x=>
+    '<div class="mncard">'+
+    '<div class="mncl1"><span class="mdate">'+fdate(x.t.date)+'</span><span class="kit '+(x.cr?'ok':'buy')+'">'+(x.cr?'فروش':'خرید')+'</span></div>'+
+    '<div class="mncl2"><div class="tinfo"><b>'+esc(x.a.name||'—')+'</b><span class="sub">ریټ '+fmtN(x.r)+' · '+esc(c)+' '+fmtN(x.ca)+'</span>'+(x.t.detail?'<span>'+esc(x.t.detail)+'</span>':'')+'</div>'+
+    '<div class="mnamt"><b style="color:'+(x.cr?'var(--ok)':'var(--acc3)')+'">PKR '+fmtN(x.pkr)+'</b></div></div>'+
+    '</div>'
+  ).join(''):'<div class="empty" style="padding:20px"><div class="eic">'+IC.wallet+'</div><p>دې په نېټو کې د '+esc(c)+' معاملې ونه موندل شوې</p></div>';
+  $('#rptStage').innerHTML='<div class="rpthead"><button class="iconbtn" onclick="closeRptMnCur()">'+RPT_IC_BACK+'</button><div class="linfo"><h2>'+esc(c)+' · '+esc(nTxt)+'</h2><p>'+fdate(from)+' ← '+fdate(to)+'</p></div></div>'+
+    '<div class="chips rptchips"><button class="chip-f active">'+(s.sold>0?'خرید: '+fmtN(s.sold):'خرید: ۰')+'</button><button class="chip-f active">'+(s.bought>0?'فروش: '+fmtN(s.bought):'فروش: ۰')+'</button></div>'+
+    statsHtml+
+    '<div class="panel"><h4>ټول خرید او فروش ('+esc(c)+')</h4><div class="mncwrap">'+list+'</div></div>';
+}
 
+/* ---------- customer summary tab ---------- */
+let sumState={mode:'best',range:'alltime',from:'',to:'',cur:'All',type:'customer'};
+const SUM_EPS=.0001,PURCH_W=.5;
+const SUM_RANGE_LBL={today:'Today',month:'This Month',lmonth:'Last Month',six:'6 Months',year:'This Year',lyear:'Last Year',alltime:'All Time',custom:'Custom'};
+const SUM_MN_CHIPS=[{k:'alltime',l:'All Time'},{k:'today',l:'Today'},{k:'month',l:'This Month'},{k:'lmonth',l:'Last Month'},{k:'six',l:'6 Months'},{k:'year',l:'This Year'},{k:'lyear',l:'Last Year'},{k:'custom',l:'Custom'}];
+function sumRange(){
+  if(sumState.range==='custom'){const f=sumState.from||'',t=sumState.to||'';return f&&t&&f>t?[t,f]:[f,t]}
+  if(sumState.range==='alltime')return['',''];
+  return rptRangeFor(sumState.range);
+}
+function sumIso(d){return String(d||'').slice(0,10)}
+function sumToTs(d){const v=Date.parse(d.length<=10?d+'T00:00:00':d);return isNaN(v)?0:v}
+function sumGapDays(a,b){return Math.max(0,Math.round((sumToTs(b)-sumToTs(a))/864e5))}
+function sumParseIso(d){const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(sumIso(d));return m?[+m[1],+m[2],+m[3]]:null}
+function sumCmpIso(a,b){
+  const A=sumParseIso(a),B=sumParseIso(b);
+  if(!A||!B)return String(a).localeCompare(String(b));
+  return (A[0]-B[0])||(A[1]-B[1])||(A[2]-B[2]);
+}
+function sumStateOf(bal){return bal>SUM_EPS?'J':(bal<-SUM_EPS?'B':'N')}
+function sumNormLog(vals){
+  let maxv=0;vals.forEach(v=>{if(v>maxv)maxv=v});
+  const dm=Math.log10(1+maxv);
+  if(!(dm>0))return vals.map(()=>0);
+  return vals.map(v=>Math.log10(1+v)/dm);
+}
+function sumFmtDays(d){
+  const n=Math.max(0,Math.round(Number(d)||0));
+  if(n>=365)return (n/365).toFixed(n/365>=10?0:1)+'y';
+  if(n>=60)return Math.round(n/30)+'mo';
+  if(n>=1)return n+'d';
+  return '<1d';
+}
+function sumIsoAddDays(d,n){
+  const m=sumParseIso(d);if(!m)return d;
+  const dt=new Date(m[0],m[1]-1,m[2]+n),p2=x=>String(x).padStart(2,'0');
+  return dt.getFullYear()+'-'+p2(dt.getMonth()+1)+'-'+p2(dt.getDate());
+}
+function sumPhaseFor(ivs,d){
+  for(let i=0;i<ivs.length;i++){
+    const iv=ivs[i];if(iv.s!=='J')continue;
+    const ft=iv.ft,tt=iv.tt||iv.ft;
+    if(sumCmpIso(d,ft)>=0&&sumCmpIso(d,tt)<0)return'J';
+    if(sumCmpIso(d,tt)>=0&&sumCmpIso(d,sumIsoAddDays(tt,30))<=0)return'J';
+  }
+  return sumStateAtIv(ivs,d);
+}
+function sumCompute(){
+  const _k=JSON.stringify(sumState)+'|'+DATA.txns.length+'|'+DATA.accounts.length;
+  if(_sCK===_k&&_sC)return _sC;
+  const rr=sumRange(),from=rr[0],to=rr[1];
+  const curSel=sumState.cur,type=sumState.type;
+  const baseCur=primCurr();
+  const accs=DATA.accounts.filter(a=>a.deleted!==true&&(type==='All'||(a.type||'')===type));
+  const allowed=new Set(accs.map(a=>a.id));
+  const endIso=to||todayIso();
+  const stats={};
+  const stOf=id=>stats[id]||(stats[id]={cntJ:0,cntB:0,totJ:{},totB:{},termsJ:0,termsB:0,jDays:0,bDays:0,openDebt:0,purch:{},purchCnt:{},lastD:'',lastTx:null,nowSt:'N',nowDays:0,nowBal:0});
+  accs.forEach(acc=>{
+    const s=stOf(acc.id);
+    const all=DATA.txns.filter(t=>t&&t.accountId===acc.id&&t.deleted!==true).sort((x,y)=>txCreated(x)-txCreated(y)||sumIso(x.date).localeCompare(sumIso(y.date)));
+    const inWin=t=>{const d=sumIso(t.date);return(!from||d>=from)&&(!to||d<=to)};
+    const winTx=all.filter(t=>inWin(t)&&(curSel==='All'||(t.currency||'PKR')===curSel));
+    winTx.forEach(t=>{
+      const cr=isCr(t),amt=Number(t.amount)||0,c=t.currency||'PKR';
+      if(cr){s.cntJ++;s.totJ[c]=(s.totJ[c]||0)+amt}
+      else{s.cntB++;s.totB[c]=(s.totB[c]||0)+amt}
+    });
+    if(winTx.length){const lt=winTx[winTx.length-1];s.lastD=sumIso(lt.date);s.lastTx={c:lt.currency||'PKR',amt:Number(lt.amount)||0,cr:isCr(lt)}}
+    const wc=curSel==='All'?baseCur:curSel;
+    const wtxs=all.filter(t=>(t.currency||'PKR')===wc&&(!to||sumIso(t.date)<=to));
+    const wOb=curSel==='All'?0:obOf(acc.id,wc);
+    let st=sumStateOf(wOb),bal=wOb,stStart=wtxs.length?sumIso(wtxs[0].date):(from||todayIso()),prevD='';
+    let tSumJ=0,tSumB=0,termsJ=0,termsB=0,jD=0,bD=0;
+    const ivs=[];
+    if(st!=='N')ivs.push({s:st,ft:stStart});
+    wtxs.forEach(t=>{
+      const d=sumIso(t.date)||todayIso();
+      if(!prevD)prevD=d;
+      else{const g=sumGapDays(prevD,d);if(st==='J')tSumJ+=g;else if(st==='B')tSumB+=g}
+      const cr=isCr(t),amt=Number(t.amount)||0;
+      bal+=cr?amt:-amt;
+      const ns=sumStateOf(bal);
+      if(ns!==st){
+        if(st==='J'){termsJ++;jD+=tSumJ;tSumJ=0}
+        if(st==='B'){termsB++;bD+=tSumB;tSumB=0}
+        if(ivs.length&&!ivs[ivs.length-1].tt)ivs[ivs.length-1].tt=d;
+        if(ns!=='N')ivs.push({s:ns,ft:d});
+        stStart=d;st=ns;
+      }
+      prevD=d;
+    });
+    const tail=prevD?sumGapDays(prevD,endIso):sumGapDays(stStart,endIso);
+    if(st==='J'){termsJ++;jD+=tSumJ+tail;if(ivs.length&&!ivs[ivs.length-1].tt)ivs[ivs.length-1].tt=endIso}
+    if(st==='B'){termsB++;bD+=tSumB+tail;if(ivs.length&&!ivs[ivs.length-1].tt)ivs[ivs.length-1].tt=endIso}
+    s.termsJ+=termsJ;s.jDays+=jD;s.termsB+=termsB;s.bDays+=bD;
+    s.nowSt=st;s.nowDays=sumGapDays(stStart,endIso);s.nowBal=bal;
+    s.openDebt=st==='B'?Math.max(0,-bal)*s.nowDays:0;
+    s.ivs=ivs.map(function(iv){return {s:iv.s,ft:iv.ft,tt:iv.tt||null}});
+    all.forEach(t=>{
+      if(to&&sumIso(t.date)>to)return;
+      const c=t.currency||'PKR';
+      if(!isCr(t)&&c!==baseCur){
+        const d=sumIso(t.date)||todayIso();
+        const ph=sumPhaseFor(ivs,d);
+        let w=(Number(t.amount)||0)*(ph==='J'?1:PURCH_W);
+        if(from&&d<from)w*=PURCH_W;
+        s.purch[c]=(s.purch[c]||0)+w;
+        s.purchCnt[c]=(s.purchCnt[c]||0)+1;
+      }
+    });
+  });
+  const nJ=sumNormLog(accs.map(a=>(stats[a.id]||{}).jDays||0));
+  const nP=sumNormLog(accs.map(a=>{const s2=stats[a.id]||{};let w=0;Object.keys(s2.purch||{}).forEach(c=>w+=s2.purch[c]);return w}));
+  const nOD=sumNormLog(accs.map(a=>(stats[a.id]||{}).openDebt||0));
+  const nBD=sumNormLog(accs.map(a=>(stats[a.id]||{}).bDays||0));
+  const list=[];
+  accs.forEach((acc,i)=>{
+    const s=stats[acc.id];if(!s)return;
+    let totAllJ=0,totAllB=0;
+    Object.keys(s.totJ).forEach(c=>totAllJ+=s.totJ[c]);
+    Object.keys(s.totB).forEach(c=>totAllB+=s.totB[c]);
+    const denom=totAllJ+totAllB;
+    const share=curSel==='All'?((s.cntJ+s.cntB)?s.cntJ/(s.cntJ+s.cntB):0):(denom>0?totAllJ/denom:0);
+    const totJin=curSel==='All'?totAllJ:(s.totJ[curSel]||0);
+    const totBin=curSel==='All'?totAllB:(s.totB[curSel]||0);
+    const avgJ=s.cntJ?(totJin/s.cntJ):0;
+    const avgB=s.cntB?(totBin/s.cntB):0;
+    const purch=Object.keys(s.purch).map(c=>({c:c,amt:s.purch[c],n:s.purchCnt[c]||0})).sort((x,y)=>y.amt-x.amt);
+    list.push({id:acc.id,acc:acc,cntJ:s.cntJ,cntB:s.cntB,totJ:totJin,totB:totBin,avgJ:avgJ,avgB:avgB,share:share,avgIdays:s.termsJ?(s.jDays/s.termsJ):0,avgBdays:s.termsB?(s.bDays/s.termsB):0,purch:purch,ivs:s.ivs||[],lastD:s.lastD,lastTx:s.lastTx,nowSt:s.nowSt,nowDays:s.nowDays,nowBal:s.nowBal,score:Math.round(60*(nJ[i]||0)+25*(nP[i]||0)+15*share),risk:Math.round(70*(nOD[i]||0)+20*(nBD[i]||0)+10*(1-share))});
+  });
+  const act=list.filter(x=>x.cntJ+x.cntB>0);
+  const bestList=act.slice().sort((x,y)=>y.score-x.score||y.cntJ-x.cntJ).slice(0,10);
+  const badList=act.filter(x=>x.cntB>0).sort((x,y)=>y.risk-x.risk||y.cntB-x.cntB).slice(0,10);
+  const tj=act.reduce((m,x)=>m+x.cntJ,0),tb=act.reduce((m,x)=>m+x.cntB,0);
+  const vJ=act.reduce((m,x)=>m+x.totJ,0),vB=act.reduce((m,x)=>m+x.totB,0);
+  let sumLD=0,cLD=0,sumBD=0,cBD=0;
+  act.forEach(x=>{if(x.avgIdays){sumLD+=x.avgIdays;cLD++}if(x.avgBdays){sumBD+=x.avgBdays;cBD++}});
+  const _res={from:from,to:to,cur:curSel,endIso:endIso,act:act,best:bestList,bad:badList,tot:{cntJ:tj,cntB:tb,totJ:vJ,totB:vB,avgTdJ:cLD?sumLD/cLD:0,avgTdB:cBD?sumBD/cBD:0}};
+  _sCK=_k;_sC=_res;
+  return _res;
+}
+function sumStateAtIv(ivs,d){
+  for(let i=0;i<ivs.length;i++){
+    const iv=ivs[i];
+    if(sumCmpIso(d,iv.ft)>=0&&sumCmpIso(d,iv.tt||iv.ft)<0)return iv.s;
+  }
+  return 'N';
+}
+function sumTint(hex,a){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return 'rgba('+r+','+g+','+b+','+a+')';
+}
+function sumStatsHtml(t){
+  const cur=sumState.cur;
+  const isAll=cur==='All';
+  const cards=[
+    {l:'Customers',v:String(t.act.length),s:'with entries in range',c:'#4f46e5'},
+    {l:isAll?'Jama Entries':'Total Jama',v:isAll?t.tot.cntJ+'x':esc(cur)+' '+fmtN(t.tot.totJ),s:isAll?'jama entries':'jama total',c:'#059669'},
+    {l:isAll?'Banam Entries':'Total Banam',v:isAll?t.tot.cntB+'x':esc(cur)+' '+fmtN(t.tot.totB),s:isAll?'banam entries':'banam total',c:'#e11d48'},
+    {l:'Avg Jama Term',v:sumFmtDays(t.tot.avgTdJ),s:'banam term ≈ '+sumFmtDays(t.tot.avgTdB),c:'#0284c7'}
+  ];
+  return cards.map(s=>{
+    return '<div class="stat" style="background:'+sumTint(s.c,.08)+';border-color:'+sumTint(s.c,.22)+'"><div class="lbl" style="color:'+s.c+'">'+esc(s.l)+'</div><div class="val">'+esc(s.v)+'</div><div class="sub">'+esc(s.s)+'</div></div>';
+  }).join('');
+}
+function sumHero(x,mode){
+  const isBad=mode==='bad';
+  const sc=isBad?x.risk:x.score;
+  const name=x.acc.name||'—';
+  const typ=TYPE_LBL[x.acc.type]||x.acc.type||'';
+  const isAll=sumState.cur==='All';
+  const wc=isAll?'PKR':sumState.cur;
+  const init=(name[0]||'?').toUpperCase();
+  const C2PI=2*Math.PI;
+  const arc=sc/100;
+  const dash=(arc*C2PI).toFixed(1);
+  const col=isBad?'#e11d48':'#f59e0b';
+  const col2=isBad?'#fb7185':'#fbbf24';
+  const stateTxt=x.nowSt==='J'?('In jama '+sumFmtDays(x.nowDays)+(x.nowBal?wc+' '+fmtN(x.nowBal):'')):
+    x.nowSt==='B'?('In banam '+sumFmtDays(x.nowDays)+(x.nowBal?wc+' '+fmtN(Math.abs(x.nowBal)):'')):'Settled now';
+  const stateCls=x.nowSt==='J'?'green':x.nowSt==='B'?'red':'';
+  const stateLbl=x.nowSt==='J'?('In jama &middot; '+sumFmtDays(x.nowDays)):x.nowSt==='B'?('In banam &middot; '+sumFmtDays(x.nowDays)):'Settled &middot; no debt';
+  const badges=[];
+  if(isBad){
+    if(!x.cntJ)badges.push('<span class="flag red">no jama back</span>');
+    if(x.avgBdays>=60)badges.push('<span class="flag red">banam term &asymp; '+sumFmtDays(x.avgBdays)+'</span>');
+  }else{
+    x.purch.filter(p=>p.n>0).slice(0,3).forEach(p=>badges.push('<span class="curb">'+esc(p.c)+' &times;'+p.n+'</span>'));
+    if(x.avgIdays>=60)badges.push('<span class="flag green">jama term &asymp; '+sumFmtDays(x.avgIdays)+'</span>');
+  }
+  const cells=[
+    {l:isAll?'Jama amount &middot; all':'Jama ('+sumState.cur+')',v:fmtN(x.totJ),cls:'ok'},
+    {l:isAll?'Banam amount &middot; all':'Banam ('+sumState.cur+')',v:fmtN(x.totB),cls:'bad'},
+    {l:'Avg jama entry',v:(x.avgJ?((isAll?'~':'')+fmtN(x.avgJ)):'-'),cls:''},
+    {l:'Avg banam entry',v:(x.avgB?((isAll?'~':'')+fmtN(x.avgB)):'-'),cls:''},
+    {l:'Jama &rarr; banam',v:x.avgIdays?sumFmtDays(x.avgIdays):'-',cls:'',k:'J'},
+    {l:'Banam &rarr; jama',v:x.avgBdays?sumFmtDays(x.avgBdays):'-',cls:'',k:'B'}
+  ];
+  const jp=Math.round(x.share*100),bp=100-jp;
+  const totEntries=x.cntJ+x.cntB;
+  return '<div class="sumpodium'+(isBad?' bad':'')+'" onclick="openLedger(\''+x.id+'\')">'
+    +'<div class="pshine"></div>'
+    +'<div class="ptop"><span class="pkick">'+(isBad?'RANK #1 — HIGHEST RISK':'RANK #1 — BEST CUSTOMER')+'</span><span class="prange">'+esc(SUM_RANGE_LBL[sumState.range]||'')+'</span></div>'
+    +'<div class="pmain">'
+    +'<div class="pmedal"><svg viewBox="0 0 64 64"><circle class="ptrack" cx="32" cy="32" r="28"/><circle class="pprog" cx="32" cy="32" r="28" style="stroke:'+col2+';stroke-dasharray:'+dash+' '+C2PI.toFixed(1)+'"/><circle cx="32" cy="32" r="28" fill="none" stroke="'+col+'" stroke-opacity=".35" stroke-width="1"/></svg>'
+    +'<div class="pcen"><b>'+sc+'</b><span>'+(isBad?'risk':'trust')+'</span></div></div>'
+    +'<div class="pinfo"><div class="pname">'+esc(name)+'</div><div class="psub">'+esc(typ)+(x.acc.city?' &middot; '+esc(x.acc.city):'')+'</div>'
+    +'<div class="pbal"><b class="pbalv'+(stateCls==='green'?' j':stateCls==='red'?' y':'')+'">'+(x.nowSt==='B'?'&minus;':'')+esc(wc)+' '+fmtN(Math.abs(x.nowBal||0))+'</b><span>'+stateLbl+'</span></div>'
+    +'<div class="ptags">'+badges.join('')+'</div></div>'
+    +'</div>'
+    +'<div class="pgrid">'+cells.map(cel=>'<div class="pcell'+(cel.k?' ta':'')+'"'+(cel.k?' onclick="event.stopPropagation();setSumTerms(\''+x.id+'\',\''+cel.k+'\')" title="Tap to see each term"':'')+'><span>'+cel.l+'</span><b class="'+cel.cls+'">'+esc(cel.v)+'</b></div>').join('')+'</div>'
+    +'<div class="pbar"><div class="plabels"><span class="ok">'+jp+'% jama</span><span class="bad">'+bp+'% banam</span></div><div class="rail"><i class="rj" style="width:'+jp+'%"></i><i class="rb" style="width:'+bp+'%"></i></div></div>'
+    +'<div class="pfoot"><span><b>'+totEntries+'</b> entries in range</span><span>Last entry: <b>'+(x.lastD?fdate(x.lastD):'—')+'</b></span><span><b>'+sc+'</b>/100 '+(isBad?'risk':'trust')+'</span></div>'
+    +'</div>';
+}
+function sumRow(x,rank,mode){
+  const isBad=mode==='bad';
+  const sc=isBad?x.risk:x.score;
+  const isAll=sumState.cur==='All';
+  const jp=x.share*100,bp=100-jp;
+  const badges=x.purch.filter(p=>p.n>0).slice(0,3).map(p=>'<span class="curb" title="currency purchases">'+esc(p.c)+' &times;'+p.n+'</span>').join('');
+  const flags=[];
+  if(isBad){
+    if(x.nowSt==='B')flags.push('<span class="flag red">In banam '+sumFmtDays(x.nowDays)+'</span>');
+    if(!x.cntJ)flags.push('<span class="flag red">no jama back</span>');
+    if(x.avgBdays>=60)flags.push('<span class="flag red">banam term &asymp; '+sumFmtDays(x.avgBdays)+'</span>');
+    if(!isAll&&x.avgB>0)flags.push('<span class="flag red">avg '+esc(sumState.cur)+' '+fmtN(x.avgB)+'</span>');
+  }else{
+    if(x.nowSt==='J')flags.push('<span class="flag green">In jama '+sumFmtDays(x.nowDays)+'</span>');
+    if(x.avgIdays>=60)flags.push('<span class="flag green">jama term &asymp; '+sumFmtDays(x.avgIdays)+'</span>');
+    if(x.cntB===0)flags.push('<span class="flag green">never banam</span>');
+  }
+  const wc=isAll?'PKR':sumState.cur;
+  const stTxt=x.nowSt==='J'?'Jama &middot; '+sumFmtDays(x.nowDays):x.nowSt==='B'?'Banam &middot; '+sumFmtDays(x.nowDays):'Settled';
+  const balCls=x.nowSt==='B'?(x.nowBal<0?'bad':''):'ok';
+  const cells=[
+    {l:'Current balance',v:(x.nowSt==='B'&&x.nowBal<0?'&minus;':'')+wc+' '+fmtN(Math.abs(x.nowBal||0)),cls:balCls},
+    {l:'Open state',v:stTxt,cls:''},
+    {l:'Last entry',v:x.lastD?fdate(x.lastD):'-',cls:''},
+    {l:isAll?'Jama amount &middot; all':'Jama ('+sumState.cur+')',v:fmtN(x.totJ),cls:'ok'},
+    {l:isAll?'Banam amount &middot; all':'Banam ('+sumState.cur+')',v:fmtN(x.totB),cls:'bad'},
+    {l:'Jama &rarr; banam',v:x.avgIdays?sumFmtDays(x.avgIdays):'-',cls:'',k:'J'},
+    {l:'Banam &rarr; jama',v:x.avgBdays?sumFmtDays(x.avgBdays):'-',cls:'',k:'B'},
+    {l:'Entries',v:(x.cntJ)+'j &middot; '+(x.cntB)+'b',cls:''}
+  ];
+  return '<div class="sumcard '+mode+(rank<=3?' r'+rank:'')+'" onclick="openLedger(\''+x.id+'\')"><div class="srow">'
+    +'<div class="rank">'+rank+'</div>'
+    +'<div class="sinfo"><div class="sname">'+esc(x.acc.name||'—')+'</div><div class="smeta"><span>'+esc(TYPE_LBL[x.acc.type]||x.acc.type||'')+'</span><span>'+jp.toFixed(0)+'% jama / '+bp.toFixed(0)+'% banam</span></div></div>'
+    +'<div class="sscore"><b>'+sc+'</b><span>'+(isBad?'risk':'trust')+'</span></div>'
+    +'</div>'
+    +'<div class="ratio"><i class="rj" style="width:'+jp+'%"></i><i class="rb" style="width:'+bp+'%"></i></div>'
+    +'<div class="sgrid">'
+    +cells.map(cel=>'<div class="sg'+(cel.k?' ta':'')+'"'+(cel.k?' onclick="event.stopPropagation();setSumTerms(\''+x.id+'\',\''+cel.k+'\')" title="Tap to see each term"':'')+'><span>'+cel.l+'</span><b class="'+cel.cls+'">'+cel.v+'</b></div>').join('')
+    +'</div>'
+    +(badges||flags.length?'<div class="badges">'+(isBad?flags.join('')+badges:badges+flags)+'</div>':'')
+    +'</div>';
+}
+function setSumMode(m){sumState.mode=m;renderSummary()}
+function setSumRange(k){sumState.range=k;renderSummary()}
+function setSumCustom(){
+  sumState.from=$('#sumFrom')?$('#sumFrom').value:'';
+  sumState.to=$('#sumTo')?$('#sumTo').value:'';
+  sumState.range='custom';
+  renderSummary();
+}
+function setSumCur(c){sumState.cur=c;renderSummary()}
+function setSumType(v){sumState.type=v;renderSummary()}
+function setSumTerms(id,kind){
+  const t=sumCompute();
+  const x=t.act.filter(function(a){return a.id===id})[0];
+  if(!x)return;
+  const isJ=kind==='J';
+  const ivs=(x.ivs||[]).filter(function(iv){return iv.s===kind&&iv.ft});
+  const wc=sumState.cur==='All'?'PKR':sumState.cur;
+  $('#termTitle').textContent=isJ?'Jama \u2192 Banam terms':'Banam \u2192 Jama terms';
+  $('#termSub').textContent=(x.acc.name||'-')+' \u00B7 '+wc+' \u00B7 avg '+(isJ?sumFmtDays(x.avgIdays):sumFmtDays(x.avgBdays));
+  let rows='';
+  ivs.forEach(function(iv,i2){
+    const d=sumGapDays(iv.ft,iv.tt||t.endIso);
+    const last=i2===ivs.length-1;
+    rows+='<div class="trow'+(kind==='B'?' b':'')+'"><div class="tnum">'+(i2+1)+'</div><div class="tinfo"><b>'+sumFmtDays(d)+(last&&x.nowSt===kind?' &middot; ongoing':'')+'</b><span>'+fdate(iv.ft)+' \u2192 '+fdate(iv.tt||t.endIso)+'</span></div><div class="tdays '+(kind==='B'?'bad':'ok')+'"><b>'+d+'d</b></div></div>';
+  });
+  $('#termList').innerHTML=(rows+'<div class="tfoot"><span>Total '+ivs.length+' terms</span><b>avg '+(isJ?sumFmtDays(x.avgIdays):sumFmtDays(x.avgBdays))+'</b></div>')||'<p class="empty">No terms.</p>';
+  openModal('m-term');
+}
+function renderSummary(){
+  const t=sumCompute();
+  const mode=sumState.mode;
+  const list=mode==='bad'?t.bad:t.best;
+  $('#sumStats').innerHTML=sumStatsHtml(t);
+  $('#sumTimeChips').innerHTML=SUM_MN_CHIPS.map(r=>'<button class="chip-f'+(sumState.range===r.k?' active':'')+'" onclick="setSumRange(\''+r.k+'\')">'+esc(SUM_RANGE_LBL[r.k])+'</button>').join('');
+  $('#sumCustom').style.display=sumState.range==='custom'?'flex':'none';
+  const cs=['All'].concat(allCurrencies());
+  if(cs.indexOf(sumState.cur)<0)sumState.cur=cs[0];
+  $('#sumCurChips').innerHTML=cs.map(c=>'<button class="chip-f'+(sumState.cur===c?' active':'')+'" onclick="setSumCur(\''+c+'\')">'+esc(c==='All'?'All currencies':c)+'</button>').join('');
+  const visTypes=ORDERED_TYPES.filter(tp=>tp==='customer'||DATA.accounts.some(a=>(a.type||'')===tp&&a.deleted!==true));
+  const sel=$('#sumTypeSel');
+  sel.innerHTML='<option value="customer">'+esc(TYPE_LBL.customer||'Customers')+'</option><option value="All">All types</option>'+visTypes.filter(tp=>tp!=='customer').map(tp=>'<option value="'+tp+'">'+esc(TYPE_LBL[tp]||tp)+'</option>').join('');
+  sel.value=sumState.type;
+  $('#sumModeChips').innerHTML='<button class="chip-f mode-best'+(mode==='best'?' active':'')+'" onclick="setSumMode(\'best\')"><span class="cd"></span>Best Customers</button><button class="chip-f mode-bad'+(mode==='bad'?' active':'')+'" onclick="setSumMode(\'bad\')"><span class="cd"></span>Bad Customers</button>';
+  $('#sumHero').innerHTML=list.length?sumHero(list[0],mode):'';
+  $('#sumList').innerHTML=list.length?list.slice(1,11).map((x,i)=>sumRow(x,i+2,mode)).join(''):'<div class="empty" style="padding:26px"><div class="eic">'+IC.wallet+'</div><p>'+(t.act.length?'Only 1 active customer in this filter — try switching time range or type.':'No customer data for this filter.')+'</p></div>';
+  $('#sumCount').textContent=(mode==='bad'?t.bad.length+' risky':t.best.length+' ranked')+' of '+t.act.length+' active'+((sumState.range!=='alltime'&&t.act.length<=2)?' - few customers, try All Time':'');
+  $('#sumSub').textContent=((t.from&&t.to)?fdate(t.from)+' — '+fdate(t.to):'All time')+(sumState.cur!=='All'?' · '+sumState.cur:'');
+}
+async function downloadSummaryPdf(){
+  try{
+    const t=sumCompute();
+    const mode=sumState.mode;
+    const list=mode==='bad'?t.bad:t.best;
+    const title=mode==='bad'?'Customer Risk Summary':'Customer Trust Summary';
+    const sub=((t.from&&t.to)?(fdate(t.from)+' - '+fdate(t.to)):'All time')+(t.cur!=='All'?'  |  '+t.cur:'  |  All currencies');
+    toast('Building PDF...');
+    let ctx;try{ctx=await pdfMakeDoc()}catch(e){toast('PDF library: '+(e&&e.message?e.message:e),'err');return}
+    const PH=PDF_A4[1],PW=PDF_A4[0],M=14,R=PW-M;
+    const cur=t.cur;
+    pdfNewPage(ctx);pdfHeaderBar(ctx,title,sub);
+    let yTop=pdfStatCards(ctx,116,[
+      {label:'Customers',value:String(t.act.length),color:C.brand,bg:C.brandSoft},
+      {label:cur==='All'?'Jama entries':'Total jama',value:cur==='All'?String(t.tot.cntJ):pdfMoney(t.tot.totJ),color:C.ok,bg:C.okBg},
+      {label:cur==='All'?'Banam entries':'Total banam',value:cur==='All'?String(t.tot.cntB):pdfMoney(t.tot.totB),color:C.bad,bg:C.badBg},
+      {label:'Avg jama term',value:sumFmtDays(t.tot.avgTdJ),color:C.accent,bg:C.zebra}
+    ]);
+    yTop+=18;
+    pdfText(ctx.page,mode==='bad'?'Top risky customers (max 10)':'Top trusted customers (max 10)',PW-M,PH-(yTop+12),{size:12.5,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.ink),align:'right'});
+    yTop+=24;
+    const h=26,colJ=R-150,colB=R-230,colT=R-308;
+    const drawHead=()=>{
+      pdfText(ctx.page,'Customer',R-8,PH-(yTop+15),{size:9.5,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.mut),align:'right'});
+      pdfText(ctx.page,cur==='All'?'Jama (x)':(cur+' jama'),colJ,PH-(yTop+15),{size:9.5,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.ok),align:'right'});
+      pdfText(ctx.page,cur==='All'?'Banam (x)':(cur+' banam'),colB,PH-(yTop+15),{size:9.5,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.bad),align:'right'});
+      pdfText(ctx.page,'Jama term',colT,PH-(yTop+15),{size:9.5,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.mut),align:'right'});
+      pdfText(ctx.page,mode==='bad'?'Risk':'Score',M+10,PH-(yTop+15),{size:9.5,bold:true,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.mut),align:'left'});
+      ctx.page.drawLine({start:{x:M,y:PH-(yTop+20)},end:{x:R,y:PH-(yTop+20)},thickness:0.7,color:pc(C.line)});
+      yTop+=24;
+    };
+    drawHead();
+    list.forEach((x,i)=>{
+      if(yTop>PH-60){pdfNewPage(ctx);pdfHeaderBar(ctx,title,sub);yTop=116;drawHead()}
+      if(i%2===1)ctx.page.drawRectangle({x:M,y:PH-(yTop+h),width:PW-M*2,height:h,color:pc(C.zebra)});
+      ctx.page.drawLine({start:{x:M,y:PH-(yTop+h)},end:{x:R,y:PH-(yTop+h)},thickness:0.5,color:pc(C.line)});
+      const b=PH-(yTop+17);
+      let nm=(i+1)+'. '+String(x.acc.name||'-');
+      pdfText(ctx.page,nm,R-8,b,{size:9.5,fontAr:ctx.fontAr,fontL:ctx.boldL,color:pc(C.ink),align:'right'});
+      const jv=cur==='All'?(x.cntJ+'x'):(pdfMoney(x.totJ));
+      const bv=cur==='All'?(x.cntB+'x'):(pdfMoney(x.totB));
+      pdfRight(ctx.page,jv,colJ,b,ctx.fontL,pc(C.ok),9);
+      pdfRight(ctx.page,bv,colB,b,ctx.fontL,pc(C.bad),9);
+      pdfRight(ctx.page,x.avgIdays?sumFmtDays(x.avgIdays):'-',colT,b,ctx.fontL,pc(C.mut),9);
+      pdfRight(ctx.page,String(mode==='bad'?x.risk:x.score),M+10,b,ctx.boldL,pc(mode==='bad'?C.bad:C.ok),10);
+      yTop+=h;
+    });
+    pdfFinishing(ctx);
+    const bytes=await ctx.doc.save();
+    deliverBlob((mode==='bad'?'bad':'best')+'-customers-summary.pdf',new Blob([bytes],{type:'application/pdf'}),'Summary PDF ready');
+  }catch(e){console.error('summary pdf failed',e);toast('PDF error: '+(e&&e.message?e.message:e),'err');}
+}
 /* ---------- boot ---------- */
 function renderAll(){
   PAL=myDarkPalette();
@@ -2577,15 +3395,18 @@ function renderAll(){
   if($('#view-ledger').classList.contains('active')&&curAccId)renderLedger();
   if($('#view-roz').classList.contains('active'))renderRoz();
   if($('#view-reports')&&$('#view-reports').classList.contains('active')&&rptSubTab)renderRptStage();
+  if($('#view-summary')&&$('#view-summary').classList.contains('active'))renderSummary();
   updateStamp();
 }
 function applyBookData(){
   DATA.accounts=DATA.accounts.filter(a=>a.deleted!==true).sort((a,b)=>String(a.name||'').localeCompare(String(b.name||'')));
   DATA.txns=DATA.txns.filter(t=>t.deleted!==true).sort((a,b)=>txTs(b)-txTs(a)||String(b.date||'').localeCompare(String(a.date||'')));
+  buildIdx();
 }
 async function boot(){
   try{
     applyTheme(storedTheme());
+    ensurePashtoFont();
     await initIDB();
     const accs=await idbAll('accounts'),txsAwait=idbAll('txns'),obs=await idbAll('ob'),txs=await txsAwait;
     const isNewInstall=!(accs.length||txs.length)&&!localStorage.getItem('sarafi_lastFetched');
@@ -2620,6 +3441,7 @@ window.toggleTheme=toggleTheme;
 window.doLogout=doLogout;window.closeConfirm=closeConfirm;
 window.renderRoz=renderRoz;window.clearRozPage=clearRozPage;window.openRozBalance=openRozBalance;window.toggleRozSort=toggleRozSort;window.downloadRozPdf=downloadRozPdf;window.downloadRozBalPdf=downloadRozBalPdf;
 window.openRptSub=openRptSub;window.closeRptSub=closeRptSub;window.setRptKhatCur=setRptKhatCur;window.setRptMnChip=setRptMnChip;window.renderRptKhat=renderRptKhat;window.renderRptBanks=renderRptBanks;window.renderRptManafi=renderRptManafi;
+window.setSumMode=setSumMode;window.setSumRange=setSumRange;window.setSumCustom=setSumCustom;window.setSumCur=setSumCur;window.setSumType=setSumType;window.setSumTerms=setSumTerms;window.downloadSummaryPdf=downloadSummaryPdf;
 window.go('dashboard');
 
 /* ---------- background canvas ---------- */
