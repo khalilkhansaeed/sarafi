@@ -1346,7 +1346,7 @@ function doLogout(){
   openConfirm('Sign out?','Are you sure you want to sign out of Sarafi?',signOutNow,'Sign Out');
 }
 function signOutNow(){
-  try{localStorage.removeItem(AUTH_KEY)}catch(e){}
+  try{localStorage.clear();sessionStorage.clear()}catch(e){}
   try{if(firebase&&firebase.auth)firebase.auth().signOut().catch(()=>{})}catch(e){}
   setTimeout(()=>{try{location.reload()}catch(e){}},120);
 }
