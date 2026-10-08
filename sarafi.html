@@ -1345,10 +1345,15 @@ async function doLogin(ev){
 function doLogout(){
   openConfirm('Sign out?','Are you sure you want to sign out of Sarafi?',signOutNow,'Sign Out');
 }
+function wipeWebStorage(){try{localStorage.clear()}catch(e){}try{sessionStorage.clear()}catch(e){}}
+function wipeIDB(){return new Promise(res=>{try{if(_idb){try{_idb.close()}catch(e){}_idb=null}const rq=indexedDB.deleteDatabase('sarafi_db');rq.onsuccess=rq.onerror=rq.onblocked=()=>res()}catch(e){res()}})}
+function wipeCaches(){try{if(window.caches&&caches.keys)return caches.keys().then(k=>Promise.all(k.map(x=>caches.delete(x)))).catch(()=>{})}catch(e){}return Promise.resolve()}
+function wipeFirebase(){try{const apps=(window.firebase&&firebase.apps)||[];let auth=null;try{auth=firebase.auth?firebase.auth():null}catch(e){}const p=auth?auth.signOut().catch(()=>{}):Promise.resolve();return p.then(()=>Promise.all(apps.map(a=>{try{return a.delete()}catch(e){return null}}))).catch(()=>{})}catch(e){}return Promise.resolve()}
 function signOutNow(){
-  try{localStorage.clear();sessionStorage.clear()}catch(e){}
-  try{if(firebase&&firebase.auth)firebase.auth().signOut().catch(()=>{})}catch(e){}
-  setTimeout(()=>{try{location.reload()}catch(e){}},120);
+  wipeFirebase()
+    .then(()=>Promise.all([wipeIDB(),wipeCaches()]))
+    .then(wipeWebStorage,wipeWebStorage)
+    .then(()=>{setTimeout(()=>{try{location.reload()}catch(e){}},120)});
 }
 let _confirmCb=null;
 function openConfirm(title,msg,cb,okLabel){
@@ -1409,6 +1414,12 @@ function txCreated(t){
   if(t.createdAt){const p=Date.parse(t.createdAt);if(p&&!isNaN(p))return p}
   return txTs(t);
 }
+function txDateMs(t){
+  const d=String((t&&t.date)||'');
+  if(!d)return 0;
+  const p=Date.parse(d.length<=10?d+'T00:00:00':d);
+  return isNaN(p)?0:p;
+}
 function txHay(t){
   const n=Number(t.amount)||0;
   return (String(t.detail||'')+' '+String(t.hawalaNo||'')+' '+String(t.pageNo||'')+' '+fmtN(n)+' '+String(n)+' '+String(Math.abs(n))).toLowerCase();
@@ -1438,7 +1449,7 @@ function buildIdx(){
       if(!a)continue;
       (curSet[id]||(curSet[id]=new Set())).add(c);
       const b=okB[String(a.branch||'')];
-      if(b&&a.id!==b.id)branchOb[b.name]=(branchOb[b.name]||0)+v;
+      if(b&&a.id!==b.id&&a.deleted!==true){const bm=branchOb[b.name]||(branchOb[b.name]={});bm[c]=(bm[c]||0)+v}
     }
   }
   const tx=DATA.txns;
@@ -1450,14 +1461,14 @@ function buildIdx(){
     if(t.currency)allCurSet.add(t.currency);
     if(id){(curSet[id]||(curSet[id]=new Set())).add(c);
       const a=accts[id],b=a?okB[String(a.branch||'')]:null;
-      if(b&&a.id!==b.id){if(cr)branchC[b.name]=(branchC[b.name]||0)+amt;else branchD[b.name]=(branchD[b.name]||0)+amt}}
+      if(b&&a.id!==b.id&&a.deleted!==true){const m2=cr?(branchC[b.name]||(branchC[b.name]={})):(branchD[b.name]||(branchD[b.name]={}));m2[c]=(m2[c]||0)+amt}}
     ((bal[id]||(bal[id]={}))[c]||(bal[id][c]={c:0,d:0}))[cr?'c':'d']+=amt;
     net[c]=(net[c]||0)+(cr?amt:-amt);
     (byKey[id+'|'+c]||(byKey[id+'|'+c]=[])).push(t);
     const ts=txTs(t);
     if(ts>=(lastTs[id]||0)){lastTs[id]=ts;lastTx[id]=t}
   }
-  for(const k in byKey)byKey[k].sort((x,y)=>txCreated(x)-txCreated(y)||String(x.date||'').localeCompare(String(y.date||'')));
+  for(const k in byKey)byKey[k].sort((x,y)=>txDateMs(x)-txDateMs(y)||txCreated(x)-txCreated(y)||String(x.date||'').localeCompare(String(y.date||'')));
   const allCurs=[...allCurSet].sort((a,b)=>curOrder(a)-curOrder(b));
   const curOf={};
   for(const id in curSet)curOf[id]=[...curSet[id]].sort((a,b)=>curOrder(a)-curOrder(b));
@@ -1664,7 +1675,7 @@ function animCount(el,val,formatter){
 function renderDashboard(){
   const c0=primCurr();
   let tc=0,td=0;
-  DATA.txns.forEach(t=>{if(t.currency!==c0)return;const a=Number(t.amount)||0;if(isCr(t))tc+=a;else td+=a});
+  DATA.txns.forEach(t=>{if(!t||t.deleted===true||t.currency!==c0)return;const a=Number(t.amount)||0;if(isCr(t))tc+=a;else td+=a});
   const stats=[
     {l:'Accounts',v:DATA.accounts.length,f:n=>String(Math.round(n)),s:typeCountsLabel(),tab:'accounts'},
     {l:'Transactions',v:DATA.txns.length,f:n=>String(Math.round(n)),s:'ledger entries',tab:'accounts'},
@@ -1694,12 +1705,12 @@ function branchAccounts(b){
 }
 function renderBranchCards(){
   const el=$('#bizGrid');if(!el)return;
-  const bs=branches(),c0=primCurr();
+  const _ix=IX(),c0=primCurr();
+  const bs=branches();
   if(!bs.length){el.innerHTML='<p style="color:var(--mut);font-size:13px">No branch accounts yet.</p>';return}
-  const _ix=IX();
   el.innerHTML=bs.map(b=>{
     const list=branchAccounts(b);
-    const tc=_ix.branchC[b.name]||0,td=_ix.branchD[b.name]||0,ob=_ix.branchOb[b.name]||0;
+    const tc=(_ix.branchC[b.name]||{})[c0]||0,td=(_ix.branchD[b.name]||{})[c0]||0,ob=(_ix.branchOb[b.name]||{})[c0]||0;
     const bal=tc-td+ob;
     const balTxt=bal>0?'+'+money(c0,bal):money(c0,bal);
     return '<div class="bizcard'+(branchSel===b.id?' active':'')+'" onclick="setBranch(\''+b.id+'\');go(\'accounts\')"><div class="bn">'+esc(b.name)+(branchSel===b.id?'<span class="tag">Active</span>':'')+'</div><div class="bv" style="color:'+(bal>0?'var(--ok)':bal<0?'var(--bad)':'var(--mut)')+'">'+balTxt+'</div><div class="bs">'+list.length+' accounts · '+c0+' '+fmtN(tc)+' credit · '+fmtN(td)+' debit</div></div>';
@@ -3112,7 +3123,7 @@ function sumCompute(){
   const stOf=id=>stats[id]||(stats[id]={cntJ:0,cntB:0,totJ:{},totB:{},termsJ:0,termsB:0,jDays:0,bDays:0,openDebt:0,purch:{},purchCnt:{},lastD:'',lastTx:null,nowSt:'N',nowDays:0,nowBal:0});
   accs.forEach(acc=>{
     const s=stOf(acc.id);
-    const all=DATA.txns.filter(t=>t&&t.accountId===acc.id&&t.deleted!==true).sort((x,y)=>txCreated(x)-txCreated(y)||sumIso(x.date).localeCompare(sumIso(y.date)));
+    const all=DATA.txns.filter(t=>t&&t.accountId===acc.id&&t.deleted!==true).sort((x,y)=>txDateMs(x)-txDateMs(y)||txCreated(x)-txCreated(y)||sumIso(x.date).localeCompare(sumIso(y.date)));
     const inWin=t=>{const d=sumIso(t.date);return(!from||d>=from)&&(!to||d<=to)};
     const winTx=all.filter(t=>inWin(t)&&(curSel==='All'||(t.currency||'PKR')===curSel));
     winTx.forEach(t=>{
