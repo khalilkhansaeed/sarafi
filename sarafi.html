@@ -3529,6 +3529,149 @@ if(CLIENT_OBJ){
 }
 
 </script>
+
+<script>
+/* ================= Sarafi updater — OTA web bundle + in-app APK (off-Play) ================= */
+(function(){
+  var UPDATE_BASE='https://github.com/khalilkhansaeed/sarafi/releases/latest/download/';
+  var WEB_ZIP='sarafi-web.zip';
+  var APK_FILE='sarafi-app-release.apk';
+  var INSTALL_APK='sarafi-update.apk';
+  var ATTEMPT_KEY='sarafi_web_attempt';
+  var BAKED_WEB_VERSION='__WEB_VERSION__';
+
+  function isNative(){try{return !!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform())}catch(e){return false}}
+  function ncall(name,method,args){
+    return new Promise(function(res,rej){
+      if(!(window.Capacitor&&Capacitor.nativePromise))return rej(new Error('native bridge unavailable'));
+      try{Capacitor.nativePromise(name,method,args||{}).then(res,rej)}catch(e){rej(e)}
+    });
+  }
+  function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+  function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+  function lsDel(k){try{localStorage.removeItem(k)}catch(e){}}
+  function baked(){return /^__/.test(BAKED_WEB_VERSION)?'dev':BAKED_WEB_VERSION}
+  // Authoritative running web version: Capgo's builtin bundle version is the
+  // native versionName, which CI stamps to the same value it publishes as
+  // webVersion. After an OTA it returns the applied bundle version.
+  function currentRunVersion(){
+    return ncall('CapacitorUpdater','current',{})
+      .then(function(r){return (r&&r.bundle&&r.bundle.version)||baked()})
+      .catch(function(){return baked()});
+  }
+
+  function downloadFileNative(url,path){
+    return ncall('Filesystem','deleteFile',{path:path,directory:'CACHE'})
+      .catch(function(){})
+      .then(function(){return ncall('Filesystem','downloadFile',{url:url,path:path,directory:'CACHE'})});
+  }
+  function readText(path){
+    return ncall('Filesystem','readFile',{path:path,directory:'CACHE',encoding:'utf8'})
+      .then(function(r){return (r&&r.data)||''});
+  }
+  function manifest(){
+    return downloadFileNative(UPDATE_BASE+'version.json','version.json')
+      .then(function(){return readText('version.json')})
+      .then(function(txt){if(!txt)throw new Error('empty manifest');return JSON.parse(txt)});
+  }
+
+  function el(tag,attrs,text){
+    var e=document.createElement(tag);
+    if(attrs)for(var k in attrs){if(k==='style'){e.style.cssText=attrs[k]}else{e.setAttribute(k,attrs[k])}}
+    if(text!=null)e.textContent=text;
+    return e;
+  }
+  function setMsg(box,main,sub){
+    while(box.firstChild)box.removeChild(box.firstChild);
+    box.appendChild(el('div',{style:'flex:1;min-width:0'},main));
+    if(sub!=null)box.appendChild(el('div',{style:'flex:1;min-width:0;opacity:.7;font-size:12px;margin-left:8px'},sub));
+  }
+  function banner(info){
+    var old=document.getElementById('updBanner');if(old)old.parentNode.removeChild(old);
+    var wrap=el('div',{id:'updBanner',style:'position:fixed;left:12px;right:12px;bottom:12px;z-index:2147483647;background:#111827;color:#fff;border-radius:14px;padding:12px 14px;box-shadow:0 10px 30px rgba(0,0,0,.35);font:14px/1.4 system-ui,Segoe UI,Roboto,sans-serif;display:flex;gap:10px;align-items:center'});
+    var txt=el('div',{style:'flex:1;min-width:0'});
+    txt.appendChild(el('div',{style:'font-weight:600'},info.text));
+    if(info.sub)txt.appendChild(el('div',{style:'opacity:.7;font-size:12px;margin-top:2px'},info.sub));
+    var btn=el('button',{style:'flex:0 0 auto;border:0;border-radius:10px;padding:9px 14px;font-weight:600;background:#6366f1;color:#fff;font-size:13px'},info.action||'Update');
+    var later=el('button',{style:'flex:0 0 auto;border:0;background:transparent;color:#9ca3af;font-size:13px;padding:6px;cursor:pointer'},'Later');
+    if(info.onAction)btn.addEventListener('click',function(){info.onAction(btn,txt)});
+    later.addEventListener('click',function(){if(wrap.parentNode)wrap.parentNode.removeChild(wrap)});
+    wrap.appendChild(txt);wrap.appendChild(btn);wrap.appendChild(later);
+    document.body.appendChild(wrap);
+    return {wrap:wrap,btn:btn,txt:txt};
+  }
+
+  function doOtaWeb(m){
+    // download() fetches the zip natively (no CORS); set() applies it and reloads.
+    ncall('CapacitorUpdater','download',{url:UPDATE_BASE+WEB_ZIP,version:m.webVersion})
+      .then(function(b){return ncall('CapacitorUpdater','set',{id:b.id})})
+      .catch(function(e){console.warn('OTA web update failed',e)});
+  }
+
+  function doApkUpdate(m,btn,txt){
+    btn.disabled=true;btn.textContent='Downloading…';
+    downloadFileNative(UPDATE_BASE+APK_FILE,INSTALL_APK)
+      .then(function(){return ncall('ApkInstaller','install',{fileName:INSTALL_APK,sha256:m.apkSha256})})
+      .then(function(r){
+        if(r&&r.needsPermission){
+          btn.disabled=false;btn.textContent='Update';
+          setMsg(txt,'Allow installs for Sarafi','Enable it in Settings, then tap Update again.');
+          return;
+        }
+        btn.textContent='Installing…';
+        setMsg(txt,'Installing update…','Follow the prompts to finish.');
+      })
+      .catch(function(e){
+        btn.disabled=false;btn.textContent='Update';
+        setMsg(txt,'Update failed',(e&&(e.message||e.errorMessage))||'network error');
+      });
+  }
+
+  function showNativeUpdate(m){
+    banner({
+      text:'Sarafi update '+(m.versionName||'')+' available',
+      sub:m.notes?('Changes: '+m.notes):'Install to get the latest features.',
+      action:'Update',
+      onAction:function(btn,txt){doApkUpdate(m,btn,txt)}
+    });
+  }
+
+  function checkUpdates(){
+    Promise.all([
+      manifest().catch(function(){return null}),
+      ncall('App','getInfo',{}).catch(function(){return null}),
+      currentRunVersion()
+    ]).then(function(res){
+      var m=res[0],info=res[1],cur=res[2];
+      if(!m)return;
+      var installed=info&&info.build?parseInt(info.build,10):0;
+
+      // Native/plugin changes require a new APK (in-app install, data preserved).
+      if(m.versionCode&&installed&&m.versionCode>installed){showNativeUpdate(m);return;}
+      if(!m.webVersion)return;
+
+      // Up to date → clear any failure marker.
+      if(m.webVersion===cur){lsDel(ATTEMPT_KEY);return;}
+
+      // Guard against a broken bundle causing a re-download loop.
+      var att=lsGet(ATTEMPT_KEY)||'',parts=att.split('|');
+      var attVer=parts[0],attCount=parseInt(parts[1]||'0',10)||0;
+      if(m.webVersion===attVer&&attCount>=2){console.warn('OTA web update skipped after repeated failure');return;}
+      lsSet(ATTEMPT_KEY,m.webVersion+'|'+((m.webVersion===attVer?attCount:0)+1));
+
+      doOtaWeb(m);
+    }).catch(function(e){console.warn('update check failed',e)});
+  }
+
+  function start(){
+    if(!isNative())return;
+    ncall('CapacitorUpdater','notifyAppReady',{}).catch(function(){});
+    window.setTimeout(checkUpdates,1500);
+  }
+  if(document.readyState==='complete'||document.readyState==='interactive'){window.setTimeout(start,0);}
+  else{document.addEventListener('DOMContentLoaded',start);}
+})();
+</script>
 </body>
 </html>
 

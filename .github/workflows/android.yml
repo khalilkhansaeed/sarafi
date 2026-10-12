@@ -5,6 +5,11 @@ on:
     branches: [ main, master ]
     tags: [ 'v*' ]
   workflow_dispatch:
+    inputs:
+      native:
+        description: "Native/plugin change? (true = bump versionCode + require APK install)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -15,6 +20,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -33,8 +40,6 @@ jobs:
       - name: Verify bundled vendor libraries are intact
         run: |
           set -e
-          # pdf-lib must be the full distribution; a truncated file parses as
-          # invalid JS and leaves window.PDFLib undefined at runtime.
           for f in www/vendor/pdf-lib.min.js www/vendor/fontkit.umd.min.js; do
             size=$(wc -c < "$f")
             if [ "$size" -lt 200000 ]; then
@@ -46,6 +51,54 @@ jobs:
           node -e "const s=require('fs').readFileSync('www/vendor/pdf-lib.min.js','utf8'); if(!/PDFLib/.test(s)){console.error('ERROR: pdf-lib missing PDFLib global');process.exit(1)}"
           echo "Vendor libraries intact."
 
+      - name: Decide version numbers (native vs web-only)
+        id: ver
+        run: |
+          set -e
+          # Did this push touch native code? If so, users MUST install a new APK.
+          NATIVE_CHANGED="false"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            NATIVE_CHANGED="${{ github.event.inputs.native }}"
+          else
+            BASE="${{ github.event.before }}"
+            if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ]; then
+              NATIVE_CHANGED="true"
+            else
+              CHANGED=$(git diff --name-only "$BASE" "${{ github.sha }}" || true)
+              if echo "$CHANGED" | grep -E '^(android/|package\.json$|package-lock\.json$|capacitor\.config\.json$)' >/dev/null; then
+                NATIVE_CHANGED="true"
+              fi
+            fi
+          fi
+
+          # Reuse the previous release's versionCode for web-only changes so the
+          # APK does not need reinstalling; bump it for native changes.
+          PREV_JSON=$(curl -fsSL "https://github.com/${{ github.repository }}/releases/latest/download/version.json" || true)
+          PREV_CODE=$(echo "$PREV_JSON" | grep -o '"versionCode"[^,]*' | grep -o '[0-9]*' | head -1 || true)
+
+          BASE_CODE=$((10000 + ${{ github.run_number }}))
+          if [ "$NATIVE_CHANGED" = "true" ]; then
+            if [ -n "$PREV_CODE" ] && [ "$PREV_CODE" -ge "$BASE_CODE" ]; then
+              VERSION_CODE=$((PREV_CODE + 1))
+            else
+              VERSION_CODE=$BASE_CODE
+            fi
+          else
+            if [ -n "$PREV_CODE" ]; then VERSION_CODE=$PREV_CODE; else VERSION_CODE=$BASE_CODE; fi
+          fi
+
+          WEB_VERSION="1.0.${{ github.run_number }}"
+          VERSION_NAME="$WEB_VERSION"
+
+          echo "NATIVE_CHANGED=$NATIVE_CHANGED"
+          echo "PREV_CODE=$PREV_CODE"
+          echo "VERSION_CODE=$VERSION_CODE"
+          echo "WEB_VERSION=$WEB_VERSION"
+          echo "NATIVE_CHANGED=$NATIVE_CHANGED" >> "$GITHUB_ENV"
+          echo "SARAFI_VERSION_CODE=$VERSION_CODE" >> "$GITHUB_ENV"
+          echo "SARAFI_VERSION_NAME=$VERSION_NAME" >> "$GITHUB_ENV"
+          echo "SARAFI_WEB_VERSION=$WEB_VERSION" >> "$GITHUB_ENV"
+
       - name: Build web assets
         run: npm run build:www
 
@@ -54,17 +107,6 @@ jobs:
           if [ ! -d android ]; then
             npx cap add android
           fi
-
-      - name: Bump versionCode so Android always treats this as new
-        run: |
-          set -e
-          GRADLE=android/app/build.gradle
-          # make version unique: base 100000 + short commit as decimal
-          VC=$((100000 + 0x${GITHUB_SHA:0:6}))
-          VN="1.0.${GITHUB_SHA:0:7}"
-          sed -i -E "s/versionCode [0-9]+/versionCode ${VC}/" "$GRADLE"
-          sed -i -E "s/versionName \"[^\"]*\"/versionName \"${VN}\"/" "$GRADLE"
-          grep -E "versionCode|versionName|applicationId" "$GRADLE"
 
       - name: Sync web assets into Android project
         run: npx cap sync android
@@ -87,7 +129,6 @@ jobs:
             echo "ERROR: index.html still references remote fontkit CDN"
             exit 1
           fi
-          # cache-busting query must be present so the WebView cannot serve a cached 404
           if ! grep -q "vendor/pdf-lib.min.js?v=" "$ASSETS/index.html"; then
             echo "ERROR: pdf-lib vendor URL is not cache-busted"
             exit 1
@@ -119,52 +160,110 @@ jobs:
           fi
           echo "PDF Filesystem/Share plugins registered and used."
 
-      - name: Build debug APK
+      - name: Verify updater wiring
+        run: |
+          set -e
+          # OTA web updater plugin must be registered natively
+          if ! grep -q "@capgo/capacitor-updater" android/app/src/main/assets/capacitor.plugins.json; then
+            echo "ERROR: @capgo/capacitor-updater not registered (OTA web updates disabled)"
+            exit 1
+          fi
+          # anti-rollback signal must be present in the shipped bundle
+          if ! grep -q "notifyAppReady" android/app/src/main/assets/public/index.html; then
+            echo "ERROR: index.html missing notifyAppReady (Capgo will roll back OTA updates)"
+            exit 1
+          fi
+          # our in-app APK installer plugin + install permission
+          test -f android/app/src/main/java/com/sarafi/app/ApkInstallerPlugin.java \
+            || { echo "ERROR: ApkInstallerPlugin.java missing"; exit 1; }
+          grep -q "REQUEST_INSTALL_PACKAGES" android/app/src/main/AndroidManifest.xml \
+            || { echo "ERROR: REQUEST_INSTALL_PACKAGES permission missing"; exit 1; }
+          echo "Updater wiring verified."
+
+      - name: Verify web version placeholder was stamped
+        run: |
+          set -e
+          if grep -q "__WEB_VERSION__" android/app/src/main/assets/public/index.html; then
+            echo "ERROR: __WEB_VERSION__ placeholder was not replaced"
+            exit 1
+          fi
+          echo "Web version stamped: $SARAFI_WEB_VERSION"
+
+      - name: Decode release keystore
+        run: |
+          set -e
+          if [ -n "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" ]; then
+            printf '%s' "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > "$RUNNER_TEMP/sarafi-release.jks"
+            echo "SARAFI_KEYSTORE_PATH=$RUNNER_TEMP/sarafi-release.jks" >> "$GITHUB_ENV"
+            echo "SARAFI_KEYSTORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> "$GITHUB_ENV"
+            echo "SARAFI_KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }}" >> "$GITHUB_ENV"
+            echo "SARAFI_KEY_PASSWORD=${{ secrets.ANDROID_KEY_PASSWORD }}" >> "$GITHUB_ENV"
+            echo "Release signing key loaded."
+          else
+            echo "WARNING: ANDROID_KEYSTORE_BASE64 secret not set; the release APK will be debug-signed and in-place updates will NOT work."
+          fi
+
+      - name: Build signed release APK
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+          ./gradlew assembleRelease --no-daemon
 
-      - name: Rename APK so it is unmistakably Sarafi
+      - name: Package release assets (APK + web zip + version.json)
         run: |
           set -e
-          SRC=android/app/build/outputs/apk/debug/app-debug.apk
-          DEST=android/app/build/outputs/apk/debug/sarafi-app-debug.apk
-          cp "$SRC" "$DEST"
-          echo "APK ready: $DEST"
-          unzip -l "$DEST" | grep -E "assets/public/vendor/(pdf-lib|fontkit)" || {
-            echo "ERROR: packaged APK is missing PDF libraries"; exit 1; }
+          mkdir -p dist
+          SRC=android/app/build/outputs/apk/release/app-release.apk
+          cp "$SRC" dist/sarafi-app-release.apk
 
-      - name: Write build manifest (proves what is inside)
-        run: |
-          set -e
+          APK_SHA=$(sha256sum dist/sarafi-app-release.apk | cut -d' ' -f1)
+          (cd www && zip -r -q ../dist/sarafi-web.zip .)
+          WEB_SHA=$(sha256sum dist/sarafi-web.zip | cut -d' ' -f1)
+
           COMMIT="${GITHUB_SHA:0:7}"
-          MAN=android/app/build/outputs/apk/debug/BUILD-INFO.txt
-          {
-            echo "Sarafi app build"
-            echo "commit: $COMMIT"
-            echo "built:  $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-            echo "apk:    sarafi-app-debug.apk"
-            echo ""
-            echo "vendor assets packaged in the APK:"
-            unzip -l android/app/build/outputs/apk/debug/sarafi-app-debug.apk \
-              | grep "assets/public/vendor/" || true
-            echo ""
-            echo "BUILD_ID in html:"
-            grep -o "const BUILD_ID='[^']*'" android/app/src/main/assets/public/index.html
-          } > "$MAN"
-          cat "$MAN"
+          NOTES="${COMMIT}"
+          if [ "${NATIVE_CHANGED}" = "true" ]; then NOTES="native ${COMMIT}"; fi
 
-      - name: Upload APK artifact
+          cat > dist/version.json <<EOF
+          {
+            "versionCode": ${SARAFI_VERSION_CODE},
+            "versionName": "${SARAFI_VERSION_NAME}",
+            "webVersion": "${SARAFI_WEB_VERSION}",
+            "webName": "sarafi-web.zip",
+            "apkName": "sarafi-app-release.apk",
+            "apkSha256": "${APK_SHA}",
+            "webSha256": "${WEB_SHA}",
+            "nativeChanged": ${NATIVE_CHANGED},
+            "notes": "${NOTES}"
+          }
+          EOF
+
+          echo "---- version.json ----"
+          cat dist/version.json
+          echo "----------------------"
+          ls -la dist
+
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: sarafi-app-debug-apk
+          name: sarafi-app-release
           path: |
-            android/app/build/outputs/apk/debug/sarafi-app-debug.apk
-            android/app/build/outputs/apk/debug/BUILD-INFO.txt
+            dist/sarafi-app-release.apk
+            dist/sarafi-web.zip
+            dist/version.json
 
-      - name: Attach APK to Release
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: Publish rolling "latest" release
         uses: softprops/action-gh-release@v2
         with:
-          files: android/app/build/outputs/apk/debug/sarafi-app-debug.apk
+          tag_name: latest
+          name: Latest Sarafi build
+          body: |
+            Automatic build for commit ${{ github.sha }}.
+            native/changed: ${{ env.NATIVE_CHANGED }}
+            webVersion: ${{ env.SARAFI_WEB_VERSION }}
+            versionCode: ${{ env.SARAFI_VERSION_CODE }}
+          make_latest: true
+          files: |
+            dist/sarafi-app-release.apk
+            dist/sarafi-web.zip
+            dist/version.json

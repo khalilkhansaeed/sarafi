@@ -5,6 +5,8 @@ _upload/
 *.aab
 *.keystore
 *.jks
+*.b64
+sarafi-release.*
 
 # generated web bundle (produced by scripts/build-www.js)
 www/index.html

@@ -7,8 +7,8 @@ android {
         applicationId "com.sarafi.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode System.getenv("SARAFI_VERSION_CODE") ? Integer.parseInt(System.getenv("SARAFI_VERSION_CODE")) : 1
+        versionName System.getenv("SARAFI_VERSION_NAME") ? System.getenv("SARAFI_VERSION_NAME") : "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -16,9 +16,22 @@ android {
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            if (System.getenv("SARAFI_KEYSTORE_PATH")) {
+                storeFile file(System.getenv("SARAFI_KEYSTORE_PATH"))
+                storePassword System.getenv("SARAFI_KEYSTORE_PASSWORD")
+                keyAlias System.getenv("SARAFI_KEY_ALIAS")
+                keyPassword System.getenv("SARAFI_KEY_PASSWORD")
+            }
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
+            // Sign with the stable release key when available so Android can update
+            // the app in place (same package + key). Falls back to debug for local builds.
+            signingConfig System.getenv("SARAFI_KEYSTORE_PATH") ? signingConfigs.release : signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

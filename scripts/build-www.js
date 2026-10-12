@@ -22,6 +22,16 @@ if (html.includes('__BUILD_ID__')) {
   console.warn('WARN: __BUILD_ID__ placeholder not found');
 }
 
+// __WEB_VERSION__ is the OTA bundle identity. CI pins it to the same value it
+// publishes in version.json (e.g. 1.0.<run>); locally we fall back to the
+// commit id so dev builds still compare deterministically.
+const webVersion = (process.env.SARAFI_WEB_VERSION || buildId).trim();
+if (html.includes('__WEB_VERSION__')) {
+  html = html.split('__WEB_VERSION__').join(webVersion);
+} else {
+  console.warn('WARN: __WEB_VERSION__ placeholder not found');
+}
+
 const V = 'v=' + encodeURIComponent(buildId);
 
 const replacements = [
