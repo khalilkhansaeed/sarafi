@@ -3808,7 +3808,9 @@ if(CLIENT_OBJ){
       var installed=info&&info.build?parseInt(info.build,10):0;
 
       // Native/plugin changes require a new APK (in-app install, data preserved).
-      if(m.versionCode&&installed&&m.versionCode>installed){showNativeUpdate(m);return;}
+      // Web-only releases must never prompt for an APK, even if their versionCode
+      // is higher (e.g. a CI run that could not read the previous version.json).
+      if(m.nativeChanged===true&&m.versionCode&&installed&&m.versionCode>installed){showNativeUpdate(m);return;}
       if(!m.webVersion)return;
 
       // Up to date → clear any failure marker.
