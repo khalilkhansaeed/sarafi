@@ -52,7 +52,7 @@ a{color:var(--acc3);text-decoration:none}
 @media(min-width:861px){.app{padding-bottom:60px}body.on-ledger .app{padding-bottom:104px}}
 
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:26px}
-.brand{display:flex;align-items:center;gap:13px;min-width:0}
+.brand{display:flex;align-items:center;gap:13px;min-width:0;cursor:pointer}
 .logo{width:48px;height:48px;border-radius:15px;background:var(--grd);display:grid;place-items:center;font-family:var(--head);font-weight:800;font-size:24px;color:#fff;box-shadow:0 8px 20px rgba(79,70,229,.3),inset 0 1px 0 rgba(255,255,255,.35);flex:none}
 .brand h1{font-family:var(--head);font-size:19px;font-weight:700;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .brand p{font-size:11.5px;color:var(--mut);letter-spacing:.6px;text-transform:uppercase}
@@ -237,6 +237,25 @@ a{color:var(--acc3);text-decoration:none}
 #m-confirm .cfbody{text-align:center;margin-bottom:17px}
 #m-confirm .cfbody h3{font-family:var(--head);font-size:16px;font-weight:700;margin-bottom:6px}
 #m-confirm .cfbody p{font-size:12.5px;color:var(--mut);line-height:1.5}
+/* ---------- JSON backup ---------- */
+#m-backup .sheet{max-width:520px}
+#m-backup .bksub{font-size:12px;color:var(--mut);line-height:1.5;margin:-3px 0 13px}
+.bklist{display:flex;flex-direction:column;gap:7px;max-height:46vh;overflow-y:auto;padding:1px 2px 1px 1px}
+.bkrow{display:flex;align-items:center;gap:11px;width:100%;text-align:left;padding:10px 12px;border-radius:13px;border:1px solid var(--brd);background:var(--card2);transition:.2s;cursor:pointer}
+.bkrow:hover{border-color:var(--brd2)}
+.bkrow.active{border-color:rgba(79,70,229,.55);background:var(--accSoft2);box-shadow:inset 0 0 0 1px var(--accSoftBrd)}
+.bkrow .bkic{width:31px;height:31px;border-radius:9px;display:grid;place-items:center;background:var(--accSoft);color:var(--acc);flex:none}
+.bkrow .bkic svg{width:15px;height:15px}
+.bkrow.all .bkic{background:rgba(5,150,105,.12);color:var(--ok)}
+.bkrow .bkinfo{min-width:0;flex:1}
+.bkrow .bkinfo b{display:block;font-family:var(--head);font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bkrow .bkinfo span{display:block;font-size:11px;color:var(--mut);margin-top:1px}
+.bkrow .bkcheck{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--brd2);display:grid;place-items:center;flex:none;color:transparent;transition:.2s}
+.bkrow.active .bkcheck{border-color:var(--acc);background:var(--acc);color:#fff}
+.bkrow .bkcheck svg{width:10px;height:10px}
+#m-backup .bkempty{font-size:12px;color:var(--mut);text-align:center;padding:18px 10px}
+#m-backup .mfoot{margin-top:16px}
+@media(max-width:520px){.bklist{max-height:52vh}}
 /* ---------- login / setup lock ---------- */
 #loginLock,#setupLock{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
 #loginLock.show,#setupLock.show{display:flex}
@@ -669,6 +688,7 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
 .spinner{width:14px;height:14px;border-radius:50%;border:2px solid rgba(100,116,139,.3);border-top-color:var(--acc);animation:spinse .7s linear infinite;display:none;flex:none}
 .topctl .btn.loading .spinner{display:inline-block}
 .topctl .btn.loading>svg{display:none}
+@media(max-width:1050px){#backupBtn .lbl{display:none}}
 [data-bk].loading .spinner{display:inline-block}
 [data-bk].loading>svg{display:none}
 .syncbadge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:#f59e0b;color:#fff;font-size:10.5px;font-weight:800;display:grid;place-items:center;box-shadow:0 2px 7px rgba(245,158,11,.5);font-family:var(--head);line-height:1;z-index:2}
@@ -895,12 +915,15 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
 
 <div class="app">
   <header class="topbar">
-    <div class="brand">
+    <div class="brand" onclick="openBackup()" title="Download a JSON backup" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openBackup()}">
       <div class="logo">S</div>
       <div><h1 id="brandName">Sarafi</h1><p id="brandSub">Sami Jani Commission Accounts</p></div>
     </div>
     <div class="topctl">
       <button class="btn btn-g" id="themeBtn" onclick="toggleTheme()" title="Switch to dark mode"><svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
+      <button class="btn btn-g" id="backupBtn" onclick="openBackup()" title="Download a JSON backup of the data saved on this device">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span class="lbl">Backup</span>
+      </button>
       <button class="btn btn-g" id="fetchBtn" onclick="runFetch()" title="Pull latest data from Firestore">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><polyline points="16 16 12 20 8 16"/><line x1="12" y1="20" x2="12" y2="10"/></svg><span class="spinner"></span><span class="lbl">Fetch</span>
       </button>
@@ -1063,6 +1086,10 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
           <div class="ric" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
           <b>منافع</b><span>ګټه او تاوان</span>
         </div>
+        <div class="rptcard" onclick="openBackup()">
+          <div class="ric" style="background:linear-gradient(135deg,#475569,#94a3b8)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+          <b>بیک اپ</b><span>JSON — ټول یا یوه څانګه</span>
+        </div>
       </div>
       <div id="rptStage"></div>
     </section>
@@ -1083,6 +1110,21 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
   </div>
 </div>
 
+
+<div class="modal" id="m-backup">
+  <div class="ovl" onclick="closeModal('m-backup')"></div>
+  <div class="sheet">
+    <div class="mhead"><h3>Download JSON Backup</h3><button class="x" onclick="closeModal('m-backup')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <p class="bksub">Choose a branch or download everything. The counts below show the data currently saved on this device.</p>
+    <div class="bklist" id="bkList"></div>
+    <div class="mfoot" style="display:flex;gap:9px">
+      <button class="btn btn-g" onclick="closeModal('m-backup')">Cancel</button>
+      <button class="btn btn-p" id="bkDownloadBtn" onclick="downloadBackupJson()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span id="bkDownloadLbl">Download JSON</span>
+      </button>
+    </div>
+  </div>
+</div>
 
 <div class="modal" id="m-term">
   <div class="ovl" onclick="closeModal('m-term')"></div>
@@ -2384,7 +2426,7 @@ async function deliverBlob(name,blob,msg){
       throw err||new Error('save failed');
     }catch(e){
       console.error('pdf deliver failed',e);
-      toast('PDF save failed: '+((e&&(e.message||e.errorMessage))||e),'err');
+      toast('File save failed: '+((e&&(e.message||e.errorMessage))||e),'err');
       return;
     }
   }
@@ -2395,7 +2437,125 @@ async function deliverBlob(name,blob,msg){
     document.body.appendChild(aEl);aEl.click();aEl.remove();
     setTimeout(()=>URL.revokeObjectURL(url),4000);
   }catch(e){ console.error('download failed',e); }
-  toast(msg||'PDF ready');
+  toast(msg||'File ready');
+}
+
+/* ---------- JSON backup ---------- */
+let bkSel='All';
+function backupBranch(branchId){
+  if(!branchId||branchId==='All')return null;
+  return branches().find(b=>b.id===branchId)||null;
+}
+function backupAccountsFor(b){
+  const live=DATA.accounts.filter(a=>a&&a.deleted!==true);
+  if(!b)return live;
+  const bn=String(b.name||'');
+  return live.filter(a=>a.id===b.id||(bn&&String(a.branch||'')===bn));
+}
+function backupScope(b){
+  const accounts=backupAccountsFor(b);
+  const ids=new Set(accounts.map(a=>a.id));
+  const txns=DATA.txns.filter(t=>t&&t.deleted!==true&&ids.has(t.accountId));
+  return {accounts,txns};
+}
+function backupCountsFor(b){
+  const s=backupScope(b);
+  let openings=0;
+  s.accounts.forEach(a=>{
+    const m=DATA.ob[a.id];
+    if(m&&Object.keys(m).some(k=>k!=='branch'&&Number(m[k])))openings++;
+  });
+  return {accounts:s.accounts.length,transactions:s.txns.length,openingBalances:openings};
+}
+function bkCountText(c){
+  return c.accounts+' account'+(c.accounts===1?'':'s')+' · '+fmtN(c.transactions)+' transaction'+(c.transactions===1?'':'s');
+}
+function bkCheck(){
+  return '<span class="bkcheck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>';
+}
+function bkRow(id,label,counts,all){
+  const active=bkSel===id;
+  const ic=all
+    ?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>'
+    :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/><path d="M9 10h.01"/><path d="M15 10h.01"/></svg>';
+  return '<button type="button" class="bkrow'+(all?' all':'')+(active?' active':'')+'" data-id="'+esc(id)+'" onclick="selectBackupBranch(this.dataset.id)" title="'+esc(label)+'">'
+    +'<span class="bkic">'+ic+'</span>'
+    +'<span class="bkinfo"><b>'+esc(label)+'</b><span>'+bkCountText(counts)+'</span></span>'
+    +bkCheck()+'</button>';
+}
+function renderBackupOptions(){
+  const el=$('#bkList');if(!el)return;
+  if(bkSel!=='All'&&!backupBranch(bkSel))bkSel='All';
+  const hasData=!!(DATA.accounts.length||DATA.txns.length);
+  if(!hasData){
+    el.innerHTML='<div class="bkempty">No data saved on this device yet. Tap Fetch to update first.</div>';
+  }else{
+    let html=bkRow('All','All branches',backupCountsFor(null),true);
+    branches().forEach(b=>{html+=bkRow(b.id,String(b.name||b.id),backupCountsFor(b),false)});
+    el.innerHTML=html;
+  }
+  const btn=$('#bkDownloadBtn');if(btn)btn.disabled=!hasData;
+}
+function openBackup(){
+  bkSel='All';
+  renderBackupOptions();
+  openModal('m-backup');
+}
+function selectBackupBranch(id){
+  bkSel=id||'All';
+  renderBackupOptions();
+}
+function buildBackupPayload(){
+  const b=bkSel==='All'?null:backupBranch(bkSel);
+  if(bkSel!=='All'&&!b)throw new Error('Branch not found');
+  const s=backupScope(b);
+  const ob={};
+  const obIds=b?new Set(s.accounts.map(a=>a.id)):null;
+  Object.keys(DATA.ob).forEach(id=>{
+    if(obIds&&!obIds.has(id))return;
+    const m=DATA.ob[id];if(!m)return;
+    const clean={};
+    Object.keys(m).forEach(k=>{
+      if(k==='branch')return;
+      const v=Number(m[k]);
+      if(v)clean[k]=v;
+    });
+    if(Object.keys(clean).length)ob[id]=clean;
+  });
+  return {
+    app:'Sarafi',
+    brand:bizName(),
+    subtitle:bizSub()||'',
+    format:'sarafi-backup',
+    version:1,
+    exportedAt:new Date().toISOString(),
+    scope:{type:b?'branch':'all',branchId:b?b.id:null,branchName:b?String(b.name||''):null},
+    counts:{accounts:s.accounts.length,transactions:s.txns.length,openingBalances:Object.keys(ob).length},
+    meta:{build:BUILD_ID,lastFetched:(function(){try{return localStorage.getItem('sarafi_lastFetched')||null}catch(e){return null}})()},
+    accounts:s.accounts,
+    transactions:s.txns,
+    openingBalances:ob
+  };
+}
+async function downloadBackupJson(){
+  if(!DATA.accounts.length&&!DATA.txns.length){toast('No data to back up yet','err');return}
+  const btn=$('#bkDownloadBtn'),lbl=$('#bkDownloadLbl');
+  try{
+    if(btn)btn.disabled=true;
+    if(lbl)lbl.textContent='Preparing…';
+    const payload=buildBackupPayload();
+    const b=payload.scope.type==='branch'?backupBranch(payload.scope.branchId):null;
+    const fname=(b?'sarafi-backup-'+safeName(b.name||b.id):'sarafi-backup-all')+'-'+todayIso()+'.json';
+    const json=JSON.stringify(payload,null,2);
+    closeModal('m-backup');
+    await deliverBlob(fname,new Blob([json],{type:'application/json'}),'Backup ready — '+payload.counts.accounts+' accounts · '+payload.counts.transactions+' transactions');
+  }catch(e){
+    console.error('backup failed',e);
+    toast('Backup failed: '+((e&&e.message)||e),'err');
+  }finally{
+    if(btn)btn.disabled=false;
+    if(lbl)lbl.textContent='Download JSON';
+  }
 }
 /* ---------- PDF export (pdf-lib + fontkit, real Arabic/Pashto shaping) ---------- */
 function pdfLibsReady(){return !!(window.PDFLib&&window.fontkit)}
@@ -3474,6 +3634,7 @@ window.runFetch=runFetch;window.openAllActivity=openAllActivity;
 window.openAllAccountsReport=openAllAccountsReport;window.closeAllAccountsReport=closeAllAccountsReport;window.toggleAllRptSort=toggleAllRptSort;window.renderAllAccountsReport=renderAllAccountsReport;
 window.openAccReport=openAccReport;window.closeAccReport=closeAccReport;window.toggleRptSort=toggleRptSort;window.renderAccReport=renderAccReport;
 window.toggleTheme=toggleTheme;
+window.openBackup=openBackup;window.selectBackupBranch=selectBackupBranch;window.downloadBackupJson=downloadBackupJson;
 window.doLogout=doLogout;window.closeConfirm=closeConfirm;
 window.renderRoz=renderRoz;window.clearRozPage=clearRozPage;window.openRozBalance=openRozBalance;window.toggleRozSort=toggleRozSort;window.downloadRozPdf=downloadRozPdf;window.downloadRozBalPdf=downloadRozBalPdf;
 window.openRptSub=openRptSub;window.closeRptSub=closeRptSub;window.setRptKhatCur=setRptKhatCur;window.setRptMnChip=setRptMnChip;window.renderRptKhat=renderRptKhat;window.renderRptBanks=renderRptBanks;window.renderRptManafi=renderRptManafi;
