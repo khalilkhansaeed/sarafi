@@ -257,25 +257,23 @@ a{color:var(--acc3);text-decoration:none}
 #m-backup .mfoot{margin-top:16px}
 @media(max-width:520px){.bklist{max-height:52vh}}
 /* ---------- login / setup lock ---------- */
-#loginLock,#setupLock{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
-#loginLock.show,#setupLock.show{display:flex}
-#loginLock .lovl,#setupLock .lovl{position:absolute;inset:0;background:rgba(15,23,42,.5);backdrop-filter:blur(10px)}
-[data-theme="dark"] #loginLock .lovl,[data-theme="dark"] #setupLock .lovl{background:rgba(3,6,15,.72)}
-#loginLock .lcard,#setupLock .lcard{position:relative;width:100%;max-width:390px;background:var(--card);border:1px solid var(--brd);border-radius:22px;padding:28px 22px 20px;box-shadow:0 30px 80px rgba(15,23,42,.4);animation:lpop .45s cubic-bezier(.34,1.56,.64,1)}
+#setupLock{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+#setupLock.show{display:flex}
+#setupLock .lovl{position:absolute;inset:0;background:rgba(15,23,42,.5);backdrop-filter:blur(10px)}
+[data-theme="dark"] #setupLock .lovl{background:rgba(3,6,15,.72)}
+#setupLock .lcard{position:relative;width:100%;max-width:390px;background:var(--card);border:1px solid var(--brd);border-radius:22px;padding:28px 22px 20px;box-shadow:0 30px 80px rgba(15,23,42,.4);animation:lpop .45s cubic-bezier(.34,1.56,.64,1)}
 @keyframes lpop{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:none}}
-#loginLock .llogo,#setupLock .llogo{width:58px;height:58px;border-radius:17px;background:var(--grd);color:#fff;display:grid;place-items:center;font-family:var(--head);font-size:27px;font-weight:800;margin:0 auto 15px;box-shadow:0 10px 26px rgba(79,70,229,.35)}
-#loginLock .lhead,#setupLock .lhead{text-align:center;margin-bottom:19px}
-#loginLock .lhead h2,#setupLock .lhead h2{font-family:var(--head);font-size:19px;font-weight:800;margin-bottom:5px}
-#loginLock .lhead p,#setupLock .lhead p{font-size:12px;color:var(--mut);line-height:1.5}
-#loginLock .lerr,#setupLock .lerr{display:none;margin-bottom:12px;padding:9px 12px;border-radius:11px;background:rgba(251,113,133,.12);border:1px solid rgba(251,113,133,.35);color:var(--bad);font-size:12px;font-weight:600;text-align:center;line-height:1.4}
-#loginLock .lerr.show,#setupLock .lerr.show{display:block}
-#loginLock .field input,#setupLock .field input{direction:ltr;text-align:left}
-#loginLock .lbtn,#setupLock .lbtn{width:100%;margin-top:4px;padding:12px}
-#loginLock .lbtn:disabled,#setupLock .lbtn:disabled{opacity:.65;cursor:default;transform:none}
-#loginLock .lbrand,#setupLock .lbrand{text-align:center;font-size:10.5px;color:var(--mut2);margin-top:15px;letter-spacing:.4px}
+#setupLock .llogo{width:58px;height:58px;border-radius:17px;background:var(--grd);color:#fff;display:grid;place-items:center;font-family:var(--head);font-size:27px;font-weight:800;margin:0 auto 15px;box-shadow:0 10px 26px rgba(79,70,229,.35)}
+#setupLock .lhead{text-align:center;margin-bottom:19px}
+#setupLock .lhead h2{font-family:var(--head);font-size:19px;font-weight:800;margin-bottom:5px}
+#setupLock .lhead p{font-size:12px;color:var(--mut);line-height:1.5}
+#setupLock .lerr{display:none;margin-bottom:12px;padding:9px 12px;border-radius:11px;background:rgba(251,113,133,.12);border:1px solid rgba(251,113,133,.35);color:var(--bad);font-size:12px;font-weight:600;text-align:center;line-height:1.4}
+#setupLock .lerr.show{display:block}
+#setupLock .field input{direction:ltr;text-align:left}
+#setupLock .lbtn{width:100%;margin-top:4px;padding:12px}
+#setupLock .lbtn:disabled{opacity:.65;cursor:default;transform:none}
+#setupLock .lbrand{text-align:center;font-size:10.5px;color:var(--mut2);margin-top:15px;letter-spacing:.4px}
 #setupLock .lhelp{text-align:center;font-size:11px;color:var(--mut2);margin-top:14px;line-height:1.6}
-#loginLock .lswitch{display:block;width:100%;margin-top:14px;background:none;border:none;color:var(--mut);font-size:11px;font-weight:600;cursor:pointer;padding:4px;transition:.2s}
-#loginLock .lswitch:hover{color:var(--acc)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:480px){.grid2{grid-template-columns:1fr}}
 .grid2.datetime{grid-template-columns:1fr 1fr;gap:8px}
@@ -902,6 +900,46 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
 .sumcard .flag.red{background:rgba(225,29,72,.09);color:var(--bad);border:1px solid rgba(225,29,72,.3)}
 .sumcard .flag.green{background:rgba(5,150,105,.1);color:var(--ok);border:1px solid rgba(5,150,105,.3)}
 
+/* ---------- branch / super admin picker ---------- */
+#branchLock{position:fixed;inset:0;z-index:210;display:none;align-items:center;justify-content:center;padding:20px}
+#branchLock.show{display:flex}
+#branchLock .lovl{position:absolute;inset:0;background:rgba(15,23,42,.5);backdrop-filter:blur(10px)}
+[data-theme="dark"] #branchLock .lovl{background:rgba(3,6,15,.72)}
+#branchLock .lcard{position:relative;width:100%;max-width:430px;background:var(--card);border:1px solid var(--brd);border-radius:22px;padding:26px 20px 18px;box-shadow:0 30px 80px rgba(15,23,42,.4);animation:lpop .45s cubic-bezier(.34,1.56,.64,1);max-height:92vh;overflow-y:auto}
+#branchLock .llogo{width:52px;height:52px;border-radius:15px;background:var(--grd);color:#fff;display:grid;place-items:center;font-family:var(--head);font-size:24px;font-weight:800;margin:0 auto 13px;box-shadow:0 10px 26px rgba(79,70,229,.35)}
+#branchLock .lhead{text-align:center;margin-bottom:15px}
+#branchLock .lhead h2{font-family:var(--head);font-size:18px;font-weight:800;margin-bottom:5px}
+#branchLock .lhead p{font-size:12px;color:var(--mut);line-height:1.5}
+#branchLock .lerr{display:none;margin-bottom:12px;padding:9px 12px;border-radius:11px;background:rgba(251,113,133,.12);border:1px solid rgba(251,113,133,.35);color:var(--bad);font-size:12px;font-weight:600;text-align:center;line-height:1.4}
+#branchLock .lerr.show{display:block}
+#branchLock .field input{direction:ltr;text-align:left}
+#branchLock .lbtn{width:100%;margin-top:4px;padding:12px}
+#branchLock .lbtn:disabled{opacity:.65;cursor:default;transform:none}
+#branchLock .lbrand{text-align:center;font-size:10.5px;color:var(--mut2);margin-top:14px;letter-spacing:.4px}
+#branchLock .lswitch{display:block;width:100%;margin-top:12px;background:none;border:none;color:var(--mut);font-size:11px;font-weight:600;cursor:pointer;padding:4px;transition:.2s}
+#branchLock .lswitch:hover{color:var(--acc)}
+.brpick{display:flex;flex-direction:column;gap:8px;margin:4px 0 2px;max-height:46vh;overflow-y:auto;padding:2px}
+.brpick .brpickbtn{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--card2);border:1px solid var(--brd);border-radius:13px;padding:11px 12px;cursor:pointer;transition:.18s;font:inherit;color:var(--txt)}
+.brpick .brpickbtn:hover,.brpick .brpickbtn:active{border-color:rgba(79,70,229,.45);background:var(--accSoft)}
+.brpick .brpickbtn.super{border-color:rgba(202,138,4,.4);background:rgba(202,138,4,.07)}
+.brpick .brpic{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:var(--accSoft);color:var(--acc);font-size:16px;flex:none}
+.brpick .brpickbtn.super .brpic{background:rgba(202,138,4,.15);color:#b45309}
+.brpick .brpinfo{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.brpick .brpinfo b{font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brpick .brpinfo span{font-size:10.5px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr;text-align:left}
+.brpick .brparrow{color:var(--mut2);font-size:19px;line-height:1;flex:none}
+.brpempty{text-align:center;padding:18px 8px;color:var(--mut);font-size:12px;line-height:1.6}
+#branchWho{display:flex;align-items:center;gap:10px;background:var(--card2);border:1px solid var(--brd);border-radius:13px;padding:10px 12px;margin-bottom:14px}
+#branchWho .whoic{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:var(--accSoft);color:var(--acc);font-size:16px;flex:none}
+#branchWho .whoinfo{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+#branchWho .whoinfo b{font-size:13.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#branchWho .whoinfo span{font-size:10.5px;color:var(--mut)}
+.curbranch{display:flex;align-items:center;gap:7px;padding:6px 11px;border-radius:99px;background:var(--card);border:1px solid var(--brd);font-size:11.5px;font-weight:700;max-width:230px;white-space:nowrap}
+.curbranch .ico{font-size:12px;flex:none}
+.curbranch b{overflow:hidden;text-overflow:ellipsis;max-width:130px}
+.curbranch .mail{font-size:10px;font-weight:500;color:var(--mut);overflow:hidden;text-overflow:ellipsis;max-width:110px;direction:ltr}
+@media(max-width:700px){.curbranch .mail{display:none}.curbranch b{max-width:90px}}
+#bizChips .chip-f.locked{cursor:default;background:var(--accSoft);color:var(--acc);border-color:var(--accSoftBrd)}
 
 [data-theme="dark"] .sumcard{background:var(--card2)}
 [data-theme="dark"] .sumcard .sg{background:rgba(255,255,255,.03)}
@@ -920,6 +958,7 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
       <div><h1 id="brandName">Sarafi</h1><p id="brandSub">Sami Jani Commission Accounts</p></div>
     </div>
     <div class="topctl">
+      <span class="curbranch" id="curBranchBadge" title="Signed in as"><span class="ico" id="curBranchRole">🏢</span><b id="curBranchName">—</b><span class="mail" id="curBranchMail"></span></span>
       <button class="btn btn-g" id="themeBtn" onclick="toggleTheme()" title="Switch to dark mode"><svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
       <button class="btn btn-g" id="backupBtn" onclick="openBackup()" title="Download a JSON backup of the data saved on this device">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span class="lbl">Backup</span>
@@ -927,8 +966,8 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
       <button class="btn btn-g" id="fetchBtn" onclick="runFetch()" title="Pull latest data from Firestore">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><polyline points="16 16 12 20 8 16"/><line x1="12" y1="20" x2="12" y2="10"/></svg><span class="spinner"></span><span class="lbl">Fetch</span>
       </button>
-      <button class="btn btn-g" id="logoutBtn" onclick="doLogout()" title="Sign out of Sarafi">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span class="lbl">Sign Out</span>
+      <button class="btn btn-g" id="logoutBtn" onclick="doLogout()" title="Switch branch or sign out">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span class="lbl">Switch</span>
       </button>
     </div>
     <nav class="nav" id="topnav">
@@ -1175,18 +1214,25 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
   </form>
 </div>
 
-<div id="loginLock">
+<div id="branchLock">
   <div class="lovl"></div>
-  <form class="lcard" id="loginForm" autocomplete="on">
-    <div class="llogo">S</div>
-    <div class="lhead"><h2 id="loginTitle">Sarafi</h2><p id="loginSub">Sami Jani Commission Accounts</p></div>
-    <div class="lerr" id="loginErr"></div>
-    <div class="field"><label>Email</label><input id="loginEmail" type="email" autocomplete="username" placeholder="you@example.com" required></div>
-    <div class="field"><label>Password</label><input id="loginPass" type="password" autocomplete="current-password" placeholder="••••••••" required></div>
-    <button class="btn btn-p lbtn" id="loginBtn" type="submit">Sign In</button>
-    <button class="lswitch" type="button" onclick="changeAccessKey()">Use a different access key</button>
+  <div class="lcard">
+    <div class="llogo" id="branchLogo">S</div>
+    <div class="lhead"><h2 id="branchTitle">Choose an account</h2><p id="branchSub">Sign in as a branch or as the super admin.</p></div>
+    <div class="lerr" id="branchErr"></div>
+    <div id="branchStepList">
+      <div class="brpick" id="branchList"></div>
+      <button class="lswitch" type="button" onclick="changeAccessKey()">Use a different access key</button>
+    </div>
+    <div id="branchStepLogin" style="display:none">
+      <button class="lswitch" type="button" style="margin:0 0 12px;text-align:left;width:auto" onclick="branchPickerBack()">← Back to accounts</button>
+      <div id="branchWho"><span class="whoic" id="branchWhoIc">🏢</span><span class="whoinfo"><b id="branchLoginName">—</b><span id="branchLoginKind">Branch</span></span></div>
+      <div class="field"><label>Email</label><input id="branchEmail" type="email" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="you@example.com" onkeydown="if(event.key==='Enter'){event.preventDefault();var p=document.getElementById('branchPass');if(p)p.focus()}"></div>
+      <div class="field"><label>Password</label><input id="branchPass" type="password" autocomplete="current-password" placeholder="••••••••" onkeydown="if(event.key==='Enter'){event.preventDefault();doBranchLogin()}"></div>
+      <button class="btn btn-p lbtn" id="branchBtn" type="button" onclick="doBranchLogin()">Sign In</button>
+    </div>
     <div class="lbrand" id="buildStamp">Sarafi · Sami Jani Commission Accounts</div>
-  </form>
+  </div>
 </div>
 
 <div class="toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span id="toastMsg"></span></div>
@@ -1276,17 +1322,237 @@ function applyBranding(c){
     document.title=name+(sub?' — '+sub:'');
     const lg=document.querySelector('.logo');if(lg)lg.textContent=name.charAt(0).toUpperCase();
     const bn=$('#brandName');if(bn)bn.textContent=name;
-    const lt=$('#loginTitle');if(lt)lt.textContent=name;
+    const bl=$('#branchLogo');if(bl)bl.textContent=name.charAt(0).toUpperCase();
     const st=$('#setupTitle');if(st)st.textContent=name+' Setup';
   }
   if(sub){
     const bs=$('#brandSub');if(bs)bs.textContent=sub;
-    const ls=$('#loginSub');if(ls)ls.textContent=sub;
+    const ls=$('#branchSub');if(ls)ls.textContent=sub;
   }
 }
 
-/* ---------- authentication gate ---------- */
-const AUTH_KEY='sarafi_auth';
+/* ---------- session / branch access gate ---------- */
+const SESSION_KEY='sarafi_session_v2';
+const REG_KEY='sarafi_branch_registry';
+const CACHE_SCOPE_KEY='sarafi_cache_scope';
+let SESSION=null;
+let REG={branches:[],superAdmin:null};
+let _pickedBranch=null;
+let _authPromise=null;
+
+function readJSON(k){try{const r=localStorage.getItem(k);return r?JSON.parse(r):null}catch(e){return null}}
+function getSession(){
+  if(SESSION)return SESSION;
+  const s=readJSON(SESSION_KEY);
+  if(s&&(s.mode==='branch'||s.mode==='super')&&s.branchName)SESSION=s;
+  return SESSION;
+}
+function saveSession(s){SESSION=s;try{localStorage.setItem(SESSION_KEY,JSON.stringify(s))}catch(e){}}
+function clearSession(){SESSION=null;try{localStorage.removeItem(SESSION_KEY)}catch(e){}}
+const isSuperSession=()=>{const s=getSession();return !!s&&s.mode==='super'};
+const isBranchSession=()=>{const s=getSession();return !!s&&s.mode==='branch'};
+function scopeKey(){const s=getSession();if(!s)return '';return s.mode==='super'?'__all__':String(s.branchName||'')}
+function lfKey(){return 'sarafi_lastFetched::'+scopeKey()}
+
+function readRegCache(){
+  const r=readJSON(REG_KEY);
+  if(!r||!Array.isArray(r.branches))return null;
+  return {branches:r.branches.filter(b=>b&&String(b.name||'').trim()),superAdmin:(r.superAdmin&&String(r.superAdmin.name||'').trim())?r.superAdmin:null,at:r.at||0};
+}
+function saveRegCache(){try{localStorage.setItem(REG_KEY,JSON.stringify({branches:REG.branches,superAdmin:REG.superAdmin,at:Date.now()}))}catch(e){}}
+function applyReg(reg){REG={branches:(reg&&reg.branches)||[],superAdmin:(reg&&reg.superAdmin)||null}}
+
+// Anonymous auth is only a Firestore credential — the real login is the branch
+// email/password stored on the branch account document.
+function ensureReadAuth(){
+  if(!_authPromise)_authPromise=(async()=>{
+    try{
+      if(!window.firebase||!firebase.auth)return false;
+      const au=firebase.auth();
+      if(au.currentUser)return true;
+      if(typeof au.signInAnonymously!=='function')return false;
+      await au.signInAnonymously();
+      return true;
+    }catch(e){console.warn('anonymous auth unavailable',e);_authPromise=null;return false}
+  })();
+  return _authPromise;
+}
+
+async function loadBranchRegistry(force){
+  let docs=null;
+  const cachedReg=readRegCache();
+  if(fdb){
+    await ensureReadAuth();
+    try{docs=await readAllDocs('accounts',q=>q.where('type','==','branch'))}
+    catch(e){console.warn('branch registry fetch failed',e)}
+  }
+  if(!docs){
+    if(force)throw new Error('Could not load the branch list. Check your connection.');
+    return cachedReg||{branches:[],superAdmin:null};
+  }
+  // An empty list is almost always an offline/local-cache read. Never let it
+  // erase a registry we already know about.
+  if(!docs.length&&cachedReg)return cachedReg;
+  let branches=docs.filter(a=>a&&a.deleted!==true&&String(a.name||'').trim()&&a.isSuperAdmin!==true);
+  let sup=docs.find(a=>a&&a.deleted!==true&&a.isSuperAdmin===true)||null;
+  // Older projects keep the super admin pointer in settings/superadmin.
+  if(!sup&&fdb){
+    try{
+      const snap=await fdb.collection('settings').doc('superadmin').get();
+      if(snap.exists){
+        const ptr=snap.data()||{},id=ptr.accountId;
+        if(id){
+          let a=docs.find(x=>x.id===id)||null;
+          if(!a){const d=await fdb.collection('accounts').doc(id).get();if(d.exists)a=Object.assign({id:d.id},d.data())}
+          if(a&&a.deleted!==true){a=Object.assign({},a,{isSuperAdmin:true});sup=a;branches=branches.filter(b=>b.id!==a.id)}
+        }
+      }
+    }catch(e){}
+  }
+  branches.sort((a,b)=>String(a.name||'').localeCompare(String(b.name||'')));
+  applyReg({branches,superAdmin:sup});
+  saveRegCache();
+  return {branches,superAdmin:sup};
+}
+
+function setBranchErr(msg){const e=$('#branchErr');if(!e)return;if(msg){e.textContent=msg;e.classList.add('show')}else{e.textContent='';e.classList.remove('show')}}
+
+function showBranchPicker(){
+  const l=$('#branchLock');if(!l)return;
+  applyBuildStamp();
+  branchPickerBack();
+  l.classList.add('show');document.body.classList.add('locked');
+  const cached=readRegCache();
+  if(cached)applyReg(cached);
+  renderPickerList();
+  ensureReadAuth()
+    .then(()=>loadBranchRegistry())
+    .then(()=>{if($('#branchLock')&&$('#branchLock').classList.contains('show'))renderPickerList()})
+    .catch(()=>{
+      if(!REG.branches.length&&!REG.superAdmin)setBranchErr('Could not load the account list. Check your connection and try again.');
+    });
+}
+function hideBranchPicker(){
+  const l=$('#branchLock');if(!l)return;
+  l.classList.remove('show');setBranchErr('');
+  if(!$$('.modal.show').length)document.body.classList.remove('locked');
+}
+function renderPickerList(){
+  const el=$('#branchList');if(!el)return;
+  const all=[];
+  if(REG.superAdmin)all.push(REG.superAdmin);
+  REG.branches.forEach(b=>all.push(b));
+  el.innerHTML=all.length?all.map(b=>{
+    const sup=b.isSuperAdmin===true;
+    return '<button type="button" class="brpickbtn'+(sup?' super':'')+'" data-id="'+esc(b.id)+'" onclick="pickBranch(this.dataset.id)">'
+      +'<span class="brpic">'+(sup?'👑':'🏢')+'</span>'
+      +'<span class="brpinfo"><b>'+esc(b.name||'')+'</b><span>'+(sup?'Super Admin · all branches':esc(b.email||'No email set'))+'</span></span>'
+      +'<span class="brparrow">›</span></button>';
+  }).join(''):'<div class="brpempty">No branches found yet. Ask your super admin to create a branch first.</div>';
+}
+function pickBranch(id){
+  const all=REG.branches.concat(REG.superAdmin?[REG.superAdmin]:[]);
+  const b=all.find(x=>String(x.id)===String(id));if(!b)return;
+  _pickedBranch=b;
+  const sup=b.isSuperAdmin===true;
+  const list=$('#branchStepList'),login=$('#branchStepLogin');
+  if(list)list.style.display='none';
+  if(login)login.style.display='block';
+  $('#branchLoginName').textContent=b.name||'';
+  $('#branchLoginKind').textContent=sup?'Super Admin — all branches':'Branch account';
+  $('#branchWhoIc').textContent=sup?'👑':'🏢';
+  $('#branchEmail').value=b.email||'';
+  $('#branchPass').value='';
+  setBranchErr('');
+  setTimeout(()=>{try{(b.email?$('#branchPass'):$('#branchEmail')).focus()}catch(e){}},140);
+}
+function branchPickerBack(){
+  const list=$('#branchStepList'),login=$('#branchStepLogin');
+  if(list)list.style.display='block';
+  if(login)login.style.display='none';
+  _pickedBranch=null;setBranchErr('');
+}
+async function doBranchLogin(){
+  const b=_pickedBranch;if(!b)return;
+  const email=((($('#branchEmail')||{}).value)||'').trim().toLowerCase();
+  const pass=(($('#branchPass')||{}).value)||'';
+  const btn=$('#branchBtn');
+  const wantEmail=String(b.email||'').trim().toLowerCase();
+  const wantPass=String(b.password||'');
+  if(!wantEmail||!wantPass){setBranchErr('This '+(b.isSuperAdmin?'super admin account':'branch')+' has no email and password set. Ask the owner to add them.');return}
+  if(email!==wantEmail||pass!==wantPass){setBranchErr('Wrong email or password.');return}
+  if(btn){btn.disabled=true;btn.textContent='Signing in...'}
+  const nextScope=b.isSuperAdmin?'__all__':String(b.name||'');
+  let prevScope='';try{prevScope=localStorage.getItem(CACHE_SCOPE_KEY)||''}catch(e){}
+  if(prevScope!==nextScope)await wipeDataCache();
+  try{localStorage.setItem(CACHE_SCOPE_KEY,nextScope)}catch(e){}
+  saveSession({
+    mode:b.isSuperAdmin?'super':'branch',
+    branchId:b.id,branchName:String(b.name||''),email:b.email||'',
+    activeChip:b.isSuperAdmin?'All':String(b.id||''),
+    activeBranch:b.isSuperAdmin?'':String(b.name||''),
+    at:Date.now()
+  });
+  setTimeout(()=>{try{location.reload()}catch(e){}},140);
+}
+function applySessionScope(){
+  const s=getSession();if(!s)return;
+  if(s.mode==='super'){branchSel=s.activeChip||'All';branchName=s.activeBranch||'';}
+  else{branchSel=s.branchId||'All';branchName=s.branchName||'';}
+}
+function updateSessionBadge(){
+  const s=getSession();const el=$('#curBranchBadge');if(!el||!s)return;
+  const nm=$('#curBranchName'),rl=$('#curBranchRole'),ml=$('#curBranchMail');
+  if(rl)rl.textContent=s.mode==='super'?'👑':'🏢';
+  if(nm)nm.textContent=s.mode==='super'?(branchName||'Super Admin'):(s.branchName||'Branch');
+  if(ml)ml.textContent=s.email||'';
+  el.title=(s.mode==='super'?'Super admin':'Branch')+': '+(s.branchName||'')+(s.email?' · '+s.email:'');
+}
+async function startWithSession(){
+  applySessionScope();
+  hideBranchPicker();
+  updateSessionBadge();
+  await startApp();
+  loadBranchRegistry().then(reg=>{
+    const s=getSession();if(!s||!reg)return;
+    let stale=false;
+    if(s.mode==='branch'&&reg.branches.length){
+      stale=!reg.branches.some(b=>String(b.id)===String(s.branchId)||String(b.name||'')===String(s.branchName));
+    }else if(s.mode==='super'&&reg.superAdmin){
+      stale=String(reg.superAdmin.id)!==String(s.branchId);
+    }
+    if(stale){
+      clearSession();
+      try{localStorage.removeItem(CACHE_SCOPE_KEY)}catch(e){}
+      wipeDataCache().then(()=>{try{location.reload()}catch(e){}});
+    }
+  }).catch(()=>{});
+}
+function bootGate(){
+  wireSetup();
+  const co=getClientConfig();
+  if(!co){showSetup();return}
+  applyBranding(co);
+  try{initFirebase(co.cfg)}catch(e){console.warn('firebase init error',e)}
+  const s=getSession();
+  const reg=readRegCache();
+  if(reg)applyReg(reg);
+  if(s){
+    // Reject a session whose branch/super admin no longer exists (when the
+    // cached registry can answer that question).
+    let stale=false;
+    if(s.mode==='branch'){
+      if(reg&&(REG.branches.length||REG.superAdmin))stale=!REG.branches.some(b=>String(b.id)===String(s.branchId)||String(b.name||'')===String(s.branchName));
+      if(!stale&&REG.superAdmin&&String(REG.superAdmin.id)===String(s.branchId))stale=true;
+    }else if(reg&&reg.superAdmin&&String(reg.superAdmin.id)!==String(s.branchId)){
+      stale=true;
+    }
+    if(stale){clearSession();showBranchPicker();return}
+    startWithSession();
+    return;
+  }
+  showBranchPicker();
+}
 function buildStampText(){
   const ok=pdfLibsReady();
   const id=/^__/.test(BUILD_ID)?'dev':BUILD_ID;
@@ -1294,19 +1560,6 @@ function buildStampText(){
 }
 function applyBuildStamp(){
   const el=$('#buildStamp');if(el)el.textContent=buildStampText();
-}
-function isLoggedIn(){try{return localStorage.getItem(AUTH_KEY)==='1'}catch(e){return false}}
-function setLoginErr(msg){const e=$('#loginErr');if(!e)return;if(msg){e.textContent=msg;e.classList.add('show')}else{e.textContent='';e.classList.remove('show')}}
-function showLogin(){
-  const l=$('#loginLock');if(!l)return;
-  applyBuildStamp();
-  l.classList.add('show');document.body.classList.add('locked');
-  const i=$('#loginEmail');if(i)setTimeout(()=>{try{if(!i.value)i.focus()}catch(e){}},250);
-}
-function hideLogin(){
-  const l=$('#loginLock');if(!l)return;
-  l.classList.remove('show');setLoginErr('');
-  if(!$$('.modal.show').length)document.body.classList.remove('locked');
 }
 function setSetupErr(msg){const e=$('#setupErr');if(!e)return;if(msg){e.textContent=msg;e.classList.add('show')}else{e.textContent='';e.classList.remove('show')}}
 function showSetup(){
@@ -1346,56 +1599,36 @@ async function doConnect(ev){
   }
 }
 function changeAccessKey(){
-  openConfirm('Change access key?','You will need to sign in again after connecting a different account.',()=>{
-    try{localStorage.removeItem(CLIENT_CFG_KEY);localStorage.removeItem(AUTH_KEY)}catch(e){}
-    setTimeout(()=>{try{location.reload()}catch(e){}},120);
+  openConfirm('Change access key?','This device will forget the current account and branch session. You will need the access key again.',async()=>{
+    clearSession();
+    try{
+      [CLIENT_CFG_KEY,SESSION_KEY,REG_KEY,CACHE_SCOPE_KEY].forEach(k=>localStorage.removeItem(k));
+      localStorage.removeItem('sarafi_lastFetched');
+    }catch(e){}
+    await wipeDataCache();
+    try{location.reload()}catch(e){}
   },'Change');
 }
 function wireSetup(){
   const f=$('#setupForm');if(f)f.addEventListener('submit',doConnect);
 }
-function authErrMsg(e){
-  const c=String((e&&e.code)||'');
-  if(c==='auth/wrong-password'||c==='auth/invalid-credential'||c==='auth/invalid-login-credentials')return 'Wrong email or password.';
-  if(c==='auth/user-not-found')return 'No account found for this email.';
-  if(c==='auth/invalid-email')return 'That email address is not valid.';
-  if(c==='auth/too-many-requests')return 'Too many attempts. Please try again later.';
-  if(c==='auth/network-request-failed')return 'Network error. Check your connection.';
-  if(c==='auth/user-disabled')return 'This account has been disabled.';
-  return (e&&e.message)||'Sign in failed. Please try again.';
-}
-async function doLogin(ev){
-  if(ev&&ev.preventDefault)ev.preventDefault();
-  const emailEl=$('#loginEmail'),passEl=$('#loginPass'),btn=$('#loginBtn');
-  const email=((emailEl&&emailEl.value)||'').trim(),pass=(passEl&&passEl.value)||'';
-  if(!email||!pass){setLoginErr('Enter your email and password.');return}
-  setLoginErr('');if(btn){btn.disabled=true;btn.textContent='Signing in...'}
+function wipeDataCache(){
+  DATA={accounts:[],txns:[],ob:{}};
+  _IX=null;_sCK=null;_sC=null;
+  let jobs=[];
+  try{jobs=[idbClear('accounts'),idbClear('txns'),idbClear('ob')]}catch(e){}
   try{
-    if(!firebase||!firebase.auth)throw new Error('Authentication is unavailable. Check your connection.');
-    await firebase.auth().signInWithEmailAndPassword(email,pass);
-  }catch(e){
-    if(btn){btn.disabled=false;btn.textContent='Sign In'}
-    setLoginErr(authErrMsg(e));
-    return;
-  }
-  try{localStorage.setItem(AUTH_KEY,'1')}catch(e){}
-  if(passEl)passEl.value='';
-  if(btn){btn.disabled=false;btn.textContent='Sign In'}
-  hideLogin();
-  startApp();
+    for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k&&k.indexOf('sarafi_lastFetched')===0)localStorage.removeItem(k)}
+  }catch(e){}
+  return Promise.all(jobs).catch(()=>{});
 }
 function doLogout(){
-  openConfirm('Sign out?','Are you sure you want to sign out of Sarafi?',signOutNow,'Sign Out');
-}
-function wipeWebStorage(){try{localStorage.clear()}catch(e){}try{sessionStorage.clear()}catch(e){}}
-function wipeIDB(){return new Promise(res=>{try{if(_idb){try{_idb.close()}catch(e){}_idb=null}const rq=indexedDB.deleteDatabase('sarafi_db');rq.onsuccess=rq.onerror=rq.onblocked=()=>res()}catch(e){res()}})}
-function wipeCaches(){try{if(window.caches&&caches.keys)return caches.keys().then(k=>Promise.all(k.map(x=>caches.delete(x)))).catch(()=>{})}catch(e){}return Promise.resolve()}
-function wipeFirebase(){try{const apps=(window.firebase&&firebase.apps)||[];let auth=null;try{auth=firebase.auth?firebase.auth():null}catch(e){}const p=auth?auth.signOut().catch(()=>{}):Promise.resolve();return p.then(()=>Promise.all(apps.map(a=>{try{return a.delete()}catch(e){return null}}))).catch(()=>{})}catch(e){}return Promise.resolve()}
-function signOutNow(){
-  wipeFirebase()
-    .then(()=>Promise.all([wipeIDB(),wipeCaches()]))
-    .then(wipeWebStorage,wipeWebStorage)
-    .then(()=>{setTimeout(()=>{try{location.reload()}catch(e){}},120)});
+  openConfirm('Switch account?','You will return to the branch / super admin picker. Data cached on this device for this branch will be cleared.',async()=>{
+    clearSession();
+    try{localStorage.removeItem(CACHE_SCOPE_KEY)}catch(e){}
+    await wipeDataCache();
+    try{location.reload()}catch(e){}
+  },'Switch');
 }
 let _confirmCb=null;
 function openConfirm(title,msg,cb,okLabel){
@@ -1534,14 +1767,24 @@ function accStat(id,code){
 function acctCurrencies(id){
   return (IX().curOf[id]||[]).slice();
 }
-const allCurrencies=()=>IX().allCurs;
+const allCurrencies=()=>{
+  const base=IX().allCurs;
+  if(!branchName)return base;
+  const accs=scopedAccounts(),set=new Set(),curOf=IX().curOf;
+  accs.forEach(a=>{
+    (curOf[a.id]||[]).forEach(c=>set.add(c));
+    const om=DATA.ob[a.id]||{};
+    Object.keys(om).forEach(c=>{if(c!=='branch'&&Number(om[c]))set.add(c)});
+  });
+  return base.filter(c=>set.has(c));
+};
 function primCurr(){
   const cs=IX().allCurs;
   if(cs.indexOf('PKR')>=0)return'PKR';
   if(cs.length)return cs[0];
   return'PKR';
 }
-const branches=()=>DATA.accounts.filter(a=>(a.type||'')==='branch').sort((a,b)=>String(a.name||'').localeCompare(String(b.name||'')));
+const branches=()=>DATA.accounts.filter(a=>(a.type||'')==='branch'&&a.isSuperAdmin!==true&&a.deleted!==true).sort((a,b)=>String(a.name||'').localeCompare(String(b.name||'')));
 function acctHasCurrency(id,code){
   const om=DATA.ob[id];
   if(om&&code in om)return true;
@@ -1555,6 +1798,23 @@ function visibleAccounts(){
     if(curSel&&!acctHasCurrency(a.id,curSel))return false;
     return true;
   });
+}
+/* Active branch scope. branchName is locked to the signed-in branch for a
+   branch session, and follows the selected chip for a super admin. */
+function inBranchScope(a){
+  if(!branchName)return true;
+  if(!a)return false;
+  if(String(a.branch||'')===branchName)return true;
+  return (a.type||'')==='branch'&&String(a.name||'')===branchName;
+}
+function scopedAccounts(){
+  return DATA.accounts.filter(a=>a&&a.deleted!==true&&inBranchScope(a));
+}
+function scopedTxns(){
+  const all=DATA.txns.filter(t=>t&&t.deleted!==true);
+  if(!branchName)return all;
+  const ids=new Set(scopedAccounts().map(a=>a.id));
+  return all.filter(t=>String(t.branch||'')===branchName||ids.has(t.accountId));
 }
 
 /* ---------- IndexedDB cache ---------- */
@@ -1650,15 +1910,21 @@ function go(tab,instant){
 /* ---------- chips / filters ---------- */
 function renderBranchChips(){
   const el=$('#bizChips');if(!el)return;
-  el.innerHTML='<button class="chip-f'+(branchSel==='All'?' active':'')+'" onclick="setBranch(\'All\')">All</button>'
+  const s=getSession();
+  if(s&&s.mode==='branch'){
+    el.innerHTML='<button type="button" class="chip-f locked" title="Signed in to this branch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'+esc(s.branchName||'Branch')+'</button>';
+    return;
+  }
+  el.innerHTML='<button class="chip-f'+(branchSel==='All'?' active':'')+'" onclick="setBranch(\'All\')">All branches</button>'
     +branches().map(b=>'<button class="chip-f'+(branchSel===b.id?' active':'')+'" onclick="setBranch(\''+b.id+'\')">'+esc(b.name||b.id)+'</button>').join('');
 }
 function setBranch(id){
+  if(!isSuperSession())return;
   branchSel=id;
   branchName=id==='All'?'':((getAcc(id)||{}).name||'');
-  renderTypeChips();
-  if($('#view-dashboard').classList.contains('active'))renderDashboard();
-  if($('#view-accounts').classList.contains('active'))renderAccounts();
+  const s=getSession();
+  if(s){s.activeChip=id;s.activeBranch=branchName;saveSession(s)}
+  renderAll();
 }
 function renderTypeChips(){
   const el=$('#accTypeSel');if(!el)return;
@@ -1716,11 +1982,12 @@ function animCount(el,val,formatter){
 /* ---------- dashboard ---------- */
 function renderDashboard(){
   const c0=primCurr();
+  const accs=scopedAccounts(),txs=scopedTxns();
   let tc=0,td=0;
-  DATA.txns.forEach(t=>{if(!t||t.deleted===true||t.currency!==c0)return;const a=Number(t.amount)||0;if(isCr(t))tc+=a;else td+=a});
+  txs.forEach(t=>{if(!t||t.deleted===true||t.currency!==c0)return;const a=Number(t.amount)||0;if(isCr(t))tc+=a;else td+=a});
   const stats=[
-    {l:'Accounts',v:DATA.accounts.length,f:n=>String(Math.round(n)),s:typeCountsLabel(),tab:'accounts'},
-    {l:'Transactions',v:DATA.txns.length,f:n=>String(Math.round(n)),s:'ledger entries',tab:'accounts'},
+    {l:'Accounts',v:accs.length,f:n=>String(Math.round(n)),s:typeCountsLabel(),tab:'accounts'},
+    {l:'Transactions',v:txs.length,f:n=>String(Math.round(n)),s:'ledger entries',tab:'accounts'},
     {l:'Total Credit',v:tc,f:v=>money(c0,v),s:'sum of جمع · '+c0,tab:'accounts'},
     {l:'Total Debit',v:td,f:v=>money(c0,v),s:'sum of بنام · '+c0,tab:'accounts'}
   ];
@@ -1738,7 +2005,7 @@ function rgbaOf(hex,a){
   return 'rgba('+r+','+g+','+b+','+a+')';
 }
 function typeCountsLabel(){
-  const base=DATA.accounts;
+  const base=scopedAccounts();
   const top=ORDERED_TYPES.filter(t=>base.some(a=>(a.type||'')===t)).slice(0,2).map(t=>{const n=base.filter(a=>(a.type||'')===t).length;return n+' '+esc(TYPE_LBL[t]||t)});
   return top.join(' · ')||'no accounts';
 }
@@ -1761,12 +2028,16 @@ function renderBranchCards(){
 function renderCurrencyPanel(){
   const el=$('#curBars');
   if(!el)return;
-  const _ix2=IX();
-  let rows=_ix2.allCurs.map(c=>{
-    const net=(_ix2.net[c]||0)+(_ix2.obTot[c]||0);
-    return {c,net};
-  }).filter(r=>r.net!==0);
+  const accs=scopedAccounts();
+  const net={};
+  accs.forEach(a=>{
+    if((a.type||'')==='branch')return;
+    const bals=accBals(a.id);
+    Object.keys(bals).forEach(c=>{if(c==='branch')return;const v=Number(bals[c]||0);if(v)net[c]=(net[c]||0)+v});
+  });
+  let rows=Object.keys(net).map(c=>({c,net:net[c]})).filter(r=>r.net!==0);
   if(!rows.length){el.innerHTML='<p style="color:var(--mut);font-size:13px">No balances yet.</p>';return}
+  rows.sort((x,y)=>curOrder(x.c)-curOrder(y.c));
   const mx=Math.max(1,...rows.map(r=>Math.abs(r.net)));
   el.innerHTML=rows.map((r,i)=>{
     const col=PAL[i%PAL.length],pc=(Math.abs(r.net)/mx*100).toFixed(1);
@@ -1775,7 +2046,7 @@ function renderCurrencyPanel(){
   setTimeout(()=>{$$('#curBars .fill').forEach(el2=>{el2.style.width=el2.dataset.w+'%'})},150);
 }
 function recentItems(){
-  return DATA.txns.slice().sort((a,b)=>txTs(b)-txTs(a)).slice(0,5).map(t=>{
+  return scopedTxns().slice().sort((a,b)=>txTs(b)-txTs(a)).slice(0,5).map(t=>{
     const a=getAcc(t.accountId);
     return {date:t.date,amt:Number(t.amount)||0,currency:t.currency||'PKR',type:isCr(t)?'credit':'debit',
       label:(isCr(t)?'Credit — ':'Debit — ')+((a&&a.name)||'—'),
@@ -1790,13 +2061,14 @@ function renderRecent(){
 }
 function openAllActivity(){
   const _CAP=500;
-  const items=DATA.txns.slice(0,_CAP).map(t=>{
+  const list=scopedTxns();
+  const items=list.slice(0,_CAP).map(t=>{
     const a=getAcc(t.accountId);
     return {date:t.date,amt:Number(t.amount)||0,currency:t.currency||'PKR',type:isCr(t)?'credit':'debit',
       label:(isCr(t)?'Credit — ':'Debit — ')+((a&&a.name)||'—'),
       sub:t.detail||(t.hawalaNo?'حواله #'+t.hawalaNo:'')||fdate(t.date)};
   });
-  $('#allActList').innerHTML=items.length?items.map(actRow).join('')+(DATA.txns.length>_CAP?'<div class="txsub" style="text-align:center;color:var(--mut);padding:10px">Showing latest '+Math.min(_CAP,DATA.txns.length)+' of '+DATA.txns.length+' entries</div>':''):'<div class="empty" style="padding:26px"><div class="eic" style="width:60px;height:60px">'+IC.wallet+'</div><p>Nothing yet.</p></div>';
+  $('#allActList').innerHTML=items.length?items.map(actRow).join('')+(list.length>_CAP?'<div class="txsub" style="text-align:center;color:var(--mut);padding:10px">Showing latest '+Math.min(_CAP,list.length)+' of '+list.length+' entries</div>':''):'<div class="empty" style="padding:26px"><div class="eic" style="width:60px;height:60px">'+IC.wallet+'</div><p>Nothing yet.</p></div>';
   openModal('m-act');
 }
 
@@ -2054,9 +2326,10 @@ function renderRoz(){
   renderRozCur();
   const page=($('#rozPage')?$('#rozPage').value.trim():'');
   const selDate=dt?dt.value:'';
+  const src=scopedTxns();
   let rows;
-  if(page)rows=DATA.txns.filter(t=>t&&t.deleted!==true&&String(t.pageNo==null?'':t.pageNo).trim()===page);
-  else rows=DATA.txns.filter(t=>t&&t.deleted!==true&&String(t.date||'').slice(0,10)===selDate&&(t.currency||'PKR')===rozCurr);
+  if(page)rows=src.filter(t=>String(t.pageNo==null?'':t.pageNo).trim()===page);
+  else rows=src.filter(t=>String(t.date||'').slice(0,10)===selDate&&(t.currency||'PKR')===rozCurr);
   rows=rows.slice().sort((x,y)=>rozSort==='desc'?(txCreated(y)-txCreated(x)||txTs(y)-txTs(x)):(txCreated(x)-txCreated(y)||txTs(x)-txTs(y)));
   $('#rozCount').textContent=rows.length+' '+(rows.length===1?'entry':'entries');
   const sub=$('#rozSub');if(sub)sub.textContent=page?('Page '+page+' · all dates · all currencies'):(selDate+' · '+rozCurr);
@@ -2075,7 +2348,11 @@ function renderRoz(){
 }
 function rozObAll(){
   let ob=0;
-  Object.keys(DATA.ob).forEach(id=>{const m=DATA.ob[id]||{};Object.keys(m).forEach(c=>{if(c==='branch')return;ob+=Number(m[c]||0)})});
+  const ids=new Set(scopedAccounts().map(a=>a.id));
+  Object.keys(DATA.ob).forEach(id=>{
+    if(branchName&&!ids.has(id))return;
+    const m=DATA.ob[id]||{};Object.keys(m).forEach(c=>{if(c==='branch')return;ob+=Number(m[c]||0)});
+  });
   return ob;
 }
 function openRozBalance(){
@@ -2083,7 +2360,7 @@ function openRozBalance(){
   const date=$('#rozDate')&&$('#rozDate').value?$('#rozDate').value:todayLocalIso();
   const curr=$('#rozCur')&&$('#rozCur').value?$('#rozCur').value:rozCurr;
   rozCurr=curr;
-  const all=DATA.txns.filter(t=>t&&t.deleted!==true);
+  const all=scopedTxns();
   let ob=0,credit=0,debit=0,scope='';
   if(page){
     const p=Number(page);
@@ -2094,7 +2371,8 @@ function openRozBalance(){
     $('#rozLblCr').textContent='Credit (to page '+p+')';
     $('#rozLblDb').textContent='Debit (to page '+p+')';
   }else{
-    Object.keys(DATA.ob).forEach(id=>{ob+=Number((DATA.ob[id]||{})[curr]||0)});
+    const _obIds=new Set(scopedAccounts().map(a=>a.id));
+    Object.keys(DATA.ob).forEach(id=>{if(branchName&&!_obIds.has(id))return;ob+=Number((DATA.ob[id]||{})[curr]||0)});
     all.forEach(t=>{
       if((t.currency||'PKR')!==curr)return;
       const d=String(t.date||'').slice(0,10),a=Number(t.amount)||0;
@@ -2176,7 +2454,7 @@ async function downloadRozPdf(){
     const page=($('#rozPage')?$('#rozPage').value.trim():'');
     const date=$('#rozDate')&&$('#rozDate').value?$('#rozDate').value:todayLocalIso();
     const curr=$('#rozCur')&&$('#rozCur').value?$('#rozCur').value:rozCurr;
-    const all=DATA.txns.filter(t=>t&&t.deleted!==true);
+    const all=scopedTxns();
     let rows;
     if(page)rows=all.filter(t=>String(t.pageNo==null?'':t.pageNo).trim()===page);
     else rows=all.filter(t=>String(t.date||'').slice(0,10)===date&&(t.currency||'PKR')===curr);
@@ -2187,7 +2465,8 @@ async function downloadRozPdf(){
       ob=rozObAll();
       all.forEach(t=>{const n=Number(t.pageNo);if(isNaN(n)||n>p)return;const a=Number(t.amount)||0;if(isCr(t))credit+=a;else debit+=a});
     }else{
-      Object.keys(DATA.ob).forEach(id=>{ob+=Number((DATA.ob[id]||{})[curr]||0)});
+      const _obIds=new Set(scopedAccounts().map(a=>a.id));
+      Object.keys(DATA.ob).forEach(id=>{if(branchName&&!_obIds.has(id))return;ob+=Number((DATA.ob[id]||{})[curr]||0)});
       all.forEach(t=>{
         if((t.currency||'PKR')!==curr)return;
         const d=String(t.date||'').slice(0,10),a=Number(t.amount)||0;
@@ -2320,7 +2599,7 @@ async function readAllDocs(col,mkQuery){
 }
 function updateStamp(){
   const el=$('#lastUpd');
-  const st=localStorage.getItem('sarafi_lastFetched')||'';
+  const st=localStorage.getItem(lfKey())||'';
   if(!el)return;
   if(!st){el.textContent='';return}
   el.textContent='Updated '+relTime(st);
@@ -2335,32 +2614,82 @@ function relTime(iso){
   }
   return '';
 }
+function chunkList(arr,n){const out=[];for(let i=0;i<arr.length;i+=n)out.push(arr.slice(i,i+n));return out}
+async function readTxnsByAccounts(ids){
+  const out=[];
+  for(const chunk of chunkList(ids,10)){
+    try{
+      const docs=await readAllDocs('txns',q=>q.where('accountId','in',chunk));
+      docs.forEach(d=>out.push(d));
+    }catch(e){console.warn('txn accountId fallback failed',e)}
+  }
+  return out;
+}
+async function readObByAccounts(ids){
+  const out=[];
+  for(const chunk of chunkList(ids,10)){
+    try{
+      const docs=await readAllDocs('openingBals',q=>q.where('id','in',chunk));
+      docs.forEach(d=>out.push(d));
+    }catch(e){}
+  }
+  return out;
+}
 async function runFetch(){
   if(!navigator.onLine){toast('No internet connection — showing cached data','err');return}
+  const s=getSession();
+  if(!s){toast('Sign in first','err');return}
+  const superMode=s.mode==='super';
   const btn=$('#fetchBtn'),sp=$('#fetchBtn .spinner'),upd=$('#lastUpd');
   if(btn){btn.disabled=true}
   if(sp){sp.style.display='inline-block'}
   if(upd)upd.textContent='Fetching…';
   try{
-    const lfRaw=localStorage.getItem('sarafi_lastFetched')||'';
-    const incremental=!!(lfRaw&&DATA.txns.length>0);
-    // accounts (full, small collection)
-    const accDocs=await readAllDocs('accounts',q=>q.orderBy('name'));
-    if(!accDocs.length&&DATA.accounts.length)throw new Error('no data received (offline?)');
-    const accNew=accDocs.filter(a=>a.deleted!==true);
-    // txns (incremental when cache present)
-    let txnDocs;
-    if(incremental)txnDocs=await readAllDocs('txns',q=>q.where('updatedAt','>',lfRaw).orderBy('updatedAt','desc'));
-    else txnDocs=await readAllDocs('txns',q=>q.orderBy('date','desc'));
-    // opening balances (full, small)
-    const obDocs=await readAllDocs('openingBals',q=>q.orderBy('id'));
-    if(!accNew.length&&!txnDocs.length)throw new Error('no data received (check connection)');
+    await ensureReadAuth();
+    const lfRaw=localStorage.getItem(lfKey())||'';
+    const incremental=superMode&&!!(lfRaw&&DATA.txns.length>0);
+    let accNew=[],txnDocs=[],obDocs=[];
+    if(superMode){
+      // Super admin: everything, every branch.
+      const accDocs=await readAllDocs('accounts',q=>q.orderBy('name'));
+      if(!accDocs.length&&DATA.accounts.length)throw new Error('no data received (offline?)');
+      accNew=accDocs.filter(a=>a&&a.deleted!==true&&a.isSuperAdmin!==true);
+      if(incremental)txnDocs=await readAllDocs('txns',q=>q.where('updatedAt','>',lfRaw).orderBy('updatedAt','desc'));
+      else txnDocs=await readAllDocs('txns',q=>q.orderBy('date','desc'));
+      obDocs=await readAllDocs('openingBals',q=>q.orderBy('id'));
+    }else{
+      // Branch login: only this branch's documents leave the server.
+      const bName=String(s.branchName||'');
+      if(!bName)throw new Error('No branch selected');
+      const map=new Map();
+      const own=await fdb.collection('accounts').doc(String(s.branchId)).get().catch(()=>null);
+      if(own&&own.exists){const d=Object.assign({id:own.id},own.data());if(d.deleted!==true)map.set(d.id,d)}
+      const accDocs=await readAllDocs('accounts',q=>q.where('branch','==',bName));
+      accDocs.forEach(a=>{if(a&&a.deleted!==true)map.set(a.id,a)});
+      accNew=[...map.values()].filter(a=>String(a.name||'')===bName||String(a.branch||'')===bName);
+      txnDocs=await readAllDocs('txns',q=>q.where('branch','==',bName));
+      const ids=accNew.map(a=>a.id).filter(Boolean);
+      if(!txnDocs.length&&ids.length){
+        const legacy=await readTxnsByAccounts(ids);
+        if(legacy.length)txnDocs=legacy;
+      }
+      obDocs=await readAllDocs('openingBals',q=>q.where('branch','==',bName));
+      if(!obDocs.length&&ids.length){
+        const legacyOb=await readObByAccounts(ids);
+        if(legacyOb.length)obDocs=legacyOb;
+      }
+      if(!accNew.length&&!txnDocs.length)throw new Error('No data found for this branch.');
+      // Never let another branch's rows through, even if the query returned them.
+      const ids2=new Set(accNew.map(a=>a.id));
+      txnDocs=txnDocs.filter(t=>t&&(String(t.branch||'')===bName||ids2.has(t.accountId)));
+      obDocs=obDocs.filter(o=>o&&(String(o.branch||'')===bName||ids2.has(o.id)));
+    }
     const obNew={};
     obDocs.forEach(o=>{const{id,...rest}=o;obNew[id]=rest});
     // merge txns
     if(DATA.txns.length&&incremental){
       const tomb=txnDocs.filter(t=>t.deleted===true).map(t=>t.id);
-      if(tomb.length){const s=new Set(tomb);DATA.txns=DATA.txns.filter(t=>!s.has(t.id))}
+      if(tomb.length){const st=new Set(tomb);DATA.txns=DATA.txns.filter(t=>!st.has(t.id))}
       const live=txnDocs.filter(t=>t.deleted!==true);
       const map=new Map(DATA.txns.map(t=>[t.id,t]));
       live.forEach(t=>{map.set(t.id,Object.assign({id:t.id},t))});
@@ -2381,7 +2710,7 @@ async function runFetch(){
       idbClear('txns').then(()=>idbPut('txns',DATA.txns)),
       idbClear('ob').then(()=>idbPut('ob',obDocs))
     ]);
-    localStorage.setItem('sarafi_lastFetched',new Date().toISOString());
+    localStorage.setItem(lfKey(),new Date().toISOString());
     renderAll();
     updateStamp();
     toast('Data updated — '+DATA.accounts.length+' accounts · '+DATA.txns.length+' entries');
@@ -2485,19 +2814,23 @@ function bkRow(id,label,counts,all){
 }
 function renderBackupOptions(){
   const el=$('#bkList');if(!el)return;
-  if(bkSel!=='All'&&!backupBranch(bkSel))bkSel='All';
+  const s=getSession();
+  const branchOnly=!!(s&&s.mode==='branch');
+  if(branchOnly){bkSel=s.branchId;if(!backupBranch(bkSel))bkSel=branches()[0]?branches()[0].id:'All'}
+  else if(bkSel!=='All'&&!backupBranch(bkSel))bkSel='All';
   const hasData=!!(DATA.accounts.length||DATA.txns.length);
   if(!hasData){
     el.innerHTML='<div class="bkempty">No data saved on this device yet. Tap Fetch to update first.</div>';
   }else{
-    let html=bkRow('All','All branches',backupCountsFor(null),true);
+    let html=branchOnly?'':bkRow('All','All branches',backupCountsFor(null),true);
     branches().forEach(b=>{html+=bkRow(b.id,String(b.name||b.id),backupCountsFor(b),false)});
     el.innerHTML=html;
   }
   const btn=$('#bkDownloadBtn');if(btn)btn.disabled=!hasData;
 }
 function openBackup(){
-  bkSel='All';
+  const s=getSession();
+  bkSel=(s&&s.mode==='branch')?(s.branchId||'All'):'All';
   renderBackupOptions();
   openModal('m-backup');
 }
@@ -2531,7 +2864,7 @@ function buildBackupPayload(){
     exportedAt:new Date().toISOString(),
     scope:{type:b?'branch':'all',branchId:b?b.id:null,branchName:b?String(b.name||''):null},
     counts:{accounts:s.accounts.length,transactions:s.txns.length,openingBalances:Object.keys(ob).length},
-    meta:{build:BUILD_ID,lastFetched:(function(){try{return localStorage.getItem('sarafi_lastFetched')||null}catch(e){return null}})()},
+    meta:{build:BUILD_ID,lastFetched:(function(){try{return localStorage.getItem(lfKey())||null}catch(e){return null}})()},
     accounts:s.accounts,
     transactions:s.txns,
     openingBalances:ob
@@ -2831,7 +3164,7 @@ function rptRangeFor(key){
   return[iso,iso];
 }
 function rptTxns(from,to){
-  let rows=DATA.txns.filter(t=>t&&t.accountId&&t.deleted!==true);
+  let rows=scopedTxns().filter(t=>t&&t.accountId);
   if(from)rows=rows.filter(t=>String(t.date)>=from);
   if(to)rows=rows.filter(t=>String(t.date)<=to);
   return rows;
@@ -2866,7 +3199,7 @@ function renderRptKhat(){
   const cs=allCurrencies();
   if(cs.indexOf(rptKhatCur)<0)rptKhatCur=cs.indexOf('PKR')>=0?'PKR':(cs[0]||'PKR');
   const q=($('#ktSearch')?($('#ktSearch').value||''):'').trim().toLowerCase();
-  let rows=DATA.accounts.filter(a=>a.deleted!==true&&(a.type||'')!=='branch').map(a=>({a,v:Number(accBals(a.id)[rptKhatCur]||0)})).filter(x=>pos?x.v>0:x.v<0);
+  let rows=scopedAccounts().filter(a=>(a.type||'')!=='branch').map(a=>({a,v:Number(accBals(a.id)[rptKhatCur]||0)})).filter(x=>pos?x.v>0:x.v<0);
   if(q)rows=rows.filter(x=>(String(x.a.name||'')+' '+String(x.a.contact||'')+' '+String(x.a.city||'')).toLowerCase().includes(q));
   rows.sort((x,y)=>{
     const t1=ORDERED_TYPES.indexOf(x.a.type||''),t2=ORDERED_TYPES.indexOf(y.a.type||'');
@@ -2888,7 +3221,7 @@ function renderRptKhat(){
   const si=$('#ktSearch');if(si)si.value=q;
 }
 function renderRptBanks(){
-  const banks=DATA.accounts.filter(a=>(a.type||'')==='cash'&&a.deleted!==true).sort((x,y)=>String(x.name||'').localeCompare(String(y.name||'')));
+  const banks=scopedAccounts().filter(a=>(a.type||'')==='cash').sort((x,y)=>String(x.name||'').localeCompare(String(y.name||'')));
   const cs=allCurrencies().filter(c=>c!=='branch');
   const q=($('#bkSearch')?($('#bkSearch').value||''):'').trim().toLowerCase();
   let fl=banks;
@@ -2941,7 +3274,7 @@ function rptProfits(from,to){
   return out;
 }
 function rptComm(from,to){
-  const ids=DATA.accounts.filter(a=>(a.type||'')==='manafi'&&a.deleted!==true);
+  const ids=scopedAccounts().filter(a=>(a.type||'')==='manafi');
   const rows=[];
   const trows=rptTxns(from,to);
   ids.forEach(a=>{
@@ -2958,7 +3291,7 @@ function rptComm(from,to){
   return rows;
 }
 function rptExp(from,to){
-  const ids=DATA.accounts.filter(a=>(a.type||'')==='masraf'&&a.deleted!==true);
+  const ids=scopedAccounts().filter(a=>(a.type||'')==='masraf');
   const rows=[];
   const trows=rptTxns(from,to);
   ids.forEach(a=>{
@@ -3271,12 +3604,12 @@ function sumPhaseFor(ivs,d){
   return sumStateAtIv(ivs,d);
 }
 function sumCompute(){
-  const _k=JSON.stringify(sumState)+'|'+DATA.txns.length+'|'+DATA.accounts.length;
+  const _k=JSON.stringify(sumState)+'|'+branchName+'|'+DATA.txns.length+'|'+DATA.accounts.length;
   if(_sCK===_k&&_sC)return _sC;
   const rr=sumRange(),from=rr[0],to=rr[1];
   const curSel=sumState.cur,type=sumState.type;
   const baseCur=primCurr();
-  const accs=DATA.accounts.filter(a=>a.deleted!==true&&(type==='All'||(a.type||'')===type));
+  const accs=scopedAccounts().filter(a=>(type==='All'||(a.type||'')===type));
   const allowed=new Set(accs.map(a=>a.id));
   const endIso=to||todayIso();
   const stats={};
@@ -3586,6 +3919,7 @@ function renderAll(){
   PAL=myDarkPalette();
   renderBranchChips();
   renderTypeChips();
+  updateSessionBadge();
   if($('#view-dashboard').classList.contains('active'))renderDashboard();
   if($('#view-accounts').classList.contains('active'))renderAccounts();
   if($('#view-ledger').classList.contains('active')&&curAccId)renderLedger();
@@ -3599,17 +3933,30 @@ function applyBookData(){
   DATA.txns=DATA.txns.filter(t=>t.deleted!==true).sort((a,b)=>txTs(b)-txTs(a)||String(b.date||'').localeCompare(String(a.date||'')));
   buildIdx();
 }
+function trimCacheToScope(){
+  const s=getSession();if(!s||s.mode!=='branch')return;
+  const bn=String(s.branchName||'');
+  DATA.accounts=DATA.accounts.filter(a=>a&&(String(a.branch||'')===bn||((a.type||'')==='branch'&&String(a.name||'')===bn)));
+  const ids=new Set(DATA.accounts.map(a=>a.id));
+  DATA.txns=DATA.txns.filter(t=>t&&(String(t.branch||'')===bn||ids.has(t.accountId)));
+  Object.keys(DATA.ob).forEach(id=>{if(!ids.has(id))delete DATA.ob[id]});
+}
 async function boot(){
   try{
     applyTheme(storedTheme());
     ensurePashtoFont();
     await initIDB();
+    const wantScope=scopeKey();
+    let cachedScope='';try{cachedScope=localStorage.getItem(CACHE_SCOPE_KEY)||''}catch(e){}
+    if(wantScope&&cachedScope&&cachedScope!==wantScope)await wipeDataCache();
+    try{localStorage.setItem(CACHE_SCOPE_KEY,wantScope)}catch(e){}
     const accs=await idbAll('accounts'),txsAwait=idbAll('txns'),obs=await idbAll('ob'),txs=await txsAwait;
-    const isNewInstall=!(accs.length||txs.length)&&!localStorage.getItem('sarafi_lastFetched');
+    const isNewInstall=!(accs.length||txs.length)&&!localStorage.getItem(lfKey());
     if(accs.length||txs.length){
       DATA.accounts=accs.map(x=>Object.assign({},x));
       DATA.txns=txs.map(x=>Object.assign({},x));
       obs.forEach(o=>{const{id,...rest}=o;DATA.ob[id]=rest});
+      trimCacheToScope();
       applyBookData();
       const cs=allCurrencies();
       if(cs.length)curSel=cs.indexOf('PKR')>=0?'PKR':cs[0];
@@ -3666,28 +4013,9 @@ if(window.Capacitor===undefined&&window.location.protocol==='file:'){
   // allow Firestore from file origin; nothing to do
 }
 let APP_STARTED=false;
-function startApp(){if(APP_STARTED)return;APP_STARTED=true;boot();}
-function wireAuthGate(){
-  const f=$('#loginForm');if(f)f.addEventListener('submit',doLogin);
-  try{
-    if(firebase&&firebase.auth){
-      firebase.auth().onAuthStateChanged(u=>{
-        if(u){try{localStorage.setItem(AUTH_KEY,'1')}catch(e){}hideLogin();startApp()}
-      });
-    }
-  }catch(e){}
-}
-wireSetup();
-const CLIENT_OBJ=getClientConfig();
-if(CLIENT_OBJ){
-  applyBranding(CLIENT_OBJ);
-  try{initFirebase(CLIENT_OBJ.cfg)}catch(e){console.warn('firebase init error',e)}
-  wireAuthGate();
-  if(isLoggedIn()){hideLogin();startApp()}
-  else{showLogin()}
-}else{
-  showSetup();
-}
+function startApp(){if(APP_STARTED)return;APP_STARTED=true;return boot();}
+window.branchPickerBack=branchPickerBack;window.pickBranch=pickBranch;window.doBranchLogin=doBranchLogin;
+bootGate();
 
 </script>
 
