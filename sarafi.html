@@ -52,7 +52,7 @@ a{color:var(--acc3);text-decoration:none}
 @media(min-width:861px){.app{padding-bottom:60px}body.on-ledger .app{padding-bottom:104px}}
 
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:26px}
-.brand{display:flex;align-items:center;gap:13px;min-width:0;cursor:pointer}
+.brand{display:flex;align-items:center;gap:13px;min-width:0}
 .logo{width:48px;height:48px;border-radius:15px;background:var(--grd);display:grid;place-items:center;font-family:var(--head);font-weight:800;font-size:24px;color:#fff;box-shadow:0 8px 20px rgba(79,70,229,.3),inset 0 1px 0 rgba(255,255,255,.35);flex:none}
 .brand h1{font-family:var(--head);font-size:19px;font-weight:700;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .brand p{font-size:11.5px;color:var(--mut);letter-spacing:.6px;text-transform:uppercase}
@@ -686,7 +686,7 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
 .spinner{width:14px;height:14px;border-radius:50%;border:2px solid rgba(100,116,139,.3);border-top-color:var(--acc);animation:spinse .7s linear infinite;display:none;flex:none}
 .topctl .btn.loading .spinner{display:inline-block}
 .topctl .btn.loading>svg{display:none}
-@media(max-width:1050px){#backupBtn .lbl{display:none}}
+@media(max-width:1050px){.topctl .lbl{display:none}}
 [data-bk].loading .spinner{display:inline-block}
 [data-bk].loading>svg{display:none}
 .syncbadge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:#f59e0b;color:#fff;font-size:10.5px;font-weight:800;display:grid;place-items:center;box-shadow:0 2px 7px rgba(245,158,11,.5);font-family:var(--head);line-height:1;z-index:2}
@@ -979,6 +979,67 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
 .setrow b{font-size:12.5px;max-width:60%;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .setnote{font-size:11px;color:var(--mut);line-height:1.6;text-align:center;padding:4px 10px 10px}
 
+/* ---------- editor mode: entry, party, queue, sync ---------- */
+body:not(.editor) #txFab{display:none!important}
+#txFab{left:20px;right:20px}
+#txFab .txb{flex:1;justify-content:center}
+@media(min-width:861px){#txFab{left:auto;right:24px}#txFab .txb{flex:0 0 auto}}
+#syncBtn{position:relative}
+#syncBtn.has{border-color:rgba(202,138,4,.5);color:#b45309;background:rgba(202,138,4,.1)}
+.syncbadge{position:absolute;top:-6px;right:-6px;min-width:17px;height:17px;padding:0 5px;border-radius:99px;background:#ca8a04;color:#fff;font-size:9.5px;font-weight:800;display:none;place-items:center;line-height:1;box-shadow:0 2px 6px rgba(202,138,4,.4)}
+#syncBtn.has .syncbadge{display:grid}
+#m-tx .sheet{max-width:500px}
+#m-party .sheet,#m-sync .sheet{max-width:470px}
+#m-txact .sheet{max-width:420px}
+.txacc{display:flex;align-items:center;gap:10px;background:var(--card2);border:1px solid var(--brd);border-radius:13px;padding:10px 12px;margin-bottom:12px}
+.txacc .av{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:var(--accSoft);color:var(--acc);font-weight:800;font-size:13px;flex:none}
+.txacc .inf{flex:1;min-width:0}
+.txacc .inf b{display:block;font-size:13.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.txacc .inf span{font-size:10.5px;color:var(--mut)}
+.tswitch{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.tswitch button{display:flex;align-items:center;justify-content:center;gap:7px;padding:12px;border-radius:13px;border:1px solid var(--brd);background:var(--card2);font-size:13.5px;font-weight:800;color:var(--mut);transition:.2s;font-family:inherit}
+.tswitch button svg{width:16px;height:16px}
+.tswitch button.on.cr{background:rgba(5,150,105,.13);border-color:rgba(5,150,105,.45);color:var(--ok);box-shadow:inset 0 0 0 1px rgba(5,150,105,.2)}
+.tswitch button.on.db{background:rgba(225,29,72,.1);border-color:rgba(225,29,72,.45);color:var(--bad);box-shadow:inset 0 0 0 1px rgba(225,29,72,.18)}
+.dchips{display:flex;gap:7px;flex-wrap:wrap}
+.dchip{padding:8px 15px;border-radius:99px;border:1px solid var(--brd);background:var(--card2);color:var(--mut);font-size:12.5px;font-weight:700;transition:.18s;font-family:inherit}
+.dchip.on{background:var(--accSoft);color:var(--acc);border-color:var(--accSoftBrd)}
+.partybox{display:flex;align-items:center;gap:9px;width:100%;background:var(--inset);border:1px solid var(--brd);border-radius:12px;padding:9px 11px;text-align:left;font-size:12.5px;color:var(--mut);transition:.2s;font-family:inherit}
+.partybox .pav{width:26px;height:26px;border-radius:9px;display:grid;place-items:center;background:var(--card2);border:1px solid var(--brd);font-size:11px;font-weight:800;color:var(--mut);flex:none}
+.partybox .pnm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.partybox .px{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--card2);border:1px solid var(--brd);color:var(--mut);flex:none;cursor:pointer}
+.partybox .px svg{width:11px;height:11px}
+.partybox.on{color:var(--txt);border-color:var(--accSoftBrd);background:var(--accSoft2)}
+.txprev{background:var(--card2);border:1px solid var(--brd);border-radius:13px;padding:11px 12px;margin:2px 0 12px;font-size:11.5px;line-height:1.6;color:var(--mut)}
+.txprev .tpl{display:flex;justify-content:space-between;gap:10px;padding:2px 0}
+.txprev .tpl b{font-weight:700;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.txprev .ok{color:var(--ok)}
+.txprev .bad{color:var(--bad)}
+.txprev .tpd{color:var(--mut2);font-size:10.5px;margin-top:4px;line-height:1.55;word-break:break-word}
+.plist{max-height:42vh;overflow-y:auto;margin:0 -2px;padding:0 2px}
+.prow{display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border-radius:11px;border:1px solid transparent;text-align:left;font-size:12.5px;color:var(--txt);font-family:inherit}
+.prow:hover,.prow:active{background:var(--card2);border-color:var(--brd)}
+.prow .pav{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:var(--accSoft);color:var(--acc);font-size:11px;font-weight:800;flex:none}
+.prow .pinf{flex:1;min-width:0}
+.prow .pinf b{display:block;font-size:12.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prow .pinf span{font-size:10px;color:var(--mut)}
+.actrow{display:grid;gap:8px}
+.actrow .btn{justify-content:center}
+.actsum{background:var(--card2);border:1px solid var(--brd);border-radius:13px;padding:11px 12px;font-size:11.5px;line-height:1.65;color:var(--mut)}
+.actsum b{color:var(--txt)}
+.sqrow{display:flex;align-items:center;gap:10px;padding:9px 10px;border:1px solid var(--brd);border-radius:11px;background:var(--card2);margin-bottom:6px}
+.sqrow .sqic{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:10px;font-weight:800;flex:none}
+.sqic.add{background:rgba(5,150,105,.14);color:var(--ok)}
+.sqic.upd{background:rgba(2,132,199,.12);color:#0284c7}
+.sqic.del{background:rgba(225,29,72,.12);color:var(--bad)}
+.sqrow .sqinf{flex:1;min-width:0}
+.sqrow .sqinf b{display:block;font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sqrow .sqinf span{font-size:10px;color:var(--mut)}
+.sqrow .sqamt{font-family:var(--head);font-size:11.5px;font-weight:800;white-space:nowrap}
+.sqnote{font-size:10.5px;color:var(--mut);line-height:1.6;margin-top:8px;text-align:center}
+#m-tx .mfoot,#m-party .mfoot{position:sticky;bottom:-16px;z-index:2;background:var(--card);padding-top:10px;padding-bottom:16px;margin-bottom:-16px}
+@media(max-width:430px){#txFab{left:14px;right:14px}.txb{padding:15px 10px;font-size:14.5px}}
+
 [data-theme="dark"] .sumcard{background:var(--card2)}
 [data-theme="dark"] .sumcard .sg{background:rgba(255,255,255,.03)}
 [data-theme="dark"] .sumcard .curb{background:rgba(6,182,212,.14)}
@@ -991,21 +1052,17 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
 
 <div class="app">
   <header class="topbar">
-    <div class="brand" onclick="openBackup()" title="Download a JSON backup" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openBackup()}">
+    <div class="brand">
       <div class="logo">S</div>
       <div><h1 id="brandName">Sarafi</h1><p id="brandSub">Sami Jani Commission Accounts</p></div>
     </div>
     <div class="topctl">
       <span class="curbranch" id="curBranchBadge" title="Signed in as"><span class="ico" id="curBranchRole">🏢</span><b id="curBranchName">—</b><span class="mail" id="curBranchMail"></span></span>
-      <button class="btn btn-g" id="themeBtn" onclick="toggleTheme()" title="Switch to dark mode"><svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
-      <button class="btn btn-g" id="backupBtn" onclick="openBackup()" title="Download a JSON backup of the data saved on this device">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span class="lbl">Backup</span>
+      <button class="btn btn-g" id="syncBtn" onclick="openSyncSheet()" title="Unsynced changes on this device">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 16.5a4 4 0 0 0-.9-7.9 6 6 0 0 0-11.6 1.6A3.5 3.5 0 0 0 6 17"/><polyline points="8 13 12 9 16 13"/><line x1="12" y1="9" x2="12" y2="20"/></svg><span class="spinner"></span><span class="lbl">Sync</span><span class="syncbadge" id="syncCount">0</span>
       </button>
       <button class="btn btn-g" id="fetchBtn" onclick="runFetch()" title="Pull latest data from Firestore">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><polyline points="16 16 12 20 8 16"/><line x1="12" y1="20" x2="12" y2="10"/></svg><span class="spinner"></span><span class="lbl">Fetch</span>
-      </button>
-      <button class="btn btn-g" id="logoutBtn" onclick="doLogout()" title="Switch branch or sign out">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span class="lbl">Switch</span>
       </button>
     </div>
     <nav class="nav" id="topnav">
@@ -1086,6 +1143,10 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
         <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input id="txSearch" placeholder="Search description or amount..." oninput="renderLedger()"></div>
       </div>
       <div id="txList"></div>
+      <div class="txbtns" id="txFab">
+        <button class="txb cr" onclick="openEntry('جمع')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="7" x2="7" y2="17"/><polyline points="17 17 7 17 7 7"/></svg>جمع</button>
+        <button class="txb db" onclick="openEntry('بنام')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="7" x2="17" y2="17"/><polyline points="7 7 17 7 17 17"/></svg>بنام</button>
+      </div>
       <div class="txsub rptsub" id="rptSub">
         <div class="rpthead">
           <button class="iconbtn" title="Back to ledger" onclick="closeAccReport()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
@@ -1247,6 +1308,77 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
       <div class="s-b"><span>Total Balance</span><b id="rozTot">—</b></div>
     </div>
     <div class="mfoot"><button class="btn btn-p" onclick="downloadRozBalPdf()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>PDF</button></div>
+  </div>
+</div>
+
+<div class="modal" id="m-tx">
+  <div class="ovl" onclick="closeEntry()"></div>
+  <div class="sheet">
+    <div class="mhead"><h3 id="txmTitle">New Entry</h3><button class="x" onclick="closeEntry()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="txacc"><span class="av" id="txmAv">A</span><span class="inf"><b id="txmAcc">—</b><span id="txmMeta"></span></span></div>
+    <div class="tswitch">
+      <button type="button" id="txmCr" class="cr" onclick="setEntryType('جمع')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="7" x2="7" y2="17"/><polyline points="17 17 7 17 7 7"/></svg>جمع</button>
+      <button type="button" id="txmDb" class="db" onclick="setEntryType('بنام')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="7" x2="17" y2="17"/><polyline points="7 7 17 7 17 17"/></svg>بنام</button>
+    </div>
+    <div class="grid2 datetime">
+      <div class="field"><label>Date *</label><input id="txmDate" type="date" onchange="entryDateChanged()"></div>
+      <div class="field"><label>Time</label><input id="txmTime" type="time"></div>
+    </div>
+    <div class="grid2 datetime">
+      <div class="field"><label>Page *</label><input id="txmPage" type="text" inputmode="numeric" autocomplete="off"></div>
+      <div class="field"><label>Currency *</label><select id="txmCur" onchange="entryCurrencyChanged()"></select></div>
+    </div>
+    <div class="field"><label>Amount *</label><input id="txmAmt" type="text" inputmode="decimal" autocomplete="off" placeholder="0" oninput="entryPreview()"></div>
+    <div class="field"><label>Darak *</label><div class="dchips" id="txmDarak"></div></div>
+    <div class="field" id="txmHwWrap" style="display:none"><label>Hawala No.</label><input id="txmHw" type="text" inputmode="numeric" autocomplete="off" oninput="entryPreview()"></div>
+    <div class="field"><label>Party Account (optional)</label>
+      <button type="button" class="partybox" id="txmParty" onclick="openPartyPicker()">
+        <span class="pav" id="txmPartyAv">+</span>
+        <span class="pnm" id="txmPartyNm">No party — single entry</span>
+        <span class="px" id="txmPartyX" style="display:none" onclick="clearParty(event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
+      </button>
+    </div>
+    <div class="field"><label>Details</label><input id="txmDetail" autocomplete="off" placeholder="Optional note" oninput="entryPreview()"></div>
+    <div class="txprev" id="txmPrev"></div>
+    <div class="mfoot" style="display:flex;gap:9px">
+      <button class="btn btn-g" onclick="closeEntry()">Cancel</button>
+      <button class="btn btn-p" id="txmSave" onclick="saveEntry()">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="m-party">
+  <div class="ovl" onclick="closeModal('m-party')"></div>
+  <div class="sheet">
+    <div class="mhead"><h3>Party Account</h3><button class="x" onclick="closeModal('m-party')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="search" style="margin-bottom:9px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input id="partySearch" placeholder="Search name or contact..." oninput="renderPartyList()"></div>
+    <div class="plist" id="partyList"></div>
+    <div class="mfoot" style="margin-top:10px"><button class="btn btn-g wide" onclick="pickParty(null)">Clear — single entry</button></div>
+  </div>
+</div>
+
+<div class="modal" id="m-txact">
+  <div class="ovl" onclick="closeModal('m-txact')"></div>
+  <div class="sheet">
+    <div class="mhead"><h3>Entry</h3><button class="x" onclick="closeModal('m-txact')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div id="txactBody"></div>
+    <div class="actrow" style="margin-top:12px">
+      <button class="btn btn-p" id="txactEdit" onclick="editFromActions()">Edit entry</button>
+      <button class="btn btn-dg" id="txactDel" onclick="deleteFromActions()">Delete entry</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="m-sync">
+  <div class="ovl" onclick="closeModal('m-sync')"></div>
+  <div class="sheet">
+    <div class="mhead"><h3>Unsynced Changes</h3><button class="x" onclick="closeModal('m-sync')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div id="syncList"></div>
+    <p class="sqnote" id="syncNote"></p>
+    <div class="mfoot" style="display:flex;gap:9px">
+      <button class="btn btn-g" onclick="closeModal('m-sync')">Close</button>
+      <button class="btn btn-p" id="syncNowBtn" onclick="syncNow()">Sync now</button>
+    </div>
   </div>
 </div>
 
@@ -1661,13 +1793,15 @@ async function doConnect(ev){
   }
 }
 function changeAccessKey(){
-  openConfirm('Change access key?','This device will forget the current account and branch session. You will need the access key again.',async()=>{
+  openConfirm('Change access key?','This device will forget the current account and branch session. You will need the access key again. Unsaved queued changes will be removed too.',async()=>{
     clearSession();
     try{
       [CLIENT_CFG_KEY,SESSION_KEY,REG_KEY,CACHE_SCOPE_KEY].forEach(k=>localStorage.removeItem(k));
       localStorage.removeItem('sarafi_lastFetched');
     }catch(e){}
     await wipeDataCache();
+    try{await idbClear('syncq')}catch(e){}
+    SYNCQ=[];
     try{location.reload()}catch(e){}
   },'Change');
 }
@@ -1686,7 +1820,8 @@ function wipeDataCache(){
   return Promise.all(jobs).catch(()=>{});
 }
 function doLogout(){
-  openConfirm('Switch account?','You will return to the branch / super admin picker. Data cached on this device for this branch will be cleared.',async()=>{
+  const n=typeof unsyncedCount==='function'?unsyncedCount():0;
+  openConfirm('Switch account?','You will return to the branch / super admin picker. Data cached on this device for this branch will be cleared.'+(n?' '+n+' unsynced '+(n===1?'change stays':'changes stay')+' queued on this device and will sync the next time you sign in.':''),async()=>{
     clearSession();
     try{localStorage.removeItem(CACHE_SCOPE_KEY)}catch(e){}
     await wipeDataCache();
@@ -1715,6 +1850,9 @@ let PAL=myDarkPalette();
 
 let DATA={accounts:[],txns:[],ob:{}};
 let PENDING=[];
+const EDITOR_KEY='sarafi_editor_mode';
+let EDITOR=false,SYNCQ=[],_syncing=false;
+let _entry=null,_actTxnId=null;
 let branchSel='All',branchName='',typeSel='All',curSel='PKR';
 let curAccId=null,ledCurr='';let accListScroll=null;
 let rptSort='desc',allRptSort='desc',rptReturnScroll=0;
@@ -1898,10 +2036,11 @@ function scopedTxns(){
 
 /* ---------- IndexedDB cache ---------- */
 let _idb=null;
-function initIDB(){return new Promise(res=>{try{const rq=indexedDB.open('sarafi_db',2);rq.onupgradeneeded=e=>{const d=e.target.result;if(!d.objectStoreNames.contains('accounts'))d.createObjectStore('accounts',{keyPath:'id'});if(!d.objectStoreNames.contains('txns'))d.createObjectStore('txns',{keyPath:'id'});if(!d.objectStoreNames.contains('ob'))d.createObjectStore('ob',{keyPath:'id'});if(!d.objectStoreNames.contains('pending'))d.createObjectStore('pending',{keyPath:'id'})};rq.onsuccess=e=>{_idb=e.target.result;res(true)};rq.onerror=()=>res(false)}catch(e){res(false)}})}
+function initIDB(){return new Promise(res=>{try{const rq=indexedDB.open('sarafi_db',3);rq.onupgradeneeded=e=>{const d=e.target.result;if(!d.objectStoreNames.contains('accounts'))d.createObjectStore('accounts',{keyPath:'id'});if(!d.objectStoreNames.contains('txns'))d.createObjectStore('txns',{keyPath:'id'});if(!d.objectStoreNames.contains('ob'))d.createObjectStore('ob',{keyPath:'id'});if(!d.objectStoreNames.contains('pending'))d.createObjectStore('pending',{keyPath:'id'});if(!d.objectStoreNames.contains('syncq'))d.createObjectStore('syncq',{keyPath:'qid'})};rq.onsuccess=e=>{_idb=e.target.result;res(true)};rq.onerror=()=>res(false)}catch(e){res(false)}})}
 function idbAll(st){return new Promise(res=>{if(!_idb)return res([]);try{const r=_idb.transaction(st,'readonly').objectStore(st).getAll();r.onsuccess=()=>res(r.result||[]);r.onerror=()=>res([])}catch(e){res([])}})}
 function idbPut(st,arr){return new Promise(res=>{if(!_idb)return res();try{const tx=_idb.transaction(st,'readwrite'),os=tx.objectStore(st);arr.forEach(x=>os.put(x));tx.oncomplete=()=>res();tx.onerror=()=>res()}catch(e){res()}})}
 function idbClear(st){return new Promise(res=>{if(!_idb)return res();try{const tx=_idb.transaction(st,'readwrite'),rq=tx.objectStore(st).clear();tx.oncomplete=()=>res();tx.onerror=()=>res()}catch(e){res()}})}
+function idbDel(st,key){return new Promise(res=>{if(!_idb)return res();try{const tx=_idb.transaction(st,'readwrite'),rq=tx.objectStore(st).delete(key);tx.oncomplete=()=>res();tx.onerror=()=>res()}catch(e){res()}})}
 
 /* ---------- toast / modal ---------- */
 function toast(msg,type='ok'){
@@ -1944,6 +2083,13 @@ document.addEventListener('click',e=>{
   s.style.cssText='width:'+d+'px;height:'+d+'px;left:'+(e.clientX-r.left-d/2)+'px;top:'+(e.clientY-r.top-d/2)+'px';
   b.appendChild(s);setTimeout(()=>s.remove(),700);
 });
+document.addEventListener('click',e=>{
+  if(!EDITOR)return;
+  const row=e.target.closest('#txList .tx[data-txid]');
+  if(row){openEntryActions(row.getAttribute('data-txid'))}
+});
+window.addEventListener('online',()=>{updateSyncBadge();if(SYNCQ.length)flushQueue({silent:true})});
+window.addEventListener('offline',updateSyncBadge);
 try{
   const CAPAPP=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.App;
   if(CAPAPP&&CAPAPP.addListener){
@@ -2265,7 +2411,9 @@ function renderLedger(){
     let meta='';
     if(t.pageNo)meta+='<span class="plink">Page '+esc(t.pageNo)+'</span>';
     if(t.linkedFromTxnId)meta+='<span class="plink">linked entry</span>';
-    return '<div class="tx"><div class="tinfo"><span>'+ftstampLocal(t)+'</span><b>'+(det?esc(det):(cr?'Credit':'Debit'))+'</b>'+(meta?'<div class="tmeta">'+meta+'</div>':'')+'</div><div class="amts"><div class="amt '+(cr?'credit':'debit')+'">'+(cr?'+':'−')+fmtN(Number(t.amount)||0)+'</div><div class="rbal '+(rb>0?'pos':rb<0?'neg':'zero')+'">Bal '+fmtN(rb)+'</div></div></div>';
+    if(EDITOR)meta+='<span class="plink" style="color:var(--acc)">tap to edit</span>';
+    const eattr=EDITOR?' data-txid="'+esc(t.id)+'" title="Tap to edit or delete"':'';
+    return '<div class="tx"'+eattr+'><div class="tinfo"><span>'+ftstampLocal(t)+'</span><b>'+(det?esc(det):(cr?'Credit':'Debit'))+'</b>'+(meta?'<div class="tmeta">'+meta+'</div>':'')+'</div><div class="amts"><div class="amt '+(cr?'credit':'debit')+'">'+(cr?'+':'−')+fmtN(Number(t.amount)||0)+'</div><div class="rbal '+(rb>0?'pos':rb<0?'neg':'zero')+'">Bal '+fmtN(rb)+'</div></div></div>';
   }).join('');
   if(txs.length>view.length)html+='<div class="txsub" style="text-align:center;color:var(--mut);padding:10px">Showing latest '+view.length+' of '+txs.length+' entries — use search or the report for older ones</div>';
   wrap.innerHTML=html;
@@ -2760,6 +2908,7 @@ async function runFetch(){
   if(upd)upd.textContent='Fetching…';
   try{
     await ensureReadAuth();
+    if(SYNCQ.length){try{await flushQueue({silent:true})}catch(e){}}
     const lfRaw=localStorage.getItem(lfKey())||'';
     const incremental=superMode&&!!(lfRaw&&DATA.txns.length>0);
     let accNew=[],txnDocs=[],obDocs=[],pendingDocs=[];
@@ -2811,6 +2960,10 @@ async function runFetch(){
     }
     const obNew={};
     obDocs.forEach(o=>{const{id,...rest}=o;obNew[id]=rest});
+    // A document with a queued change must keep its local version; a fresh pull
+    // must never overwrite work that has not reached Firestore yet.
+    const queuedKeys=new Set(SYNCQ.map(o=>o.col+':'+o.id));
+    if(queuedKeys.size)txnDocs=txnDocs.filter(t=>!queuedKeys.has('txns:'+t.id));
     // merge txns
     if(DATA.txns.length&&incremental){
       const tomb=txnDocs.filter(t=>t.deleted===true).map(t=>t.id);
@@ -2824,6 +2977,7 @@ async function runFetch(){
     }
     DATA.accounts=accNew;
     DATA.ob=obNew;
+    applyQueueLocal();
     PENDING=(pendingDocs||[]).filter(p=>p&&(!p.status||p.status==='pending'));
     if(!superMode)PENDING=PENDING.filter(p=>String(p.toBranchAccountName||'')===String(s.branchName||''));
     PENDING=PENDING.map(p=>Object.assign({id:p.id},p));
@@ -4101,15 +4255,632 @@ function renderSettings(){
   const who=s?(s.mode==='super'?'Super Admin':(s.branchName||'Branch')):'—';
   const mail=s&&s.email?s.email:'';
   el.innerHTML=
+    '<div class="setcard"><h4>Mode</h4>'+
+      '<div class="setrow"><span>App mode</span><b id="edModeLbl">'+(EDITOR?'Editor':'View only')+'</b></div>'+
+      '<div class="setrow"><span>Add, edit and delete entries on this device</span><button class="btn '+(EDITOR?'btn-dg':'btn-p')+' sm" id="edToggleBtn" onclick="toggleEditor()">'+(EDITOR?'Turn off':'Turn on')+'</button></div>'+
+      '<p class="setnote" style="text-align:left;padding:4px 0 0">View only keeps the app as it is now. Editor unlocks جمع / بنام on customer, tijari and bank ledgers.</p>'+
+    '</div>'+
+    '<div class="setcard"><h4>Sync</h4>'+
+      '<div class="setrow"><span>Unsynced changes</span><b id="setSyncN">'+unsyncedCount()+'</b></div>'+
+      '<div class="setrow"><span>Write queued changes to Firestore</span><button class="btn btn-p sm" onclick="syncNow()">Sync now</button></div>'+
+      '<div class="setrow"><span>See what will be synced</span><button class="btn btn-g sm" onclick="openSyncSheet()">View queue</button></div>'+
+    '</div>'+
     '<div class="setcard"><h4>Account</h4><div class="setrow"><span>Signed in as</span><b>'+esc(who)+'</b></div>'+(mail?'<div class="setrow"><span>Email</span><b style="direction:ltr">'+esc(mail)+'</b></div>':'')+'<div class="setrow"><span>Switch account</span><button class="btn btn-g sm" onclick="doLogout()">Switch</button></div></div>'+
     '<div class="setcard"><h4>Appearance</h4><div class="setrow"><span>Theme</span><button class="btn btn-g sm" onclick="toggleTheme()">'+(isDark()?'Light mode':'Dark mode')+'</button></div></div>'+
     '<div class="setcard"><h4>Data</h4><div class="setrow"><span>Pull latest from Firestore</span><button class="btn btn-p sm" onclick="runFetch()">Fetch now</button></div><div class="setrow"><span>Download JSON backup</span><button class="btn btn-g sm" onclick="openBackup()">Backup</button></div></div>'+
     '<div class="setcard"><h4>Access</h4><div class="setrow"><span>Connect a different access key</span><button class="btn btn-dg sm" onclick="changeAccessKey()">Change key</button></div></div>'+
     '<div class="setcard"><h4>About</h4><div class="setrow"><span>Build</span><b style="direction:ltr">'+esc(/^__/.test(BUILD_ID)?'dev':BUILD_ID)+'</b></div><div class="setrow"><span>PDF libraries</span><b>'+esc(pdfLibsReady()?'Ready':'Loading…')+'</b></div></div>'+
-    '<p class="setnote">Sync and data entry are coming in a future update. Approvals are read-only for now.</p>';
+    '<p class="setnote">Approvals are read-only for now. Cross-branch editing is the next step.</p>';
+  applyEditorUI();
 }
 function openMore(){openModal('m-more')}
 function moreGo(tab){closeModal('m-more');setTimeout(()=>{try{go(tab)}catch(e){}},160)}
+
+/* ---------- editor mode + write queue ---------- */
+const WRITABLE_TYPES={customer:1,tijari:1,cash:1};
+const DARAKS=['نغدي','چيک','حواله','انلاين'];
+function loadEditor(){try{EDITOR=localStorage.getItem(EDITOR_KEY)==='1'}catch(e){EDITOR=false}}
+function setEditor(on){
+  EDITOR=!!on;
+  try{localStorage.setItem(EDITOR_KEY,EDITOR?'1':'0')}catch(e){}
+  applyEditorUI();
+  if($('#view-settings').classList.contains('active'))renderSettings();
+}
+function applyEditorUI(){
+  document.body.classList.toggle('editor',EDITOR);
+  const fab=$('#txFab');if(fab)fab.style.display=EDITOR?'flex':'none';
+  const b=$('#edToggleBtn');
+  if(b){b.textContent=EDITOR?'Turn off':'Turn on';b.className='btn '+(EDITOR?'btn-dg':'btn-p')+' sm'}
+  const l=$('#edModeLbl');if(l)l.textContent=EDITOR?'Editor':'View only';
+}
+function toggleEditor(){
+  if(EDITOR){setEditor(false);toast('Editor off — app is view only now');return}
+  openConfirm('Turn on Editor mode?','You will be able to add, edit and delete entries on this device. Every change is saved locally first and then synced to Firestore.',()=>{setEditor(true);toast('Editor mode on')},'Turn on');
+}
+function actorSnap(){
+  const s=getSession()||{};
+  if(s.mode==='super')return {email:s.email||'',name:s.branchName||'Super Admin',role:'super_admin',accountId:s.branchId||'',branch:String(branchName||'')};
+  return {email:s.email||'',name:s.branchName||'',role:'branch',accountId:s.branchId||'',branch:s.branchName||''};
+}
+function authorFields(p,br){
+  const a=actorSnap(),f={};
+  f[p+'By']=a.email;f[p+'ByEmail']=a.email;f[p+'ByName']=a.name;
+  f[p+'ByRole']=a.role;f[p+'ByAccountId']=a.accountId;f[p+'ByBranch']=a.branch;
+  f[p+'OnBehalfOfBranch']=br||'';
+  return f;
+}
+function sessionWriteBranch(){
+  const s=getSession()||{};
+  return s.mode==='branch'?String(s.branchName||''):String(branchName||'');
+}
+function writeBranchFor(a){
+  const s=getSession()||{};
+  if(s.mode==='branch')return String(s.branchName||'');
+  return String((a&&a.branch)||branchName||'');
+}
+function isWritableAccount(a){
+  if(!a||a.deleted===true||a.isSuperAdmin)return false;
+  if(!WRITABLE_TYPES[String(a.type||'')])return false;
+  const s=getSession();if(!s)return false;
+  if(s.mode==='branch')return String(a.branch||'')===String(s.branchName||'');
+  return !!String(a.branch||'');
+}
+function writeBlockReason(a){
+  if(!a)return 'Account not found';
+  const s=getSession();if(!s)return 'Sign in first';
+  if(a.isSuperAdmin)return 'The super admin account is not a ledger';
+  if(!WRITABLE_TYPES[String(a.type||'')])return 'Only customers, tijari and bank accounts can be edited right now';
+  if(s.mode==='branch'&&String(a.branch||'')!==String(s.branchName||''))return 'This account belongs to another branch';
+  if(s.mode==='super'&&!String(a.branch||''))return 'This account has no branch';
+  return '';
+}
+function toNumStr(v){
+  if(v==null||v==='')return '';
+  return String(v)
+    .replace(/[۰-۹]/g,d=>String(d.charCodeAt(0)-1776))
+    .replace(/[٠-٩]/g,d=>String(d.charCodeAt(0)-1632))
+    .replace(/[٫]/g,'.')
+    .replace(/[^0-9.]/g,'');
+}
+function nowHM(){const d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
+function uidQ(){return 'q_'+Date.now()+'_'+Math.random().toString(36).slice(2,9)}
+function uidTxn(s){return 'txn_'+Date.now()+(s||'')+'_'+Math.random().toString(36).slice(2,9)}
+function nextHawalaNo(acctId,cur,et){
+  let m=0;
+  DATA.txns.forEach(t=>{
+    if(!t||t.deleted===true)return;
+    if(String(t.accountId||'')!==String(acctId)||String(t.currency||'')!==String(cur)||String(t.entryType||'')!==String(et))return;
+    const n=Number(t.hawalaNo);if(!isNaN(n)&&n>m)m=n;
+  });
+  return m?String(m+1):'';
+}
+function autoPageNo(ds,acctId){
+  const s=getSession()||{};
+  const acct=acctId?getAcc(acctId):null;
+  const br=s.mode==='branch'?String(s.branchName||''):String((acct&&acct.branch)||branchName||'');
+  let todayMax=0,allMax=0;
+  DATA.txns.forEach(t=>{
+    if(!t||t.deleted===true)return;
+    if(br&&String(t.branch||'')!==br)return;
+    const p=Number(t.pageNo)||0;if(!p)return;
+    if(p>allMax)allMax=p;
+    if(String(t.date||'')===String(ds||'')&&p>todayMax)todayMax=p;
+  });
+  return String(todayMax||allMax+1||1);
+}
+function buildTxnDetail(et,darak,counterName,hwNo,userDetail){
+  return [et,darak,counterName,hwNo,userDetail].filter(x=>x!=null&&String(x)!=='').join(' ');
+}
+function fixWordToken(text,oldV,newV){
+  if(!text||!oldV||!newV||String(oldV)===String(newV))return text;
+  let i=text.indexOf(oldV);
+  while(i>-1){
+    const b=i===0?'':text[i-1],a=(i+oldV.length)>=text.length?'':text[i+oldV.length];
+    if((b===''||b===' ')&&(a===''||a===' '))return text.slice(0,i)+newV+text.slice(i+oldV.length);
+    i=text.indexOf(oldV,i+1);
+  }
+  return text;
+}
+
+/* ----- queue ----- */
+function dataOps(){return SYNCQ.filter(o=>o&&o.col!=='auditLog')}
+function unsyncedCount(){const s=new Set();dataOps().forEach(o=>s.add(o.col+':'+o.id));return s.size}
+function updateSyncBadge(){
+  const n=unsyncedCount();
+  $$('#syncCount').forEach(el=>{el.textContent=String(n);el.style.display=n>0?'grid':'none'});
+  const b=$('#syncBtn');if(b)b.classList.toggle('has',n>0);
+  const t=$('#setSyncN');if(t)t.textContent=String(n);
+}
+function stampOp(op){
+  const d=op.data=op.data||{};
+  const now=new Date().toISOString();
+  const br=String(d.branch||sessionWriteBranch()||'');
+  if(op.type==='set'){
+    if(!d.createdAt)d.createdAt=now;
+    d.updatedAt=now;
+    if(!d.createdByEmail&&!d.createdBy)Object.assign(d,authorFields('created',br));
+    Object.assign(d,authorFields('updated',br));
+  }else if(op.type==='update'){
+    d.updatedAt=now;
+    Object.assign(d,authorFields('updated',br));
+  }else if(op.type==='delete'){
+    d.updatedAt=now;d.deleted=true;
+    if(!d.deletedAt)d.deletedAt=now;
+    Object.assign(d,authorFields('deleted',br));
+  }
+  if(br)d.branch=br;
+  return op;
+}
+function auditOp(action,txn,before){
+  const a=actorSnap(),id='audit_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);
+  const data={
+    id,action,time:new Date().toISOString(),
+    byEmail:a.email,actorEmail:a.email,actorName:a.name,actorRole:a.role,
+    actorAccountId:a.accountId,actorHomeBranch:a.branch,
+    branch:String((txn&&txn.branch)||sessionWriteBranch()||''),
+    recordType:'txns',recordId:(txn&&txn.id)||null,
+    accountId:(txn&&txn.accountId)||null,
+    currency:(txn&&txn.currency)||null,
+    amount:txn&&txn.amount!=null?Number(txn.amount):null,
+    darak:(txn&&txn.darak)||null,
+    detail:(txn&&txn.detail)||null,
+    date:(txn&&txn.date)||null,
+    txnId:(txn&&txn.id)||null,
+    authEmail:getSession()&&getSession().email||'',
+    before:before?JSON.parse(JSON.stringify(before)):null,
+    after:action==='delete'?null:JSON.parse(JSON.stringify(txn||{}))
+  };
+  return {type:'set',col:'auditLog',id,data};
+}
+function applyLocalOps(ops){
+  let changed=false;
+  const s=getSession()||{};
+  const scoped=s.mode==='branch';
+  const bn=String(s.branchName||'');
+  for(const op of ops){
+    if(!op||op.col!=='txns')continue;
+    // A branch session must never see another branch's queued work on screen;
+    // the op itself stays in the queue and still syncs.
+    if(scoped&&op.data&&op.data.branch&&String(op.data.branch)!==bn)continue;
+    if(op.type==='delete'){
+      DATA.txns=DATA.txns.filter(t=>t.id!==op.id);changed=true;
+    }else{
+      const i=DATA.txns.findIndex(t=>t.id===op.id);
+      if(i>=0)DATA.txns[i]=Object.assign({},DATA.txns[i],op.data);
+      else DATA.txns.push(Object.assign({id:op.id},op.data));
+      changed=true;
+    }
+  }
+  if(changed){DATA.txns=DATA.txns.filter(t=>t&&t.deleted!==true);buildIdx()}
+}
+function applyQueueLocal(){applyLocalOps(SYNCQ)}
+function refreshAfterWrite(){
+  updateSyncBadge();
+  if($('#view-dashboard').classList.contains('active'))renderDashboard();
+  if($('#view-accounts').classList.contains('active'))renderAccounts();
+  if($('#view-ledger').classList.contains('active')&&curAccId)renderLedger();
+  if($('#view-roz').classList.contains('active'))renderRoz();
+  if($('#view-settings').classList.contains('active'))renderSettings();
+}
+async function queueTxnWrites(legs,audits){
+  const ids=new Set(legs.map(l=>l.id));
+  const stale=SYNCQ.filter(o=>o.col==='txns'&&ids.has(o.id));
+  if(stale.length){
+    SYNCQ=SYNCQ.filter(o=>!(o.col==='txns'&&ids.has(o.id)));
+    for(const o of stale){try{await idbDel('syncq',o.qid)}catch(e){}}
+  }
+  const ops=[];
+  for(const leg of legs){
+    const op=stampOp({type:leg.type||(leg.isNew?'set':'update'),col:'txns',id:leg.id,data:leg.data});
+    op.qid=uidQ();
+    op._label=leg.type==='delete'?'del':(leg.isNew?'add':'upd');
+    ops.push(op);
+  }
+  for(const au of audits||[]){au.qid=uidQ();ops.push(au)}
+  SYNCQ=SYNCQ.concat(ops);
+  await idbPut('syncq',ops);
+  applyLocalOps(ops);
+  refreshAfterWrite();
+  if(navigator.onLine)flushQueue({silent:true});
+}
+async function flushQueue(opts){
+  opts=opts||{};
+  if(_syncing)return false;
+  if(!SYNCQ.length)return true;
+  if(!fdb||!navigator.onLine)return false;
+  _syncing=true;
+  const btn=$('#syncBtn');if(btn)btn.classList.add('loading');
+  try{await ensureReadAuth()}catch(e){}
+  const queue=SYNCQ.slice();
+  const BATCH=450;
+  let allOk=true;
+  const writeOne=async op=>{
+    const ref=fdb.collection(op.col).doc(op.id);
+    if(op.type==='set')await ref.set(op.data);
+    else await ref.set(op.data,{merge:true});
+  };
+  for(let i=0;i<queue.length;i+=BATCH){
+    const part=queue.slice(i,i+BATCH);
+    try{
+      if(typeof fdb.batch==='function'){
+        const b=fdb.batch();
+        part.forEach(op=>{
+          const ref=fdb.collection(op.col).doc(op.id);
+          if(op.type==='set')b.set(ref,op.data);
+          else b.set(ref,op.data,{merge:true});
+        });
+        await b.commit();
+      }else{
+        for(const op of part)await writeOne(op);
+      }
+      for(const op of part){try{await idbDel('syncq',op.qid)}catch(e){}}
+      const gone=new Set(part.map(o=>o.qid));
+      SYNCQ=SYNCQ.filter(o=>!gone.has(o.qid));
+    }catch(e){
+      console.warn('batch sync failed, retrying one by one',e);
+      for(const op of part){
+        try{
+          await writeOne(op);
+          try{await idbDel('syncq',op.qid)}catch(e2){}
+          SYNCQ=SYNCQ.filter(o=>o.qid!==op.qid);
+        }catch(e3){
+          allOk=false;
+          console.warn('sync failed for',op.col,op.id,e3);
+        }
+      }
+    }
+  }
+  _syncing=false;
+  if(btn)btn.classList.remove('loading');
+  updateSyncBadge();
+  if($('#m-sync')&&$('#m-sync').classList.contains('show'))renderSyncList();
+  if(!opts.silent){
+    if(!SYNCQ.length)toast('All changes synced ✓');
+    else toast('Some changes could not sync — they stay queued','err');
+  }
+  return allOk&&!SYNCQ.length;
+}
+async function syncNow(){
+  if(!SYNCQ.length){toast('Nothing to sync');return}
+  if(!fdb){toast('Firestore is not ready yet — reconnect and try again','err');return}
+  if(!navigator.onLine){toast('No internet — changes stay queued','err');return}
+  const b=$('#syncNowBtn');if(b){b.disabled=true;b.textContent='Syncing…'}
+  await flushQueue();
+  if(b){b.disabled=false;b.textContent='Sync now'}
+  renderSyncList();
+}
+function openSyncSheet(){renderSyncList();openModal('m-sync')}
+function renderSyncList(){
+  const el=$('#syncList');if(!el)return;
+  const ops=dataOps();
+  if(!ops.length){
+    el.innerHTML='<div class="empty" style="padding:26px 16px"><div class="eic" style="width:54px;height:54px">'+IC.wallet+'</div><p>Nothing waiting</p><p style="font-size:11.5px;color:var(--mut);margin-top:5px">Changes you make in editor mode appear here until they reach Firestore.</p></div>';
+  }else{
+    el.innerHTML=ops.map(op=>{
+      const d=op.data||{},a=getAcc(d.accountId)||null;
+      const lab=op._label||(op.type==='delete'?'del':(op.type==='update'?'upd':'add'));
+      const act=lab==='del'?{l:'Delete',c:'del'}:lab==='upd'?{l:'Edit',c:'upd'}:{l:'Add',c:'add'};
+      const nm=a?a.name:(d.accountId||'—');
+      const cur=d.currency||'PKR',amt=Number(d.amount)||0;
+      const when=[d.date||'',d.pageNo?'p.'+d.pageNo:''].filter(Boolean).join(' · ');
+      return '<div class="sqrow"><span class="sqic '+act.c+'">'+act.l.charAt(0)+'</span><span class="sqinf"><b>'+esc(nm)+'</b><span>'+act.l+' · '+esc(when||'—')+'</span></span><span class="sqamt">'+esc(cur)+' '+fmtN(amt)+'</span></div>';
+    }).join('');
+  }
+  const audits=SYNCQ.filter(o=>o.col==='auditLog').length;
+  const n=unsyncedCount();
+  const note=$('#syncNote');
+  if(note){
+    note.innerHTML=n?('These records are already saved on this device and will be written to Firestore when you sync.'+(audits?' '+audits+' audit log '+(audits===1?'entry':'entries')+' will be written too.':'')):'';
+  }
+  updateSyncBadge();
+}
+
+/* ----- entry modal ----- */
+function entryCurrencyList(a){
+  let cs=acctCurrencies(a.id);
+  if(!cs.length)cs=allCurrencies().slice();
+  if(!cs.length)cs=CURRS.map(x=>x.code);
+  if(_entry&&_entry.currency&&cs.indexOf(_entry.currency)<0)cs=[_entry.currency].concat(cs);
+  return cs;
+}
+function entryDefaultCurrency(a){
+  const cs=acctCurrencies(a.id);
+  if(ledCurr&&cs.indexOf(ledCurr)>=0)return ledCurr;
+  if(cs.indexOf('PKR')>=0)return 'PKR';
+  if(cs.length)return cs[0];
+  const all=allCurrencies();
+  if(curSel&&all.indexOf(curSel)>=0)return curSel;
+  return 'PKR';
+}
+function openEntry(type){
+  if(!EDITOR){toast('Turn on Editor mode in Settings first','err');return}
+  const a=getAcc(curAccId);
+  const why=writeBlockReason(a);
+  if(why){toast(why,'err');return}
+  const ds=todayLocalIso();
+  _entry={mode:'new',txnId:null,pairTxnId:null,accountId:a.id,entryType:type==='بنام'?BANAM:JAMA,
+    date:ds,time:nowHM(),page:autoPageNo(ds,a.id),currency:entryDefaultCurrency(a),amount:'',
+    darak:'نغدي',hawala:'',detail:'',partyId:'',orig:null};
+  paintEntry();
+  openModal('m-tx');
+}
+function openEntryEdit(id){
+  if(!EDITOR)return;
+  const t=DATA.txns.find(x=>x.id===id&&x.deleted!==true);
+  if(!t){toast('Entry not found','err');return}
+  const a=getAcc(t.accountId);
+  const why=writeBlockReason(a);
+  if(why){toast(why,'err');return}
+  if(t.linkedFromTxnId||t.counterpartBranchName){toast('Linked cross-branch entries cannot be edited here yet','err');return}
+  const sib=(t.pairId&&DATA.txns.find(x=>x.pairId===t.pairId&&x.id!==t.id&&x.deleted!==true))||null;
+  if(sib&&(sib.linkedFromTxnId||sib.counterpartBranchName)){toast('Linked cross-branch entries cannot be edited here yet','err');return}
+  const tm=t.time||(t.updatedAt?(function(){const d=new Date(t.updatedAt);return isNaN(d)?'':String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')})():nowHM());
+  _entry={mode:'edit',txnId:t.id,pairTxnId:sib?sib.id:null,accountId:t.accountId,entryType:t.entryType||JAMA,
+    date:String(t.date||todayLocalIso()),time:tm,page:String(t.pageNo||autoPageNo(t.date,t.accountId)),currency:t.currency||'PKR',
+    amount:String(Number(t.amount)||''),darak:t.darak||'نغدي',hawala:t.hawalaNo!=null?String(t.hawalaNo):'',
+    detail:String(t.detail||''),partyId:sib?sib.accountId:'',orig:JSON.parse(JSON.stringify(t)),origSib:sib?JSON.parse(JSON.stringify(sib)):null};
+  paintEntry();
+  openModal('m-tx');
+}
+function paintEntry(){
+  if(!_entry)return;
+  const a=getAcc(_entry.accountId)||{};
+  const isEdit=_entry.mode==='edit';
+  $('#txmTitle').textContent=isEdit?'Edit Entry':(_entry.entryType===JAMA?'New Credit Entry':'New Debit Entry');
+  $('#txmAv').textContent=String(a.name||'A').trim().charAt(0).toUpperCase()||'A';
+  $('#txmAcc').textContent=a.name||'—';
+  $('#txmMeta').textContent=(TYPE_LBL[a.type]||a.type||'')+(a.branch?' · '+a.branch:'')+(isEdit?' · editing':'');
+  $('#txmCr').className='cr'+(_entry.entryType===JAMA?' on':'');
+  $('#txmDb').className='db'+(_entry.entryType===BANAM?' on':'');
+  $('#txmDate').value=_entry.date;
+  $('#txmTime').value=_entry.time;
+  $('#txmPage').value=_entry.page;
+  $('#txmAmt').value=_entry.amount;
+  const cs=entryCurrencyList(a);
+  $('#txmCur').innerHTML=cs.map(c=>'<option value="'+esc(c)+'"'+(_entry.currency===c?' selected':'')+'>'+esc(c)+'</option>').join('');
+  $('#txmDarak').innerHTML=DARAKS.map(d=>'<button type="button" class="dchip'+(_entry.darak===d?' on':'')+'" onclick="setDarak(this.dataset.v)" data-v="'+esc(d)+'">'+esc(d)+'</button>').join('');
+  $('#txmHwWrap').style.display=_entry.darak==='حواله'?'block':'none';
+  $('#txmHw').value=_entry.hawala;
+  $('#txmDetail').value=_entry.detail;
+  const p=_entry.partyId?getAcc(_entry.partyId):null;
+  $('#txmParty').className='partybox'+(p?' on':'');
+  $('#txmPartyAv').textContent=p?String(p.name||'P').trim().charAt(0).toUpperCase():'+';
+  $('#txmPartyNm').textContent=p?p.name:(isEdit?'No party — single entry':'No party — single entry');
+  $('#txmPartyX').style.display=(p&&!isEdit)?'grid':'none';
+  $('#txmSave').textContent=isEdit?'Save Changes':'Save Entry';
+  $('#txmSave').disabled=false;
+  entryPreview();
+}
+function setEntryType(et){
+  if(!_entry)return;
+  entrySyncForm();
+  _entry.entryType=et===BANAM?BANAM:JAMA;
+  paintEntry();
+}
+function setDarak(v){
+  if(!_entry)return;
+  entrySyncForm();
+  _entry.darak=v;
+  if(v==='حواله'&&!_entry.hawala){
+    const h=nextHawalaNo(_entry.accountId,_entry.currency,_entry.entryType);
+    if(h)_entry.hawala=h;
+  }
+  paintEntry();
+}
+function entryDateChanged(){
+  if(!_entry)return;
+  const v=$('#txmDate').value||todayLocalIso();
+  _entry.date=v;
+  if(_entry.mode==='new')_entry.page=autoPageNo(v,_entry.accountId);
+  paintEntry();
+}
+function entryCurrencyChanged(){
+  if(!_entry)return;
+  _entry.currency=$('#txmCur').value||'PKR';
+  entryPreview();
+}
+function entryPreview(){
+  if(!_entry)return;
+  const amt=Number(toNumStr($('#txmAmt')?$('#txmAmt').value:_entry.amount))||0;
+  const pg=($('#txmPage')?$('#txmPage').value:'').trim();
+  const dt=($('#txmDate')?$('#txmDate').value:'')||_entry.date;
+  const tm=($('#txmTime')?$('#txmTime').value:'')||_entry.time;
+  const det=($('#txmDetail')?$('#txmDetail').value:'').trim();
+  const hw=($('#txmHw')?$('#txmHw').value:'').trim();
+  const a=getAcc(_entry.accountId),p=_entry.partyId?getAcc(_entry.partyId):null;
+  const cur=$('#txmCur')?$('#txmCur').value:_entry.currency;
+  const cr=_entry.entryType===JAMA;
+  const before=a?accStat(a.id,cur).bal:0;
+  const sgn=cr?1:-1;
+  const lines=[];
+  if(a)lines.push('<div class="tpl"><b>'+esc(a.name||'')+'</b><span class="'+(cr?'ok':'bad')+'">'+(cr?'+':'−')+esc(cur)+' '+fmtN(amt)+'</span></div>');
+  if(p)lines.push('<div class="tpl"><b>'+esc(p.name||'')+'</b><span class="'+(cr?'bad':'ok')+'">'+(cr?'−':'+')+esc(cur)+' '+fmtN(amt)+'</span></div>');
+  if(!p)lines.push('<div class="tpl"><span>Single entry</span><span>—</span></div>');
+  const after=before+sgn*amt;
+  lines.push('<div class="tpd">Page '+esc(pg||'—')+' · '+esc(fdate(dt))+' · '+esc(tm||'')+'<br>Balance: '+esc(fmtN(before))+' → <b>'+esc(fmtN(after))+'</b>'+(det?'<br>Detail: '+esc(det):'')+(hw?'<br>Hawala #'+esc(hw):'')+'</div>');
+  $('#txmPrev').innerHTML=lines.join('');
+}
+function closeEntry(){_entry=null;closeModal('m-tx')}
+function entrySyncForm(){
+  if(!_entry)return;
+  const m=$('#m-tx');
+  if(m&&m.classList.contains('show'))entryReadForm();
+}
+function entryPartyCandidates(){
+  const acctId=_entry?_entry.accountId:null;
+  const s=getSession()||{};
+  return DATA.accounts.filter(a=>a&&a.deleted!==true&&a.id!==acctId&&isWritableAccount(a)&&
+    (s.mode==='branch'||!branchName||String(a.branch||'')===String(branchName)));
+}
+function openPartyPicker(){
+  if(!_entry)return;
+  if(_entry.mode==='edit'){toast('The party account is locked on an existing entry','err');return}
+  $('#partySearch').value='';
+  renderPartyList();
+  openModal('m-party');
+}
+function renderPartyList(){
+  const el=$('#partyList');if(!el)return;
+  const q=String(($('#partySearch')||{}).value||'').trim().toLowerCase();
+  let list=entryPartyCandidates();
+  if(q)list=list.filter(a=>String(a.name||'').toLowerCase().includes(q)||String(a.contact||a.phone||'').toLowerCase().includes(q));
+  list=list.slice(0,120);
+  if(!list.length){
+    el.innerHTML='<div class="empty" style="padding:24px 14px"><p>No accounts found</p><p style="font-size:11.5px;color:var(--mut);margin-top:5px">Only accounts of this branch can be a party.</p></div>';
+    return;
+  }
+  el.innerHTML=list.map(a=>'<button type="button" class="prow" onclick="pickParty(this.dataset.id)" data-id="'+esc(a.id)+'"><span class="pav">'+esc(String(a.name||'?').trim().charAt(0).toUpperCase())+'</span><span class="pinf"><b>'+esc(a.name||'')+'</b><span>'+esc(TYPE_LBL[a.type]||a.type||'')+(a.contact?' · '+esc(a.contact):'')+'</span></span></button>').join('');
+}
+function pickParty(id){
+  if(!_entry)return;
+  entrySyncForm();
+  _entry.partyId=id||'';
+  closeModal('m-party');
+  paintEntry();
+}
+function clearParty(e){
+  if(e){e.preventDefault();e.stopPropagation()}
+  if(!_entry)return;
+  entrySyncForm();
+  _entry.partyId='';
+  paintEntry();
+}
+function entryReadForm(){
+  _entry.date=($('#txmDate').value||'').trim()||todayLocalIso();
+  _entry.time=($('#txmTime').value||'').trim();
+  _entry.page=($('#txmPage').value||'').replace(/[^0-9]/g,'');
+  _entry.currency=$('#txmCur').value||'PKR';
+  _entry.amount=toNumStr($('#txmAmt').value);
+  _entry.detail=($('#txmDetail').value||'').trim();
+  _entry.hawala=($('#txmHw').value||'').replace(/[^0-9]/g,'');
+}
+function saveEntry(){
+  if(!_entry||_entry._saving)return;
+  entryReadForm();
+  const a=getAcc(_entry.accountId);
+  const why=writeBlockReason(a);
+  if(why){toast(why,'err');return}
+  const amt=Number(_entry.amount);
+  if(!_entry.date){toast('Pick a date','err');return}
+  if(!_entry.page||!(Number(_entry.page)>0)){toast('Page number is required','err');return}
+  if(!(amt>0)){toast('Enter an amount greater than zero','err');return}
+  if(!_entry.darak){toast('Pick a darak type','err');return}
+  const p=_entry.partyId?getAcc(_entry.partyId):null;
+  if(p){
+    if(!isWritableAccount(p)){toast('The party account is not editable','err');return}
+    if(String(p.id)===String(a.id)){toast('Party must be a different account','err');return}
+  }
+  const br=writeBranchFor(a);
+  if(!br){toast('No branch selected for this write','err');return}
+  const wasEdit=_entry.mode==='edit';
+  _entry._saving=true;
+  const sbtn=$('#txmSave');if(sbtn)sbtn.disabled=true;
+  const now=new Date().toISOString();
+  const pageNo=Number(_entry.page)||null;
+  const hw=_entry.darak==='حواله'?( _entry.hawala||null):null;
+  const legs=[],audits=[];
+  if(_entry.mode==='new'){
+    const pairId='txn_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
+    const id1=uidTxn('a'),id2=p?uidTxn('b'):null;
+    const base={date:_entry.date,time:_entry.time||null,pageNo,currency:_entry.currency,amount:amt,
+      rate:null,currExch:null,currAmount:null,
+      hawalaNo:hw,pairId,branch:br,createdAt:now,updatedAt:now};
+    legs.push({id:id1,isNew:true,data:Object.assign({},base,{id:id1,accountId:a.id,entryType:_entry.entryType,
+      darak:_entry.darak,detail:buildTxnDetail(_entry.entryType,_entry.darak,p?p.name:'',hw||'',$('#txmDetail')?($('#txmDetail').value||'').trim():'')})});
+    if(p){
+      const opp=_entry.entryType===JAMA?BANAM:JAMA;
+      legs.push({id:id2,isNew:true,data:Object.assign({},base,{id:id2,accountId:p.id,entryType:opp,
+        darak:_entry.darak,detail:buildTxnDetail(opp,_entry.darak,a.name,hw||'',$('#txmDetail')?($('#txmDetail').value||'').trim():'')})});
+    }
+    legs.forEach(l=>audits.push(auditOp('add',l.data,null)));
+  }else{
+    const t=DATA.txns.find(x=>x.id===_entry.txnId);
+    if(!t){toast('Entry not found','err');return}
+    const sib=_entry.pairTxnId?DATA.txns.find(x=>x.id===_entry.pairTxnId):null;
+    // Keep the auto words inside the detail in step with darak/hawala edits,
+    // exactly like the main app's fixWordToken.
+    let d1=_entry.detail;
+    if(d1&&t.darak&&_entry.darak&&t.darak!==_entry.darak)d1=fixWordToken(d1,t.darak,_entry.darak);
+    if(d1&&t.hawalaNo&&hw&&String(t.hawalaNo)!==String(hw))d1=fixWordToken(d1,String(t.hawalaNo),String(hw));
+    const patch={date:_entry.date,time:_entry.time||null,pageNo,currency:_entry.currency,amount:amt,
+      entryType:_entry.entryType,darak:_entry.darak,hawalaNo:hw,detail:d1||null,branch:String(t.branch||writeBranchFor(a))};
+    // If this record was created here and has not synced yet, keep the queued
+    // write a full `set` so createdAt/createdBy are never lost to a partial merge.
+    const qAdd=SYNCQ.some(o=>o.col==='txns'&&o.id===t.id&&o.type==='set');
+    legs.push({id:t.id,isNew:false,type:qAdd?'set':'update',data:qAdd?Object.assign({},t,patch):JSON.parse(JSON.stringify(patch))});
+    audits.push(auditOp('edit',Object.assign({},t,patch),t));
+    if(sib){
+      const opp=_entry.entryType===JAMA?BANAM:JAMA;
+      let d2=sib.detail;
+      if(d2&&sib.darak&&_entry.darak&&sib.darak!==_entry.darak)d2=fixWordToken(d2,sib.darak,_entry.darak);
+      if(d2&&sib.hawalaNo&&hw&&String(sib.hawalaNo)!==String(hw))d2=fixWordToken(d2,String(sib.hawalaNo),String(hw));
+      const patch2={date:_entry.date,time:_entry.time||null,pageNo,currency:_entry.currency,amount:amt,
+        entryType:opp,darak:_entry.darak,hawalaNo:hw,detail:d2||null,branch:String(sib.branch||writeBranchFor(getAcc(sib.accountId)))};
+      const qAdd2=SYNCQ.some(o=>o.col==='txns'&&o.id===sib.id&&o.type==='set');
+      legs.push({id:sib.id,isNew:false,type:qAdd2?'set':'update',data:qAdd2?Object.assign({},sib,patch2):patch2});
+      audits.push(auditOp('edit',Object.assign({},sib,patch2),sib));
+    }
+  }
+  queueTxnWrites(legs,audits).then(()=>{
+    closeEntry();
+    toast(wasEdit?'Entry updated · queued for sync':'Entry saved · queued for sync');
+    if($('#view-ledger').classList.contains('active'))renderLedger();
+  }).catch(e=>{toast('Could not queue the change','err');console.warn(e);if(_entry){_entry._saving=false}if(sbtn)sbtn.disabled=false});
+}
+function openEntryActions(id){
+  if(!EDITOR)return;
+  const t=DATA.txns.find(x=>x.id===id&&x.deleted!==true);
+  if(!t)return;
+  _actTxnId=id;
+  const a=getAcc(t.accountId)||{};
+  let why=writeBlockReason(a);
+  if(t.linkedFromTxnId||t.counterpartBranchName)why='This entry is linked to another branch. Cross-branch editing is not enabled yet.';
+  const cr=isCr(t);
+  $('#txactBody').innerHTML='<div class="actsum"><b>'+esc(a.name||'—')+'</b><br>'+esc(fdate(t.date))+' · Page '+esc(t.pageNo||'—')+'<br>'
+    +'<span style="font-size:16px;font-weight:800;font-family:var(--head);color:'+(cr?'var(--ok)':'var(--bad)')+'">'+(cr?'+':'−')+esc(t.currency||'PKR')+' '+esc(fmtN(Number(t.amount)||0))+'</span>'
+    +'<br>'+esc(t.entryType||'')+(t.darak?' · '+esc(t.darak):'')+(t.hawalaNo?' · #'+esc(t.hawalaNo):'')
+    +(t.detail?'<br><span style="font-size:10.5px">'+esc(t.detail)+'</span>':'')
+    +(why?'<br><span style="color:var(--bad);font-size:10.5px">'+esc(why)+'</span>':'')
+    +'</div>';
+  $('#txactEdit').disabled=!!why;
+  $('#txactDel').disabled=!!why;
+  openModal('m-txact');
+}
+function editFromActions(){
+  const id=_actTxnId;
+  closeModal('m-txact');
+  setTimeout(()=>openEntryEdit(id),120);
+}
+function deleteFromActions(){
+  const id=_actTxnId;
+  closeModal('m-txact');
+  setTimeout(()=>askDeleteTxn(id),120);
+}
+function askDeleteTxn(id){
+  if(!EDITOR)return;
+  const t=DATA.txns.find(x=>x.id===id&&x.deleted!==true);
+  if(!t)return;
+  const a=getAcc(t.accountId);
+  const why=writeBlockReason(a);
+  if(why){toast(why,'err');return}
+  if(t.linkedFromTxnId||t.counterpartBranchName){toast('Linked cross-branch entries cannot be deleted here yet','err');return}
+  const sib=t.pairId?DATA.txns.find(x=>x.pairId===t.pairId&&x.id!==t.id&&x.deleted!==true):null;
+  if(sib&&(sib.linkedFromTxnId||sib.counterpartBranchName)){toast('Linked cross-branch entries cannot be deleted here yet','err');return}
+  const msg='This will delete '+(sib?'both linked entries':'this entry')+' from '+((a&&a.name)||'the ledger')+'. The change is queued and synced to Firestore.';
+  openConfirm(sib?'Delete both entries?':'Delete this entry?',msg,()=>{
+    const now=new Date().toISOString();
+    const legs=[],audits=[];
+    [t,sib].filter(Boolean).forEach(x=>{
+      const data=Object.assign({},x,{deleted:true,deletedAt:now,updatedAt:now});
+      legs.push({id:x.id,isNew:false,type:'delete',data});
+      audits.push(auditOp('delete',Object.assign({},x,{deleted:true}),x));
+    });
+    queueTxnWrites(legs,audits).then(()=>{
+      toast('Deleted · queued for sync');
+      if($('#view-ledger').classList.contains('active'))renderLedger();
+    });
+  },'Delete');
+}
 
 /* ---------- boot ---------- */
 function renderAll(){
@@ -4151,7 +4922,9 @@ async function boot(){
   try{
     applyTheme(storedTheme());
     ensurePashtoFont();
+    loadEditor();
     await initIDB();
+    SYNCQ=(await idbAll('syncq')).filter(o=>o&&o.qid&&o.col&&o.id);
     let cv='';try{cv=localStorage.getItem(CACHE_VER_KEY)||''}catch(e){}
     if(cv!==CACHE_VER){
       // Scoped-fetch schema changed (network accounts are now included) — drop
@@ -4181,13 +4954,18 @@ async function boot(){
       renderBranchChips();
       renderTypeChips();
     }
+    applyQueueLocal();
     renderDashboard();
     renderAccounts();
     updatePendingBadge();
+    applyEditorUI();
+    updateSyncBadge();
     if(A)A({targets:'#view-dashboard .stat, #view-dashboard .panel',translateY:[26,0],opacity:[0,1],duration:650,delay:A.stagger(60),easing:'easeOutQuart'});
     if(isNewInstall&&navigator.onLine)runFetch();
+    else if(SYNCQ.length&&navigator.onLine)setTimeout(()=>flushQueue({silent:true}),1400);
   }catch(e){
     console.warn('boot error',e);
+    applyEditorUI();updateSyncBadge();
     renderBranchChips();renderDashboard();renderAccounts();
   }
 }
@@ -4200,6 +4978,10 @@ window.openBackup=openBackup;window.selectBackupBranch=selectBackupBranch;window
 window.doLogout=doLogout;window.closeConfirm=closeConfirm;
 window.renderRoz=renderRoz;window.clearRozPage=clearRozPage;window.openRozBalance=openRozBalance;window.toggleRozSort=toggleRozSort;window.downloadRozPdf=downloadRozPdf;window.downloadRozBalPdf=downloadRozBalPdf;
 window.openRptSub=openRptSub;window.closeRptSub=closeRptSub;window.setRptKhatCur=setRptKhatCur;window.setRptMnChip=setRptMnChip;window.renderRptKhat=renderRptKhat;window.renderRptBanks=renderRptBanks;window.renderRptManafi=renderRptManafi;
+window.openEntry=openEntry;window.setEntryType=setEntryType;window.setDarak=setDarak;window.entryDateChanged=entryDateChanged;window.entryCurrencyChanged=entryCurrencyChanged;window.entryPreview=entryPreview;window.saveEntry=saveEntry;window.closeEntry=closeEntry;
+window.openPartyPicker=openPartyPicker;window.renderPartyList=renderPartyList;window.pickParty=pickParty;window.clearParty=clearParty;
+window.openEntryActions=openEntryActions;window.editFromActions=editFromActions;window.deleteFromActions=deleteFromActions;
+window.toggleEditor=toggleEditor;window.openSyncSheet=openSyncSheet;window.syncNow=syncNow;window.renderSyncList=renderSyncList;
 window.setSumMode=setSumMode;window.setSumRange=setSumRange;window.setSumCustom=setSumCustom;window.setSumCur=setSumCur;window.setSumType=setSumType;window.setSumTerms=setSumTerms;window.downloadSummaryPdf=downloadSummaryPdf;
 window.go('dashboard');
 
