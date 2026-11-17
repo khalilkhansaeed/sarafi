@@ -1037,6 +1037,7 @@ body:not(.editor) #txFab{display:none!important}
 .sqrow .sqinf span{font-size:10px;color:var(--mut)}
 .sqrow .sqamt{font-family:var(--head);font-size:11.5px;font-weight:800;white-space:nowrap}
 .sqnote{font-size:10.5px;color:var(--mut);line-height:1.6;margin-top:8px;text-align:center}
+.sqsep{font-size:9.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--mut2);font-weight:800;margin:12px 0 7px}
 #m-tx .mfoot,#m-party .mfoot{position:sticky;bottom:-16px;z-index:2;background:var(--card);padding-top:10px;padding-bottom:16px;margin-bottom:-16px}
 @media(max-width:430px){#txFab{left:14px;right:14px}.txb{padding:15px 10px;font-size:14.5px}}
 
@@ -1851,7 +1852,10 @@ let PAL=myDarkPalette();
 let DATA={accounts:[],txns:[],ob:{}};
 let PENDING=[];
 const EDITOR_KEY='sarafi_editor_mode';
-let EDITOR=false,SYNCQ=[],_syncing=false;
+const AUTOSYNC_KEY='sarafi_autosync';
+const LASTS_KEY='sarafi_lastsync';
+const LASTMETA_KEY='sarafi_lastsync_meta';
+let EDITOR=false,AUTOSYNC=false,SYNCQ=[],_syncing=false,LASTREC=[],LASTMETA={at:'',err:''};
 let _entry=null,_actTxnId=null;
 let branchSel='All',branchName='',typeSel='All',curSel='PKR';
 let curAccId=null,ledCurr='';let accListScroll=null;
@@ -2088,7 +2092,7 @@ document.addEventListener('click',e=>{
   const row=e.target.closest('#txList .tx[data-txid]');
   if(row){openEntryActions(row.getAttribute('data-txid'))}
 });
-window.addEventListener('online',()=>{updateSyncBadge();if(SYNCQ.length)flushQueue({silent:true})});
+window.addEventListener('online',()=>{updateSyncBadge();if(AUTOSYNC&&SYNCQ.length)flushQueue({silent:true})});
 window.addEventListener('offline',updateSyncBadge);
 try{
   const CAPAPP=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.App;
@@ -2908,7 +2912,7 @@ async function runFetch(){
   if(upd)upd.textContent='Fetching…';
   try{
     await ensureReadAuth();
-    if(SYNCQ.length){try{await flushQueue({silent:true})}catch(e){}}
+    if(AUTOSYNC&&SYNCQ.length){try{await flushQueue({silent:true})}catch(e){}}
     const lfRaw=localStorage.getItem(lfKey())||'';
     const incremental=superMode&&!!(lfRaw&&DATA.txns.length>0);
     let accNew=[],txnDocs=[],obDocs=[],pendingDocs=[];
@@ -4262,6 +4266,8 @@ function renderSettings(){
     '</div>'+
     '<div class="setcard"><h4>Sync</h4>'+
       '<div class="setrow"><span>Unsynced changes</span><b id="setSyncN">'+unsyncedCount()+'</b></div>'+
+      '<div class="setrow"><span>Auto-sync after each change</span><button class="btn '+(AUTOSYNC?'btn-p':'btn-g')+' sm" onclick="toggleAutoSync()">'+(AUTOSYNC?'On':'Off')+'</button></div>'+
+      '<p class="setnote" style="text-align:left;padding:2px 0 0">'+(AUTOSYNC?'Changes are sent to Firestore immediately.':'Changes stay in the queue until you press Sync now or the header Sync button.')+'</p>'+
       '<div class="setrow"><span>Write queued changes to Firestore</span><button class="btn btn-p sm" onclick="syncNow()">Sync now</button></div>'+
       '<div class="setrow"><span>See what will be synced</span><button class="btn btn-g sm" onclick="openSyncSheet()">View queue</button></div>'+
     '</div>'+
@@ -4279,7 +4285,20 @@ function moreGo(tab){closeModal('m-more');setTimeout(()=>{try{go(tab)}catch(e){}
 /* ---------- editor mode + write queue ---------- */
 const WRITABLE_TYPES={customer:1,tijari:1,cash:1};
 const DARAKS=['نغدي','چيک','حواله','انلاين'];
-function loadEditor(){try{EDITOR=localStorage.getItem(EDITOR_KEY)==='1'}catch(e){EDITOR=false}}
+function loadEditor(){
+  try{EDITOR=localStorage.getItem(EDITOR_KEY)==='1'}catch(e){EDITOR=false}
+  try{AUTOSYNC=localStorage.getItem(AUTOSYNC_KEY)==='1'}catch(e){AUTOSYNC=false}
+  try{LASTREC=JSON.parse(localStorage.getItem(LASTS_KEY)||'[]')||[]}catch(e){LASTREC=[]}
+  try{LASTMETA=JSON.parse(localStorage.getItem(LASTMETA_KEY)||'{}')||{}}catch(e){LASTMETA={}}
+  if(!Array.isArray(LASTREC))LASTREC=[];
+}
+function toggleAutoSync(){
+  AUTOSYNC=!AUTOSYNC;
+  try{localStorage.setItem(AUTOSYNC_KEY,AUTOSYNC?'1':'0')}catch(e){}
+  if(AUTOSYNC&&SYNCQ.length&&navigator.onLine)flushQueue({silent:true});
+  toast(AUTOSYNC?'Auto-sync on':'Auto-sync off — changes wait for Sync');
+  if($('#view-settings').classList.contains('active'))renderSettings();
+}
 function setEditor(on){
   EDITOR=!!on;
   try{localStorage.setItem(EDITOR_KEY,EDITOR?'1':'0')}catch(e){}
@@ -4454,6 +4473,18 @@ function applyLocalOps(ops){
   if(changed){DATA.txns=DATA.txns.filter(t=>t&&t.deleted!==true);buildIdx()}
 }
 function applyQueueLocal(){applyLocalOps(SYNCQ)}
+function recordSynced(ops){
+  const at=new Date().toISOString();
+  const rows=[];
+  (ops||[]).forEach(o=>{
+    if(!o||o.col!=='txns')return;
+    const d=o.data||{},a=getAcc(d.accountId);
+    rows.push({at,label:o._label||o.type||'set',account:(a&&a.name)||d.accountId||'',amount:Number(d.amount)||0,currency:d.currency||'',date:d.date||''});
+  });
+  if(!rows.length)return;
+  LASTREC=rows.concat(LASTREC).slice(0,20);
+  try{localStorage.setItem(LASTS_KEY,JSON.stringify(LASTREC))}catch(e){}
+}
 function refreshAfterWrite(){
   updateSyncBadge();
   if($('#view-dashboard').classList.contains('active'))renderDashboard();
@@ -4481,7 +4512,7 @@ async function queueTxnWrites(legs,audits){
   await idbPut('syncq',ops);
   applyLocalOps(ops);
   refreshAfterWrite();
-  if(navigator.onLine)flushQueue({silent:true});
+  if(AUTOSYNC&&navigator.onLine)flushQueue({silent:true});
 }
 async function flushQueue(opts){
   opts=opts||{};
@@ -4514,6 +4545,7 @@ async function flushQueue(opts){
         for(const op of part)await writeOne(op);
       }
       for(const op of part){try{await idbDel('syncq',op.qid)}catch(e){}}
+      recordSynced(part);
       const gone=new Set(part.map(o=>o.qid));
       SYNCQ=SYNCQ.filter(o=>!gone.has(o.qid));
     }catch(e){
@@ -4523,6 +4555,7 @@ async function flushQueue(opts){
           await writeOne(op);
           try{await idbDel('syncq',op.qid)}catch(e2){}
           SYNCQ=SYNCQ.filter(o=>o.qid!==op.qid);
+          recordSynced([op]);
         }catch(e3){
           allOk=false;
           console.warn('sync failed for',op.col,op.id,e3);
@@ -4532,6 +4565,8 @@ async function flushQueue(opts){
   }
   _syncing=false;
   if(btn)btn.classList.remove('loading');
+  LASTMETA={at:new Date().toISOString(),err:SYNCQ.length?'Some changes could not be written':''};
+  try{localStorage.setItem(LASTMETA_KEY,JSON.stringify(LASTMETA))}catch(e){}
   updateSyncBadge();
   if($('#m-sync')&&$('#m-sync').classList.contains('show'))renderSyncList();
   if(!opts.silent){
@@ -4553,10 +4588,11 @@ function openSyncSheet(){renderSyncList();openModal('m-sync')}
 function renderSyncList(){
   const el=$('#syncList');if(!el)return;
   const ops=dataOps();
+  let listHtml='';
   if(!ops.length){
-    el.innerHTML='<div class="empty" style="padding:26px 16px"><div class="eic" style="width:54px;height:54px">'+IC.wallet+'</div><p>Nothing waiting</p><p style="font-size:11.5px;color:var(--mut);margin-top:5px">Changes you make in editor mode appear here until they reach Firestore.</p></div>';
+    listHtml='<div class="empty" style="padding:26px 16px"><div class="eic" style="width:54px;height:54px">'+IC.wallet+'</div><p>Nothing waiting</p><p style="font-size:11.5px;color:var(--mut);margin-top:5px">Changes you make in editor mode appear here until they reach Firestore.</p></div>';
   }else{
-    el.innerHTML=ops.map(op=>{
+    listHtml=ops.map(op=>{
       const d=op.data||{},a=getAcc(d.accountId)||null;
       const lab=op._label||(op.type==='delete'?'del':(op.type==='update'?'upd':'add'));
       const act=lab==='del'?{l:'Delete',c:'del'}:lab==='upd'?{l:'Edit',c:'upd'}:{l:'Add',c:'add'};
@@ -4566,11 +4602,23 @@ function renderSyncList(){
       return '<div class="sqrow"><span class="sqic '+act.c+'">'+act.l.charAt(0)+'</span><span class="sqinf"><b>'+esc(nm)+'</b><span>'+act.l+' · '+esc(when||'—')+'</span></span><span class="sqamt">'+esc(cur)+' '+fmtN(amt)+'</span></div>';
     }).join('');
   }
+  const recent=LASTREC.slice(0,8);
+  const recHtml=recent.length?('<div class="sqsep">Recently synced</div>'+recent.map(r=>{
+    const act=r.label==='del'?{l:'Deleted',c:'del'}:r.label==='upd'?{l:'Edited',c:'upd'}:{l:'Added',c:'add'};
+    return '<div class="sqrow" style="opacity:.72"><span class="sqic '+act.c+'">✓</span><span class="sqinf"><b>'+esc(r.account||'—')+'</b><span>'+act.l+' · '+esc(r.date||'')+' · '+esc(relTime(r.at))+'</span></span><span class="sqamt">'+esc(r.currency||'')+' '+fmtN(r.amount||0)+'</span></div>';
+  }).join('')):'';
+  el.innerHTML=listHtml+(recHtml?'<div style="margin-top:4px">'+recHtml+'</div>':'');
   const audits=SYNCQ.filter(o=>o.col==='auditLog').length;
   const n=unsyncedCount();
   const note=$('#syncNote');
   if(note){
-    note.innerHTML=n?('These records are already saved on this device and will be written to Firestore when you sync.'+(audits?' '+audits+' audit log '+(audits===1?'entry':'entries')+' will be written too.':'')):'';
+    let msg='';
+    if(n){
+      msg='These records are already saved on this device and will be written to Firestore when you sync.'+(AUTOSYNC?'':' Auto-sync is off — press Sync now when ready.')+(audits?' '+audits+' audit log '+(audits===1?'entry':'entries')+' will be written too.':'');
+    }else if(LASTMETA.at){
+      msg='Last sync: '+relTime(LASTMETA.at)+(LASTMETA.err?' — '+LASTMETA.err:'')+'.';
+    }
+    note.textContent=msg;
   }
   updateSyncBadge();
 }
@@ -4962,7 +5010,7 @@ async function boot(){
     updateSyncBadge();
     if(A)A({targets:'#view-dashboard .stat, #view-dashboard .panel',translateY:[26,0],opacity:[0,1],duration:650,delay:A.stagger(60),easing:'easeOutQuart'});
     if(isNewInstall&&navigator.onLine)runFetch();
-    else if(SYNCQ.length&&navigator.onLine)setTimeout(()=>flushQueue({silent:true}),1400);
+    else if(AUTOSYNC&&SYNCQ.length&&navigator.onLine)setTimeout(()=>flushQueue({silent:true}),1400);
   }catch(e){
     console.warn('boot error',e);
     applyEditorUI();updateSyncBadge();
