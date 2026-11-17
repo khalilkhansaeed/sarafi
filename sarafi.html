@@ -1019,6 +1019,8 @@ body:not(.editor) #txFab{display:none!important}
 .plist{max-height:42vh;overflow-y:auto;margin:0 -2px;padding:0 2px}
 .prow{display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border-radius:11px;border:1px solid transparent;text-align:left;font-size:12.5px;color:var(--txt);font-family:inherit}
 .prow:hover,.prow:active{background:var(--card2);border-color:var(--brd)}
+.prow.on{background:var(--accSoft);border-color:var(--accSoftBrd)}
+.prow.on .pav{background:var(--acc);color:#fff}
 .prow .pav{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:var(--accSoft);color:var(--acc);font-size:11px;font-weight:800;flex:none}
 .prow .pinf{flex:1;min-width:0}
 .prow .pinf b{display:block;font-size:12.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1037,7 +1039,6 @@ body:not(.editor) #txFab{display:none!important}
 .sqrow .sqinf span{font-size:10px;color:var(--mut)}
 .sqrow .sqamt{font-family:var(--head);font-size:11.5px;font-weight:800;white-space:nowrap}
 .sqnote{font-size:10.5px;color:var(--mut);line-height:1.6;margin-top:8px;text-align:center}
-.sqsep{font-size:9.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--mut2);font-weight:800;margin:12px 0 7px}
 #m-tx .mfoot,#m-party .mfoot{position:sticky;bottom:-16px;z-index:2;background:var(--card);padding-top:10px;padding-bottom:16px;margin-bottom:-16px}
 @media(max-width:430px){#txFab{left:14px;right:14px}.txb{padding:15px 10px;font-size:14.5px}}
 
@@ -1860,9 +1861,27 @@ let DATA={accounts:[],txns:[],ob:{}};
 let PENDING=[];
 const EDITOR_KEY='sarafi_editor_mode';
 const AUTOSYNC_KEY='sarafi_autosync';
-const LASTS_KEY='sarafi_lastsync';
 const LASTMETA_KEY='sarafi_lastsync_meta';
-let EDITOR=false,AUTOSYNC=false,SYNCQ=[],_syncing=false,LASTREC=[],LASTMETA={at:'',err:''};
+const SETTINGS_KEY='sarafi_settings_main';
+let EDITOR=false,AUTOSYNC=false,SYNCQ=[],_syncing=false,LASTMETA={at:'',err:''};
+let SETTINGS={currencies:[],names:{}};
+function applyMainSettings(s,persist){
+  const list=Array.isArray(s&&s.currencies)?s.currencies:[];
+  const codes=[],names={};
+  list.forEach(c=>{
+    const code=typeof c==='string'?c:((c&&c.code)||'');
+    if(!code)return;
+    if(codes.indexOf(code)<0)codes.push(code);
+    const nm=(c&&typeof c==='object')?(c.name||''):'';
+    if(nm)names[code]=nm;
+  });
+  if(!codes.length)return;
+  SETTINGS={currencies:codes,names};
+  if(persist!==false){try{localStorage.setItem(SETTINGS_KEY,JSON.stringify({currencies:list}))}catch(e){}}
+}
+function loadMainSettings(){
+  try{const s=JSON.parse(localStorage.getItem(SETTINGS_KEY)||'null');if(s)applyMainSettings(s,false)}catch(e){}
+}
 let _entry=null,_actTxnId=null;
 let branchSel='All',branchName='',typeSel='All',curSel='PKR';
 let curAccId=null,ledCurr='';let accListScroll=null;
@@ -2911,6 +2930,12 @@ async function runFetch(){
   try{
     await ensureReadAuth();
     if(AUTOSYNC&&SYNCQ.length){try{await flushQueue({silent:true})}catch(e){}}
+    // Currency list (and other display settings) come from the same settings/main
+    // document the Sarafi Software uses.
+    try{
+      const ss=await fdb.collection('settings').doc('main').get();
+      if(ss&&ss.exists)applyMainSettings(ss.data(),true);
+    }catch(e){console.warn('settings fetch failed',e)}
     const lfRaw=localStorage.getItem(lfKey())||'';
     const incremental=superMode&&!!(lfRaw&&DATA.txns.length>0);
     let accNew=[],txnDocs=[],obDocs=[],pendingDocs=[];
@@ -4286,9 +4311,7 @@ const DARAKS=['نغدي','چيک','حواله','انلاين'];
 function loadEditor(){
   try{EDITOR=localStorage.getItem(EDITOR_KEY)==='1'}catch(e){EDITOR=false}
   try{AUTOSYNC=localStorage.getItem(AUTOSYNC_KEY)==='1'}catch(e){AUTOSYNC=false}
-  try{LASTREC=JSON.parse(localStorage.getItem(LASTS_KEY)||'[]')||[]}catch(e){LASTREC=[]}
   try{LASTMETA=JSON.parse(localStorage.getItem(LASTMETA_KEY)||'{}')||{}}catch(e){LASTMETA={}}
-  if(!Array.isArray(LASTREC))LASTREC=[];
 }
 function toggleAutoSync(){
   AUTOSYNC=!AUTOSYNC;
@@ -4388,15 +4411,19 @@ function autoPageNo(ds,acctId){
 function buildTxnDetail(et,darak,counterName,hwNo,userDetail){
   return [et,darak,counterName,hwNo,userDetail].filter(x=>x!=null&&String(x)!=='').join(' ');
 }
-function fixWordToken(text,oldV,newV){
-  if(!text||!oldV||!newV||String(oldV)===String(newV))return text;
-  let i=text.indexOf(oldV);
-  while(i>-1){
-    const b=i===0?'':text[i-1],a=(i+oldV.length)>=text.length?'':text[i+oldV.length];
-    if((b===''||b===' ')&&(a===''||a===' '))return text.slice(0,i)+newV+text.slice(i+oldV.length);
-    i=text.indexOf(oldV,i+1);
-  }
-  return text;
+// Strip the generated words (entryType, darak, counterparty, hawala) from a
+// saved detail so the edit form only shows the user's note. The detail is then
+// rebuilt for both legs, which is what makes changing the party safe.
+function detailNote(detail,et,darak,counter,hw){
+  let s=String(detail||'').trim();
+  const eat=tok=>{
+    if(!tok)return;
+    const t=String(tok).trim();if(!t)return;
+    if(s===t){s='';return}
+    if(s.indexOf(t)===0&&(s.length===t.length||s[t.length]===' '))s=s.slice(t.length).trim();
+  };
+  eat(et);eat(darak);eat(counter);eat(hw);
+  return s;
 }
 
 /* ----- queue ----- */
@@ -4454,35 +4481,33 @@ function applyLocalOps(ops){
   const s=getSession()||{};
   const scoped=s.mode==='branch';
   const bn=String(s.branchName||'');
+  const put=[],del=[];
   for(const op of ops){
     if(!op||op.col!=='txns')continue;
     // A branch session must never see another branch's queued work on screen;
     // the op itself stays in the queue and still syncs.
     if(scoped&&op.data&&op.data.branch&&String(op.data.branch)!==bn)continue;
     if(op.type==='delete'){
-      DATA.txns=DATA.txns.filter(t=>t.id!==op.id);changed=true;
+      DATA.txns=DATA.txns.filter(t=>t.id!==op.id);
+      del.push(op.id);
+      changed=true;
     }else{
       const i=DATA.txns.findIndex(t=>t.id===op.id);
       if(i>=0)DATA.txns[i]=Object.assign({},DATA.txns[i],op.data);
       else DATA.txns.push(Object.assign({id:op.id},op.data));
+      put.push(DATA.txns.find(t=>t.id===op.id));
       changed=true;
     }
   }
+  // Keep the on-device cache in step with the screen. Without this, a synced
+  // entry lived only in memory and vanished on the next app start until Fetch.
+  try{
+    if(put.length)idbPut('txns',put.filter(Boolean));
+    if(del.length)del.forEach(id=>idbDel('txns',id));
+  }catch(e){}
   if(changed){DATA.txns=DATA.txns.filter(t=>t&&t.deleted!==true);buildIdx()}
 }
 function applyQueueLocal(){applyLocalOps(SYNCQ)}
-function recordSynced(ops){
-  const at=new Date().toISOString();
-  const rows=[];
-  (ops||[]).forEach(o=>{
-    if(!o||o.col!=='txns')return;
-    const d=o.data||{},a=getAcc(d.accountId);
-    rows.push({at,label:o._label||o.type||'set',account:(a&&a.name)||d.accountId||'',amount:Number(d.amount)||0,currency:d.currency||'',date:d.date||''});
-  });
-  if(!rows.length)return;
-  LASTREC=rows.concat(LASTREC).slice(0,20);
-  try{localStorage.setItem(LASTS_KEY,JSON.stringify(LASTREC))}catch(e){}
-}
 function refreshAfterWrite(){
   updateSyncBadge();
   if($('#view-dashboard').classList.contains('active'))renderDashboard();
@@ -4519,7 +4544,7 @@ async function flushQueue(opts){
   if(!fdb||!navigator.onLine)return false;
   _syncing=true;
   const btn=$('#syncBtn');if(btn)btn.classList.add('loading');
-  try{await ensureReadAuth()}catch(e){}
+  try{await Promise.race([ensureReadAuth().catch(()=>false),new Promise(r=>setTimeout(r,4000))])}catch(e){}
   const queue=SYNCQ.slice();
   const BATCH=450;
   let allOk=true;
@@ -4543,7 +4568,6 @@ async function flushQueue(opts){
         for(const op of part)await writeOne(op);
       }
       for(const op of part){try{await idbDel('syncq',op.qid)}catch(e){}}
-      recordSynced(part);
       const gone=new Set(part.map(o=>o.qid));
       SYNCQ=SYNCQ.filter(o=>!gone.has(o.qid));
     }catch(e){
@@ -4553,7 +4577,6 @@ async function flushQueue(opts){
           await writeOne(op);
           try{await idbDel('syncq',op.qid)}catch(e2){}
           SYNCQ=SYNCQ.filter(o=>o.qid!==op.qid);
-          recordSynced([op]);
         }catch(e3){
           allOk=false;
           console.warn('sync failed for',op.col,op.id,e3);
@@ -4600,21 +4623,16 @@ function renderSyncList(){
       return '<div class="sqrow"><span class="sqic '+act.c+'">'+act.l.charAt(0)+'</span><span class="sqinf"><b>'+esc(nm)+'</b><span>'+act.l+' · '+esc(when||'—')+'</span></span><span class="sqamt">'+esc(cur)+' '+fmtN(amt)+'</span></div>';
     }).join('');
   }
-  const recent=LASTREC.slice(0,8);
-  const recHtml=recent.length?('<div class="sqsep">Recently synced</div>'+recent.map(r=>{
-    const act=r.label==='del'?{l:'Deleted',c:'del'}:r.label==='upd'?{l:'Edited',c:'upd'}:{l:'Added',c:'add'};
-    return '<div class="sqrow" style="opacity:.72"><span class="sqic '+act.c+'">✓</span><span class="sqinf"><b>'+esc(r.account||'—')+'</b><span>'+act.l+' · '+esc(r.date||'')+' · '+esc(relTime(r.at))+'</span></span><span class="sqamt">'+esc(r.currency||'')+' '+fmtN(r.amount||0)+'</span></div>';
-  }).join('')):'';
-  el.innerHTML=listHtml+(recHtml?'<div style="margin-top:4px">'+recHtml+'</div>':'');
   const audits=SYNCQ.filter(o=>o.col==='auditLog').length;
   const n=unsyncedCount();
+  el.innerHTML=listHtml;
   const note=$('#syncNote');
   if(note){
     let msg='';
     if(n){
       msg='These records are already saved on this device and will be written to Firestore when you sync.'+(AUTOSYNC?'':' Auto-sync is off — press Sync now when ready.')+(audits?' '+audits+' audit log '+(audits===1?'entry':'entries')+' will be written too.':'');
-    }else if(LASTMETA.at){
-      msg='Last sync: '+relTime(LASTMETA.at)+(LASTMETA.err?' — '+LASTMETA.err:'')+'.';
+    }else if(LASTMETA.err){
+      msg='Last sync failed: '+LASTMETA.err;
     }
     note.textContent=msg;
   }
@@ -4623,10 +4641,9 @@ function renderSyncList(){
 
 /* ----- entry modal ----- */
 function entryCurrencyList(a){
-  let cs=acctCurrencies(a.id);
-  if(!cs.length)cs=allCurrencies().slice();
-  if(!cs.length)cs=CURRS.map(x=>x.code);
-  if(_entry&&_entry.currency&&cs.indexOf(_entry.currency)<0)cs=[_entry.currency].concat(cs);
+  let cs=(SETTINGS.currencies.length?SETTINGS.currencies.slice():CURRS.map(x=>x.code));
+  acctCurrencies(a.id).forEach(c=>{if(cs.indexOf(c)<0)cs.push(c)});
+  if(_entry&&_entry.currency&&cs.indexOf(_entry.currency)<0)cs.unshift(_entry.currency);
   return cs;
 }
 function entryDefaultCurrency(a){
@@ -4634,9 +4651,10 @@ function entryDefaultCurrency(a){
   if(ledCurr&&cs.indexOf(ledCurr)>=0)return ledCurr;
   if(cs.indexOf('PKR')>=0)return 'PKR';
   if(cs.length)return cs[0];
-  const all=allCurrencies();
+  const all=(SETTINGS.currencies.length?SETTINGS.currencies:CURRS.map(x=>x.code));
   if(curSel&&all.indexOf(curSel)>=0)return curSel;
-  return 'PKR';
+  if(all.indexOf('PKR')>=0)return 'PKR';
+  return all[0]||'PKR';
 }
 function openEntry(type){
   if(!EDITOR){toast('Turn on Editor mode in Settings first','err');return}
@@ -4660,11 +4678,12 @@ function openEntryEdit(id){
   if(t.linkedFromTxnId||t.counterpartBranchName){toast('Linked cross-branch entries cannot be edited here yet','err');return}
   const sib=(t.pairId&&DATA.txns.find(x=>x.pairId===t.pairId&&x.id!==t.id&&x.deleted!==true))||null;
   if(sib&&(sib.linkedFromTxnId||sib.counterpartBranchName)){toast('Linked cross-branch entries cannot be edited here yet','err');return}
+  const sibName=sib?((getAcc(sib.accountId)||{}).name||''):'';
   const tm=t.time||(t.updatedAt?(function(){const d=new Date(t.updatedAt);return isNaN(d)?'':String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')})():nowHM());
   _entry={mode:'edit',txnId:t.id,pairTxnId:sib?sib.id:null,accountId:t.accountId,entryType:t.entryType||JAMA,
     date:String(t.date||todayLocalIso()),time:tm,page:String(t.pageNo||autoPageNo(t.date,t.accountId)),currency:t.currency||'PKR',
     amount:String(Number(t.amount)||''),darak:t.darak||'نغدي',hawala:t.hawalaNo!=null?String(t.hawalaNo):'',
-    detail:String(t.detail||''),partyId:sib?sib.accountId:'',orig:JSON.parse(JSON.stringify(t)),origSib:sib?JSON.parse(JSON.stringify(sib)):null};
+    detail:detailNote(t.detail,t.entryType,t.darak,sibName,t.hawalaNo),partyId:sib?sib.accountId:'',orig:JSON.parse(JSON.stringify(t)),origSib:sib?JSON.parse(JSON.stringify(sib)):null};
   paintEntry();
   openModal('m-tx');
 }
@@ -4683,7 +4702,10 @@ function paintEntry(){
   $('#txmPage').value=_entry.page;
   $('#txmAmt').value=_entry.amount;
   const cs=entryCurrencyList(a);
-  $('#txmCur').innerHTML=cs.map(c=>'<option value="'+esc(c)+'"'+(_entry.currency===c?' selected':'')+'>'+esc(c)+'</option>').join('');
+  $('#txmCur').innerHTML=cs.map(c=>{
+    const nm=SETTINGS.names[c]||((CURRS.find(x=>x.code===c)||{}).name||'');
+    return '<option value="'+esc(c)+'"'+(_entry.currency===c?' selected':'')+'>'+esc(c)+(nm?' — '+esc(nm):'')+'</option>';
+  }).join('');
   $('#txmDarak').innerHTML=DARAKS.map(d=>'<button type="button" class="dchip'+(_entry.darak===d?' on':'')+'" onclick="setDarak(this.dataset.v)" data-v="'+esc(d)+'">'+esc(d)+'</button>').join('');
   $('#txmHwWrap').style.display=_entry.darak==='حواله'?'block':'none';
   $('#txmHw').value=_entry.hawala;
@@ -4691,8 +4713,8 @@ function paintEntry(){
   const p=_entry.partyId?getAcc(_entry.partyId):null;
   $('#txmParty').className='partybox'+(p?' on':'');
   $('#txmPartyAv').textContent=p?String(p.name||'P').trim().charAt(0).toUpperCase():'+';
-  $('#txmPartyNm').textContent=p?p.name:(isEdit?'No party — single entry':'No party — single entry');
-  $('#txmPartyX').style.display=(p&&!isEdit)?'grid':'none';
+  $('#txmPartyNm').textContent=p?p.name:'No party — single entry';
+  $('#txmPartyX').style.display=p?'grid':'none';
   $('#txmSave').textContent=isEdit?'Save Changes':'Save Entry';
   $('#txmSave').disabled=false;
   entryPreview();
@@ -4742,6 +4764,12 @@ function entryPreview(){
   if(a)lines.push('<div class="tpl"><b>'+esc(a.name||'')+'</b><span class="'+(cr?'ok':'bad')+'">'+(cr?'+':'−')+esc(cur)+' '+fmtN(amt)+'</span></div>');
   if(p)lines.push('<div class="tpl"><b>'+esc(p.name||'')+'</b><span class="'+(cr?'bad':'ok')+'">'+(cr?'−':'+')+esc(cur)+' '+fmtN(amt)+'</span></div>');
   if(!p)lines.push('<div class="tpl"><span>Single entry</span><span>—</span></div>');
+  const oldP=(_entry.mode==='edit'&&_entry.origSib)?getAcc(_entry.origSib.accountId):null;
+  if(_entry.mode==='edit'){
+    if(oldP&&p&&String(oldP.id)!==String(p.id))lines.push('<div class="tpd">Party changes: '+esc(oldP.name||'')+' → '+esc(p.name||'')+'<br>The old party entry will be deleted.</div>');
+    else if(oldP&&!p)lines.push('<div class="tpd">Party removed: '+esc(oldP.name||'')+' — its entry will be deleted.</div>');
+    else if(!oldP&&p)lines.push('<div class="tpd">Party added: '+esc(p.name||'')+'</div>');
+  }
   const after=before+sgn*amt;
   lines.push('<div class="tpd">Page '+esc(pg||'—')+' · '+esc(fdate(dt))+' · '+esc(tm||'')+'<br>Balance: '+esc(fmtN(before))+' → <b>'+esc(fmtN(after))+'</b>'+(det?'<br>Detail: '+esc(det):'')+(hw?'<br>Hawala #'+esc(hw):'')+'</div>');
   $('#txmPrev').innerHTML=lines.join('');
@@ -4760,7 +4788,6 @@ function entryPartyCandidates(){
 }
 function openPartyPicker(){
   if(!_entry)return;
-  if(_entry.mode==='edit'){toast('The party account is locked on an existing entry','err');return}
   $('#partySearch').value='';
   renderPartyList();
   openModal('m-party');
@@ -4775,7 +4802,7 @@ function renderPartyList(){
     el.innerHTML='<div class="empty" style="padding:24px 14px"><p>No accounts found</p><p style="font-size:11.5px;color:var(--mut);margin-top:5px">Only accounts of this branch can be a party.</p></div>';
     return;
   }
-  el.innerHTML=list.map(a=>'<button type="button" class="prow" onclick="pickParty(this.dataset.id)" data-id="'+esc(a.id)+'"><span class="pav">'+esc(String(a.name||'?').trim().charAt(0).toUpperCase())+'</span><span class="pinf"><b>'+esc(a.name||'')+'</b><span>'+esc(TYPE_LBL[a.type]||a.type||'')+(a.contact?' · '+esc(a.contact):'')+'</span></span></button>').join('');
+  el.innerHTML=list.map(a=>'<button type="button" class="prow'+(_entry&&_entry.partyId===a.id?' on':'')+'" onclick="pickParty(this.dataset.id)" data-id="'+esc(a.id)+'"><span class="pav">'+esc(String(a.name||'?').trim().charAt(0).toUpperCase())+'</span><span class="pinf"><b>'+esc(a.name||'')+'</b><span>'+esc(TYPE_LBL[a.type]||a.type||'')+(a.contact?' · '+esc(a.contact):'')+'</span></span></button>').join('');
 }
 function pickParty(id){
   if(!_entry)return;
@@ -4843,28 +4870,41 @@ function saveEntry(){
     const t=DATA.txns.find(x=>x.id===_entry.txnId);
     if(!t){toast('Entry not found','err');return}
     const sib=_entry.pairTxnId?DATA.txns.find(x=>x.id===_entry.pairTxnId):null;
-    // Keep the auto words inside the detail in step with darak/hawala edits,
-    // exactly like the main app's fixWordToken.
-    let d1=_entry.detail;
-    if(d1&&t.darak&&_entry.darak&&t.darak!==_entry.darak)d1=fixWordToken(d1,t.darak,_entry.darak);
-    if(d1&&t.hawalaNo&&hw&&String(t.hawalaNo)!==String(hw))d1=fixWordToken(d1,String(t.hawalaNo),String(hw));
+    const note=_entry.detail||'';
+    const pairId=t.pairId||(p?('txn_'+Date.now()+'_'+Math.random().toString(36).slice(2,7)):null);
+    const mainDetail=buildTxnDetail(_entry.entryType,_entry.darak,p?p.name:'',hw||'',note);
     const patch={date:_entry.date,time:_entry.time||null,pageNo,currency:_entry.currency,amount:amt,
-      entryType:_entry.entryType,darak:_entry.darak,hawalaNo:hw,detail:d1||null,branch:String(t.branch||writeBranchFor(a))};
+      entryType:_entry.entryType,darak:_entry.darak,hawalaNo:hw,detail:mainDetail||null,branch:String(t.branch||writeBranchFor(a))};
+    if(pairId)patch.pairId=pairId;
     // If this record was created here and has not synced yet, keep the queued
     // write a full `set` so createdAt/createdBy are never lost to a partial merge.
     const qAdd=SYNCQ.some(o=>o.col==='txns'&&o.id===t.id&&o.type==='set');
     legs.push({id:t.id,isNew:false,type:qAdd?'set':'update',data:qAdd?Object.assign({},t,patch):JSON.parse(JSON.stringify(patch))});
     audits.push(auditOp('edit',Object.assign({},t,patch),t));
-    if(sib){
+    // Party was removed or replaced: the old counter-entry is deleted.
+    if(sib&&(!p||String(sib.accountId)!==String(p.id))){
+      const delNow=new Date().toISOString();
+      const delData=Object.assign({},sib,{deleted:true,deletedAt:delNow,updatedAt:delNow});
+      legs.push({id:sib.id,isNew:false,type:'delete',data:delData});
+      audits.push(auditOp('delete',Object.assign({},sib,{deleted:true}),sib));
+    }
+    if(p){
       const opp=_entry.entryType===JAMA?BANAM:JAMA;
-      let d2=sib.detail;
-      if(d2&&sib.darak&&_entry.darak&&sib.darak!==_entry.darak)d2=fixWordToken(d2,sib.darak,_entry.darak);
-      if(d2&&sib.hawalaNo&&hw&&String(sib.hawalaNo)!==String(hw))d2=fixWordToken(d2,String(sib.hawalaNo),String(hw));
-      const patch2={date:_entry.date,time:_entry.time||null,pageNo,currency:_entry.currency,amount:amt,
-        entryType:opp,darak:_entry.darak,hawalaNo:hw,detail:d2||null,branch:String(sib.branch||writeBranchFor(getAcc(sib.accountId)))};
-      const qAdd2=SYNCQ.some(o=>o.col==='txns'&&o.id===sib.id&&o.type==='set');
-      legs.push({id:sib.id,isNew:false,type:qAdd2?'set':'update',data:qAdd2?Object.assign({},sib,patch2):patch2});
-      audits.push(auditOp('edit',Object.assign({},sib,patch2),sib));
+      const sibDetail=buildTxnDetail(opp,_entry.darak,a.name,hw||'',note);
+      if(sib&&String(sib.accountId)===String(p.id)){
+        const patch2={date:_entry.date,time:_entry.time||null,pageNo,currency:_entry.currency,amount:amt,
+          entryType:opp,darak:_entry.darak,hawalaNo:hw,detail:sibDetail||null,pairId,branch:String(sib.branch||writeBranchFor(p))};
+        const qAdd2=SYNCQ.some(o=>o.col==='txns'&&o.id===sib.id&&o.type==='set');
+        legs.push({id:sib.id,isNew:false,type:qAdd2?'set':'update',data:qAdd2?Object.assign({},sib,patch2):patch2});
+        audits.push(auditOp('edit',Object.assign({},sib,patch2),sib));
+      }else{
+        const id2=uidTxn('b');
+        const nd={id:id2,date:_entry.date,time:_entry.time||null,pageNo,currency:_entry.currency,amount:amt,
+          rate:null,currExch:null,currAmount:null,hawalaNo:hw,pairId,branch:writeBranchFor(p),
+          createdAt:now,updatedAt:now,accountId:p.id,entryType:opp,darak:_entry.darak,detail:sibDetail||null};
+        legs.push({id:id2,isNew:true,data:nd});
+        audits.push(auditOp('add',nd,null));
+      }
     }
   }
   queueTxnWrites(legs,audits).then(()=>{
@@ -4969,7 +5009,13 @@ async function boot(){
     applyTheme(storedTheme());
     ensurePashtoFont();
     loadEditor();
+    loadMainSettings();
     await initIDB();
+    // Pull the owner's currency list in the background so the entry form is
+    // correct even before the first manual Fetch.
+    if(navigator.onLine&&fdb){
+      ensureReadAuth().then(()=>fdb.collection('settings').doc('main').get()).then(ss=>{if(ss&&ss.exists)applyMainSettings(ss.data(),true)}).catch(()=>{});
+    }
     SYNCQ=(await idbAll('syncq')).filter(o=>o&&o.qid&&o.col&&o.id);
     let cv='';try{cv=localStorage.getItem(CACHE_VER_KEY)||''}catch(e){}
     if(cv!==CACHE_VER){
