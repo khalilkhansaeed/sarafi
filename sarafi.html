@@ -2937,7 +2937,7 @@ async function runFetch(){
       if(ss&&ss.exists)applyMainSettings(ss.data(),true);
     }catch(e){console.warn('settings fetch failed',e)}
     const lfRaw=localStorage.getItem(lfKey())||'';
-    const incremental=superMode&&!!(lfRaw&&DATA.txns.length>0);
+    const incremental=!!(lfRaw&&DATA.txns.length>0);
     let accNew=[],txnDocs=[],obDocs=[],pendingDocs=[];
     if(superMode){
       // Super admin: everything, every branch.
@@ -2949,24 +2949,41 @@ async function runFetch(){
       obDocs=await readAllDocs('openingBals',q=>q.orderBy('id'));
       try{pendingDocs=await readAllDocs('pendingTxns',q=>q.orderBy('date','desc'))}catch(e){console.warn('pending fetch failed',e)}
     }else{
-      // Branch login: this branch's documents, plus the branch/counter accounts
-      // its own entries reference (cross-branch hawala), so names and balances
-      // line up with the main Sarafi app.
+      // Branch login: this branch's documents, plus the accounts its entries
+      // reference. Transactions are fetched incrementally by updatedAt (a
+      // single-field query, so no composite index is needed).
       const bName=String(s.branchName||'');
       if(!bName)throw new Error('No branch selected');
       const map=new Map();
       const own=await fdb.collection('accounts').doc(String(s.branchId)).get().catch(()=>null);
       if(own&&own.exists){const d=Object.assign({id:own.id},own.data());if(d.deleted!==true)map.set(d.id,d)}
       const accDocs=await readAllDocs('accounts',q=>q.where('branch','==',bName));
+      if(!accDocs.length&&!own&&DATA.accounts.length)throw new Error('no accounts received (offline?)');
       accDocs.forEach(a=>{if(a&&a.deleted!==true)map.set(a.id,a)});
-      let ownIds=[...map.keys()].filter(Boolean);
-      txnDocs=await readAllDocs('txns',q=>q.where('branch','==',bName));
-      if(!txnDocs.length&&ownIds.length){
-        const legacy=await readTxnsByAccounts(ownIds);
-        if(legacy.length)txnDocs=legacy;
+      const ownIds=[...map.keys()].filter(Boolean);
+      if(incremental){
+        try{
+          txnDocs=await readAllDocs('txns',q=>q.where('updatedAt','>',lfRaw).orderBy('updatedAt','desc'));
+          // Match the full-fetch query scope exactly: only this branch's entries.
+          txnDocs=txnDocs.filter(t=>t&&String(t.branch||'')===bName);
+        }catch(e){
+          console.warn('incremental branch fetch failed; using full fetch',e);
+          txnDocs=await readAllDocs('txns',q=>q.where('branch','==',bName));
+        }
+      }else{
+        txnDocs=await readAllDocs('txns',q=>q.where('branch','==',bName));
+        if(!txnDocs.length&&ownIds.length){
+          const legacy=await readTxnsByAccounts(ownIds);
+          if(legacy.length)txnDocs=legacy;
+        }
       }
-      const refIds=[...new Set(txnDocs.map(t=>t&&t.accountId).filter(Boolean))].filter(id=>!map.has(id));
-      const refSet=new Set(refIds);
+      // Account set = fresh branch accounts + every account referenced by the
+      // merged ledger. Referenced accounts already cached are reused, so only
+      // genuinely new ids are read.
+      const refSet=new Set();
+      (incremental?[...DATA.txns,...txnDocs]:txnDocs).forEach(t=>{if(t&&t.accountId)refSet.add(t.accountId)});
+      DATA.accounts.forEach(a=>{if(a&&refSet.has(a.id)&&!map.has(a.id))map.set(a.id,a)});
+      const refIds=[...refSet].filter(id=>id&&!map.has(id));
       if(refIds.length){
         const refDocs=await readAccountsByIds(refIds);
         refDocs.forEach(a=>{if(a&&a.deleted!==true&&!map.has(a.id))map.set(a.id,stripAccountCreds(a))});
@@ -2978,7 +2995,7 @@ async function runFetch(){
         const legacyOb=await readObByAccounts(ids);
         if(legacyOb.length)obDocs=legacyOb;
       }
-      if(!accNew.length&&!txnDocs.length)throw new Error('No data found for this branch.');
+      if(!accNew.length&&!txnDocs.length&&!DATA.txns.length)throw new Error('No data found for this branch.');
       try{pendingDocs=await readAllDocs('pendingTxns',q=>q.where('toBranchAccountName','==',bName))}catch(e){console.warn('pending fetch failed',e)}
       // Never let another branch's transactions through, even if the query returned them.
       const ids2=new Set(accNew.map(a=>a.id));
