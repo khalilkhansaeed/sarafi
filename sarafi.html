@@ -1045,6 +1045,13 @@ body:not(.editor) #txFab{display:none!important}
 [data-theme="dark"] .sumcard .sg{background:rgba(255,255,255,.03)}
 [data-theme="dark"] .sumcard .curb{background:rgba(6,182,212,.14)}
 @media(max-width:560px){.sumcard .sgrid{grid-template-columns:repeat(2,1fr)}.sumcard .sscore b{font-size:15px}}
+
+/* ---------- static UI: all motion removed ---------- */
+html{scroll-behavior:auto!important}
+*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+.spinner{display:none!important}
+.btn:hover,.btn-p:hover,.btn-g:hover,.btn-dg:hover,.btn-ok:hover,.iconbtn:hover,.stat:hover,.bizcard:hover,.bankcard:hover,.rptcard:hover,.krow:hover,.mnclick:hover,.tx:hover,.pcard:hover,.sumpodium:hover,.sumcard:hover,.fab:hover,.sheet .mhead .trash:hover,.txsubhead .trash:hover{transform:none!important}
+.fabwrap.open .pill,.fabwrap.open .fab,.fabwrap.open .fab svg{transform:none!important}
 </style>
 </head>
 <body>
@@ -1430,7 +1437,7 @@ body:not(.editor) #txFab{display:none!important}
 
 <div class="toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span id="toastMsg"></span></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
+
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -1461,7 +1468,7 @@ body:not(.editor) #txFab{display:none!important}
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const isDark=()=>document.documentElement.getAttribute('data-theme')==='dark';
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const A=window.anime?window.anime:null;
+const A=null; /* motion removed: every animated transition is disabled */
 const BUILD_ID='__BUILD_ID__';
 
 /* ---------- multi-tenant Firebase: master registry resolves each client's config ---------- */
@@ -2079,15 +2086,6 @@ document.addEventListener('keydown',e=>{
 });
 
 document.addEventListener('click',e=>{
-  if($('#view-accounts').classList.contains('active')||$('#view-ledger').classList.contains('active'))return;
-  const b=e.target.closest('.btn,.iconbtn,.fab,.pill,.seg button,.chip-f,.nav button,.bottomnav button');
-  if(!b)return;
-  const r=b.getBoundingClientRect(),d=Math.max(r.width,r.height)*1.1,s=document.createElement('span');
-  s.className='ripple';
-  s.style.cssText='width:'+d+'px;height:'+d+'px;left:'+(e.clientX-r.left-d/2)+'px;top:'+(e.clientY-r.top-d/2)+'px';
-  b.appendChild(s);setTimeout(()=>s.remove(),700);
-});
-document.addEventListener('click',e=>{
   if(!EDITOR)return;
   const row=e.target.closest('#txList .tx[data-txid]');
   if(row){openEntryActions(row.getAttribute('data-txid'))}
@@ -2126,7 +2124,7 @@ function go(tab,instant){
     const t=(tab==='ledger')?'accounts':(tab==='reports'||tab==='summary'||tab==='settings')?'more':tab;
     b.classList.toggle('active',b.dataset.tab===t);
   });
-  if(tab==='accounts'||tab==='ledger')jumpScroll(tab==='ledger'||accListScroll==null?0:accListScroll);else window.scrollTo({top:0,behavior:'smooth'});
+  if(tab==='accounts'||tab==='ledger')jumpScroll(tab==='ledger'||accListScroll==null?0:accListScroll);else window.scrollTo({top:0,behavior:'auto'});
   if(tab==='dashboard')renderDashboard();
   if(tab==='accounts'){renderAccounts();if(accListScroll!=null){jumpScroll(accListScroll);accListScroll=null}}
   if(tab==='ledger')renderLedger();
@@ -5046,11 +5044,9 @@ window.go('dashboard');
     for(const p of P){p.x+=p.vx;p.y+=p.vy;if(p.x<-20)p.x=W+20;if(p.x>W+20)p.x=-20;if(p.y<-20)p.y=H+20;if(p.y>H+20)p.y=-20}
     for(let i=0;i<P.length;i++){for(let j=i+1;j<P.length;j++){const a=P[i],b=P[j],dx=a.x-b.x,dy=a.y-b.y,d2=dx*dx+dy*dy;if(d2<16900){const o=(1-Math.sqrt(d2)/130)*.09;cx.strokeStyle='rgba('+BG.line+','+o.toFixed(3)+')';cx.lineWidth=1;cx.beginPath();cx.moveTo(a.x,a.y);cx.lineTo(b.x,b.y);cx.stroke()}}}
     for(const p of P){cx.beginPath();cx.arc(p.x,p.y,p.r,0,7);cx.fillStyle='rgba('+BG.dot+','+(p.a*.35).toFixed(2)+')';cx.fill()}
-    raf=requestAnimationFrame(draw);
   }
   sizeCv();draw();
-  window.addEventListener('resize',sizeCv);
-  document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(raf);raf=null}else if(!raf)draw()});
+  window.addEventListener('resize',()=>{sizeCv();draw()});
 })();
 
 /* ---------- start ---------- */
