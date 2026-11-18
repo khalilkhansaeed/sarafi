@@ -976,6 +976,8 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
 #m-switch .accbranch .brpinfo b{font-size:12.5px}
 #m-switch .accbranch .brpinfo span{font-size:10px;color:var(--mut);direction:ltr;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #m-switch .accbranch .brstate{font-size:10px;font-weight:800;color:var(--mut2);flex:none}
+.cpnote{font-size:10.5px;color:var(--mut2);line-height:1.5;margin-top:6px}
+#m-cparty .sheet{max-width:460px}
 @media(max-width:430px){.bottomnav button{padding:7px 7px;font-size:10px}.bottomnav button svg{width:19px;height:19px}}
 
 /* ---------- more sheet / approvals / settings ---------- */
@@ -1398,18 +1400,39 @@ html{scroll-behavior:auto!important}
     <div class="field"><label>Amount *</label><input id="txmAmt" type="text" inputmode="decimal" autocomplete="off" placeholder="0" oninput="entryPreview()"></div>
     <div class="field"><label>Darak *</label><div class="dchips" id="txmDarak"></div></div>
     <div class="field" id="txmHwWrap" style="display:none"><label>Hawala No.</label><input id="txmHw" type="text" inputmode="numeric" autocomplete="off" oninput="entryPreview()"></div>
-    <div class="field"><label>Party Account (optional)</label>
+    <div class="field" id="txmPartyWrap"><label>Party Account (optional)</label>
       <button type="button" class="partybox" id="txmParty" onclick="openPartyPicker()">
         <span class="pav" id="txmPartyAv">+</span>
         <span class="pnm" id="txmPartyNm">No party — single entry</span>
         <span class="px" id="txmPartyX" style="display:none" onclick="clearParty(event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
       </button>
     </div>
+    <div class="field" id="txmCpartyWrap" style="display:none"><label id="txmCpartyLbl">Customer in the other branch (optional)</label>
+      <button type="button" class="partybox" id="txmCparty" onclick="openCounterpartPicker()">
+        <span class="pav" id="txmCpartyAv">+</span>
+        <span class="pnm" id="txmCpartyNm">No customer — branch only</span>
+        <span class="px" id="txmCpartyX" style="display:none" onclick="clearCounterpart(event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
+      </button>
+      <p class="cpnote" id="txmCpartyNote"></p>
+    </div>
     <div class="field"><label>Details</label><input id="txmDetail" autocomplete="off" placeholder="Optional note" oninput="entryPreview()"></div>
     <div class="txprev" id="txmPrev"></div>
     <div class="mfoot" style="display:flex;gap:9px">
       <button class="btn btn-g" onclick="closeEntry()">Cancel</button>
       <button class="btn btn-p" id="txmSave" onclick="saveEntry()">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="m-cparty">
+  <div class="ovl" onclick="closeModal('m-cparty')"></div>
+  <div class="sheet">
+    <div class="mhead"><h3>Customer in <span id="cpartyBranch">branch</span></h3><button class="x" onclick="closeModal('m-cparty')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="search" style="margin-bottom:9px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input id="cpartySearch" placeholder="Search customer..." oninput="renderCounterpartList()"></div>
+    <div class="plist" id="cpartyList"></div>
+    <div class="mfoot" style="margin-top:10px;display:flex;gap:8px">
+      <button class="btn btn-g" onclick="cpartyRefresh()">Refresh</button>
+      <button class="btn btn-g wide" onclick="pickCounterpart(null)">No customer</button>
     </div>
   </div>
 </div>
@@ -2826,7 +2849,10 @@ function renderLedger(){
     if(t.hawalaNo!=null&&String(t.hawalaNo)!==''){const hn=String(t.hawalaNo);det=det.split(/\s+/).filter(w=>w!==hn&&w!=='#'+hn).join(' ').trim()}
     let meta='';
     if(t.pageNo)meta+='<span class="plink">Page '+esc(t.pageNo)+'</span>';
-    if(t.linkedFromTxnId)meta+='<span class="plink">linked entry</span>';
+    if(t.linkedFromTxnId){
+      const ls=linkStateLabel(t);
+      if(ls)meta+='<span class="plink" style="color:'+(ls.c==='ok'?'var(--ok)':ls.c==='bad'?'var(--bad)':'var(--mut)')+'">'+esc(ls.l)+'</span>';
+    }
     if(EDITOR)meta+='<span class="plink" style="color:var(--acc)">tap to edit</span>';
     const eattr=EDITOR?' data-txid="'+esc(t.id)+'" title="Tap to edit or delete"':'';
     return '<div class="tx"'+eattr+'><div class="tinfo"><span>'+ftstampLocal(t)+'</span><b>'+(det?esc(det):(cr?'Credit':'Debit'))+'</b>'+(meta?'<div class="tmeta">'+meta+'</div>':'')+'</div><div class="amts"><div class="amt '+(cr?'credit':'debit')+'">'+(cr?'+':'−')+fmtN(Number(t.amount)||0)+'</div><div class="rbal '+(rb>0?'pos':rb<0?'neg':'zero')+'">Bal '+fmtN(rb)+'</div></div></div>';
@@ -3358,6 +3384,13 @@ async function runFetch(opts){
       const accDocs=await readAllDocs('accounts',q=>q.where('branch','==',bName));
       if(!accDocs.length&&!own&&DATA.accounts.length)throw new Error('no accounts received (offline?)');
       accDocs.forEach(a=>{if(a&&a.deleted!==true)map.set(a.id,a)});
+      // Branch accounts are the addresses for cross-branch hawala. They have no
+      // `branch` value, so fetch them explicitly; without this a branch with no
+      // prior cross-branch entry would not see any target to send to.
+      try{
+        const brDocs=await readAllDocs('accounts',q=>q.where('type','==','branch'));
+        brDocs.forEach(a=>{if(a&&a.deleted!==true&&a.isSuperAdmin!==true&&!map.has(a.id))map.set(a.id,stripAccountCreds(a))});
+      }catch(e){console.warn('branch account fetch failed',e)}
       const ownIds=[...map.keys()].filter(Boolean);
       if(incremental){
         try{
@@ -3386,7 +3419,7 @@ async function runFetch(opts){
         const refDocs=await readAccountsByIds(refIds);
         refDocs.forEach(a=>{if(a&&a.deleted!==true&&!map.has(a.id))map.set(a.id,stripAccountCreds(a))});
       }
-      accNew=[...map.values()].filter(a=>String(a.name||'')===bName||String(a.branch||'')===bName||refSet.has(a.id)).map(stripAccountCreds);
+      accNew=[...map.values()].filter(a=>String(a.type||'')==='branch'||String(a.name||'')===bName||String(a.branch||'')===bName||refSet.has(a.id)).map(stripAccountCreds);
       const ids=accNew.map(a=>a.id).filter(Boolean);
       obDocs=await readAllDocs('openingBals',q=>q.where('branch','==',bName));
       if(!obDocs.length&&ids.length){
@@ -3394,7 +3427,12 @@ async function runFetch(opts){
         if(legacyOb.length)obDocs=legacyOb;
       }
       if(!accNew.length&&!txnDocs.length&&!DATA.txns.length)throw new Error('No data found for this branch.');
-      try{pendingDocs=await readAllDocs('pendingTxns',q=>q.where('toBranchAccountName','==',bName))}catch(e){console.warn('pending fetch failed',e)}
+      let pIn=[],pOut=[];
+      try{pIn=await readAllDocs('pendingTxns',q=>q.where('toBranchAccountName','==',bName))}catch(e){console.warn('incoming pending fetch failed',e)}
+      try{pOut=await readAllDocs('pendingTxns',q=>q.where('fromBranch','==',bName))}catch(e){console.warn('outgoing pending fetch failed',e)}
+      const pm=new Map();
+      [...pIn,...pOut].forEach(p=>{if(p&&p.id)pm.set(p.id,p)});
+      pendingDocs=[...pm.values()];
       // Never let another branch's transactions through, even if the query returned them.
       const ids2=new Set(accNew.map(a=>a.id));
       txnDocs=txnDocs.filter(t=>t&&(String(t.branch||'')===bName||ids2.has(t.accountId)));
@@ -3422,8 +3460,8 @@ async function runFetch(opts){
     }
     DATA.accounts=accNew;
     DATA.ob=obNew;
-    PENDING=(pendingDocs||[]).filter(p=>p&&(!p.status||p.status==='pending'));
-    if(!superMode)PENDING=PENDING.filter(p=>String(p.toBranchAccountName||'')===String(s.branchName||''));
+    PENDING=(pendingDocs||[]).filter(keepPendingRec);
+    if(!superMode)PENDING=PENDING.filter(p=>String(p.toBranchAccountName||'')===String(s.branchName||'')||String(p.fromBranch||'')===String(s.branchName||''));
     PENDING=PENDING.map(p=>Object.assign({id:p.id},p));
     PENDING.sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
     applyQueueLocal();
@@ -3440,6 +3478,7 @@ async function runFetch(opts){
       idbClear('pending').then(()=>idbPut('pending',PENDING))
     ]);
     localStorage.setItem(lfKey(),new Date().toISOString());
+    _cpartyCache={};
     renderAll();
     updateStamp();
     if(!opts.silent)toast('Data updated — '+DATA.accounts.length+' accounts · '+DATA.txns.length+' entries');
@@ -4652,11 +4691,17 @@ async function downloadSummaryPdf(){
   }catch(e){console.error('summary pdf failed',e);toast('PDF error: '+(e&&e.message?e.message:e),'err');}
 }
 /* ---------- approvals (read-only placeholder) ---------- */
+function keepPendingRec(p){
+  if(!p)return false;
+  if(!p.status||p.status==='pending')return true;
+  const t=Date.parse(p.updatedAt||p.acceptedAt||p.rejectedAt||p.createdAt||'')||0;
+  return !!t&&(Date.now()-t)<120*864e5;
+}
 function pendingForScope(){
   const s=getSession();if(!s)return [];
   const list=PENDING.filter(p=>p&&(!p.status||p.status==='pending'));
   if(s.mode==='branch')return list.filter(p=>String(p.toBranchAccountName||'')===String(s.branchName||''));
-  if(branchName)return list.filter(p=>String(p.toBranchAccountName||'')===branchName||String(p.fromBranch||'')===branchName);
+  if(branchName)return list.filter(p=>String(p.toBranchAccountName||'')===branchName);
   return list;
 }
 function pendingTypeLabel(p){
@@ -4904,7 +4949,7 @@ async function previewDelete(p){
   const target=pendBranch(p);
   const fromAcct=await resolveBranchAccount(p.fromBranch);
   const doc=await findCounterpart(p,target,fromAcct);
-  if(!doc)return {items:[],changes:[],warn:'The counterpart entry is not in this device’s data. Fetch and try again.',note:'',ok:false,ctx:{fromAcct,doc,target}};
+  if(!doc)return {items:[],changes:[],warn:'',note:'The counterpart entry is already gone. Accepting will close this request without changing your ledger.',ok:true,ctx:{fromAcct,doc:null,target,list:[]}};
   const fullPair=p.fullPair===true||(p.fullPair===undefined&&Array.isArray(p.deletedDataList)&&p.deletedDataList.length>1);
   const list=fullPair?await findPairTxns(doc,target):[doc];
   const items=list.map(t=>{
@@ -5033,7 +5078,6 @@ async function pendFresh(p){
     if(st&&st!=='pending'){
       const i=PENDING.findIndex(x=>x.id===p.id);
       if(i>=0)PENDING[i]=Object.assign({},PENDING[i],d.data());
-      PENDING=PENDING.filter(x=>x.id!==p.id);
       renderApprovals();updatePendingBadge();
       toast('This request was already processed','err');
       return false;
@@ -5116,6 +5160,10 @@ function execNormalDecline(p,pv,now){
     toBranchAccountName:p.fromBranch,originalAccountId:p.toBranchAccountId,txnIds:p.txnIds||[],
     date:p.date,pageNo:p.pageNo!=null?p.pageNo:null,entryType:p.entryType,darak:p.darak,
     currency:p.currency,amount:Number(p.amount)||0,hawalaNo:p.hawalaNo||null,detail:p.detail||null,
+    entryDetail:p.entryDetail||p.detail||null,
+    ...(p.counterpartCustomerId||p.counterpartCustomerName?{counterpartCustomerId:p.counterpartCustomerId||'',
+      counterpartCustomerName:p.counterpartCustomerName||'',counterpartCustomerType:p.counterpartCustomerType||'',
+      counterpartCustomerEntryType:p.counterpartCustomerEntryType||p.entryType}:{}),
     relatedPendingId:p.id,status:'pending',createdAt:now,branch:target};
   const patch=pendStatusPatch(p,'rejected',now);
   return [
@@ -5166,6 +5214,13 @@ function execDeleteAccept(p,pv,now){
     const del=Object.assign({},t,{deleted:true,deletedAt:now,updatedAt:now,branch:target});
     ops.push({type:'delete',col:'txns',id:t.id,data:del});
     ops.push(auditOp('delete',Object.assign({},t,{deleted:true}),t));
+  }
+  // If the sender deleted before this branch accepted the original hawala, the
+  // original request would otherwise stay on screen and could create a mirror
+  // after the delete was applied. Close it with the delete.
+  if(p.linkedFromTxnId){
+    const orig=PENDING.find(x=>x&&x.id===p.linkedFromTxnId&&(!x.status||x.status==='pending'));
+    if(orig)ops.push({type:'update',col:'pendingTxns',id:orig.id,data:pendStatusPatch(orig,'accepted',now)});
   }
   ops.push({type:'update',col:'pendingTxns',id:p.id,data:pendStatusPatch(p,'accepted',now)});
   ops.push(auditPending('edit',Object.assign({},p,{status:'accepted'}),p));
@@ -5255,14 +5310,31 @@ function execCancelDecline(p,pv,now){
   }else{
     re={fromBranch:target,toBranchAccountId:fromAcct.id,toBranchAccountName:p.fromBranch,txnIds:p.txnIds||[],
       date:p.date,pageNo:p.pageNo!=null?p.pageNo:null,entryType:p.entryType,darak:p.darak,currency:p.currency,
-      amount:Number(p.amount)||0,hawalaNo:p.hawalaNo||null,detail:p.detail||null,status:'pending',createdAt:now,id:nid,branch:target};
+      amount:Number(p.amount)||0,hawalaNo:p.hawalaNo||null,detail:p.detail||null,
+      entryDetail:p.entryDetail||p.detail||null,
+      ...(p.counterpartCustomerId||p.counterpartCustomerName?{counterpartCustomerId:p.counterpartCustomerId||'',
+        counterpartCustomerName:p.counterpartCustomerName||'',counterpartCustomerType:p.counterpartCustomerType||'',
+        counterpartCustomerEntryType:p.counterpartCustomerEntryType||p.entryType}:{}),
+      status:'pending',createdAt:now,id:nid,branch:target};
   }
-  return [
+  const ops=[
     {type:'set',col:'pendingTxns',id:nid,data:re,_new:true},
     {type:'update',col:'pendingTxns',id:p.id,data:pendStatusPatch(p,'rejected',now)},
     auditPending('add',re,null),
     auditPending('edit',Object.assign({},p,{status:'rejected'}),p)
   ];
+  // A re-sent normal request gets a new pending id. Point the sender's own entry
+  // at it so later edits/deletes and the status label resolve the new mirror.
+  if(!p.editPendingId&&!p.deletedData&&!(Array.isArray(p.deletedDataList)&&p.deletedDataList.length)){
+    (p.txnIds||[]).forEach(tid=>{
+      if(!tid)return;
+      const t=DATA.txns.find(x=>x.id===tid);
+      const qAdd=SYNCQ.some(o=>o.col==='txns'&&o.id===tid&&o.type==='set');
+      if(qAdd&&t)ops.push({type:'set',col:'txns',id:tid,data:Object.assign({},t,{linkedFromTxnId:nid})});
+      else ops.push({type:'update',col:'txns',id:tid,data:{linkedFromTxnId:nid}});
+    });
+  }
+  return ops;
 }
 async function confirmPendingAction(){
   const a=_pendAction;
@@ -5613,7 +5685,7 @@ async function loadAccountIntoApp(acc){
   DATA.txns=(txs||[]).map(x=>Object.assign({},x));
   (obs||[]).forEach(o=>{const{id,...rest}=o;DATA.ob[id]=rest});
   SYNCQ=(q||[]).filter(o=>o&&o.qid&&o.col&&o.id);
-  PENDING=(pend||[]).filter(p=>p&&(!p.status||p.status==='pending')).map(p=>Object.assign({},p));
+  PENDING=(pend||[]).filter(keepPendingRec).map(p=>Object.assign({},p));
   applyQueueLocal();
   trimCacheToScope();
   applyBookData();
@@ -5687,6 +5759,34 @@ function doLogout(){
 /* ---------- editor mode + write queue ---------- */
 const WRITABLE_TYPES={customer:1,tijari:1,cash:1};
 const DARAKS=['نغدي','چيک','حواله','انلاين'];
+let _cpartyCache={},_cpartyBranch='',_cpartyErr='';
+function linkPending(t){
+  if(!t||!t.linkedFromTxnId)return null;
+  return PENDING.find(p=>p&&p.id===t.linkedFromTxnId)||null;
+}
+function linkSnap(o){
+  return {entryType:o.entryType,darak:o.darak,currency:o.currency,amount:Number(o.amount)||0,
+    rate:o.rate?Number(o.rate):null,hawalaNo:o.hawalaNo||null,detail:o.detail||null,
+    date:o.date,pageNo:o.pageNo?Number(o.pageNo):null,accountId:o.accountId};
+}
+function linkedCustomer(t){
+  if(!t)return null;
+  if(t.counterpartCustomerId||t.counterpartCustomerName)return {id:t.counterpartCustomerId||'',name:t.counterpartCustomerName||''};
+  const p=linkPending(t);
+  if(p&&(p.counterpartCustomerId||p.counterpartCustomerName))return {id:p.counterpartCustomerId||'',name:p.counterpartCustomerName||''};
+  return null;
+}
+function linkStateLabel(t){
+  if(!t||!t.linkedFromTxnId)return null;
+  const p=linkPending(t);
+  const br=String(t.counterpartBranchName||(p&&p.toBranchAccountName)||'branch');
+  if(p&&String(p.toBranchAccountName||'')===sessionBookBranch())return {l:'mirror of '+br,c:'ok'};
+  if(!p)return {l:'linked to '+br,c:'wait'};
+  if(!p.status||p.status==='pending')return {l:'waiting for '+br,c:'wait'};
+  if(p.status==='accepted')return {l:'accepted by '+br,c:'ok'};
+  if(p.status==='rejected')return {l:'declined by '+br+' — check Approvals',c:'bad'};
+  return {l:'linked to '+br,c:'wait'};
+}
 function loadEditor(){
   try{
     const ev=localStorage.getItem(perAccKey(EDITOR_KEY));
@@ -5750,11 +5850,37 @@ function isWritableAccount(a){
   if(s.mode==='branch')return String(a.branch||'')===String(s.branchName||'');
   return !!String(a.branch||'');
 }
+function sessionBookBranch(){
+  const s=getSession()||{};
+  return s.mode==='branch'?String(s.branchName||''):String(branchName||'');
+}
+function branchNameOf(a){
+  if(!a||String(a.type||'')!=='branch')return '';
+  try{
+    const reg=[];
+    if(REG.superAdmin)reg.push(REG.superAdmin);
+    (REG.branches||[]).forEach(b=>reg.push(b));
+    const hit=reg.find(b=>b&&String(b.id)===String(a.id));
+    if(hit&&String(hit.name||'').trim())return String(hit.name||'');
+  }catch(e){}
+  return String(a.name||'');
+}
+function isCrossBranchTarget(a){
+  if(!a||String(a.type||'')!=='branch')return false;
+  const own=sessionBookBranch();
+  return !!own&&branchNameOf(a)!==own;
+}
 function writeBlockReason(a){
   if(!a)return 'Account not found';
   const s=getSession();if(!s)return 'Sign in first';
   if(a.isSuperAdmin)return 'The super admin account is not a ledger';
-  if(!WRITABLE_TYPES[String(a.type||'')])return 'Only customers, tijari and bank accounts can be edited right now';
+  if(String(a.type||'')==='branch'){
+    const own=sessionBookBranch();
+    if(!own)return 'Choose a branch first';
+    if(branchNameOf(a)===own)return 'This is your own branch account';
+    return '';
+  }
+  if(!WRITABLE_TYPES[String(a.type||'')])return 'Only customers, tijari, bank accounts and other branch accounts can be used here';
   if(s.mode==='branch'&&String(a.branch||'')!==String(s.branchName||''))return 'This account belongs to another branch';
   if(s.mode==='super'&&!String(a.branch||''))return 'This account has no branch';
   return '';
@@ -5894,12 +6020,10 @@ function applyLocalOps(ops){
         else PENDING.push(Object.assign({},op.data));
         const rec=PENDING.find(x=>x.id===op.id);
         if(rec)pput.push(Object.assign({},rec));
-        if(rec&&rec.status&&rec.status!=='pending')PENDING=PENDING.filter(x=>x.id!==op.id);
       }else if(i>=0){
         PENDING[i]=Object.assign({},PENDING[i],op.data);
         const rec=PENDING[i];
         if(rec)pput.push(Object.assign({},rec));
-        if(rec&&rec.status&&rec.status!=='pending')PENDING=PENDING.filter(x=>x.id!==op.id);
       }
       pendChanged=true;
     }
@@ -6084,9 +6208,12 @@ function openEntry(type){
   const why=writeBlockReason(a);
   if(why){toast(why,'err');return}
   const ds=todayLocalIso();
+  const cross=isCrossBranchTarget(a);
   _entry={mode:'new',txnId:null,pairTxnId:null,accountId:a.id,entryType:type==='بنام'?BANAM:JAMA,
     date:ds,time:nowHM(),page:autoPageNo(ds,a.id),currency:entryDefaultCurrency(a),amount:'',
-    darak:'نغدي',hawala:'',detail:'',partyId:'',orig:null};
+    darak:cross?'حواله':'نغدي',hawala:'',detail:'',partyId:'',
+    counterpartId:'',counterpartName:'',counterpartType:'',counterpartEntryType:type==='بنام'?BANAM:JAMA,orig:null};
+  if(cross&&!_entry.hawala){const h=nextHawalaNo(a.id,_entry.currency,_entry.entryType);if(h)_entry.hawala=h}
   paintEntry();
   openModal('m-tx');
 }
@@ -6097,11 +6224,24 @@ function openEntryEdit(id){
   const a=getAcc(t.accountId);
   const why=writeBlockReason(a);
   if(why){toast(why,'err');return}
+  const tm=t.time||(t.updatedAt?(function(){const d=new Date(t.updatedAt);return isNaN(d)?'':String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')})():nowHM());
+  if(String(a.type||'')==='branch'){
+    if(!t.linkedFromTxnId){toast('Only linked hawala entries can be changed here','err');return}
+    if(linkedCustomer(t)){toast('This hawala has a customer leg; edit/delete from this device is not supported yet','err');return}
+    _entry={mode:'editLinked',txnId:t.id,pairTxnId:null,accountId:t.accountId,entryType:t.entryType||JAMA,
+      date:String(t.date||todayLocalIso()),time:tm,page:String(t.pageNo||autoPageNo(t.date,t.accountId)),currency:t.currency||'PKR',
+      amount:String(Number(t.amount)||''),darak:'حواله',hawala:t.hawalaNo!=null?String(t.hawalaNo):'',
+      detail:detailNote(t.detail,t.entryType,t.darak,'',t.hawalaNo),partyId:'',
+      counterpartId:'',counterpartName:'',counterpartType:'',counterpartEntryType:t.entryType||JAMA,
+      orig:JSON.parse(JSON.stringify(t)),origSib:null};
+    paintEntry();
+    openModal('m-tx');
+    return;
+  }
   if(t.linkedFromTxnId||t.counterpartBranchName){toast('Linked cross-branch entries cannot be edited here yet','err');return}
   const sib=(t.pairId&&DATA.txns.find(x=>x.pairId===t.pairId&&x.id!==t.id&&x.deleted!==true))||null;
   if(sib&&(sib.linkedFromTxnId||sib.counterpartBranchName)){toast('Linked cross-branch entries cannot be edited here yet','err');return}
   const sibName=sib?((getAcc(sib.accountId)||{}).name||''):'';
-  const tm=t.time||(t.updatedAt?(function(){const d=new Date(t.updatedAt);return isNaN(d)?'':String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')})():nowHM());
   _entry={mode:'edit',txnId:t.id,pairTxnId:sib?sib.id:null,accountId:t.accountId,entryType:t.entryType||JAMA,
     date:String(t.date||todayLocalIso()),time:tm,page:String(t.pageNo||autoPageNo(t.date,t.accountId)),currency:t.currency||'PKR',
     amount:String(Number(t.amount)||''),darak:t.darak||'نغدي',hawala:t.hawalaNo!=null?String(t.hawalaNo):'',
@@ -6112,11 +6252,15 @@ function openEntryEdit(id){
 function paintEntry(){
   if(!_entry)return;
   const a=getAcc(_entry.accountId)||{};
-  const isEdit=_entry.mode==='edit';
-  $('#txmTitle').textContent=isEdit?'Edit Entry':(_entry.entryType===JAMA?'New Credit Entry':'New Debit Entry');
+  const linkedEdit=_entry.mode==='editLinked';
+  const isEdit=_entry.mode==='edit'||linkedEdit;
+  const cross=isCrossBranchTarget(a);
+  const tgt=branchNameOf(a)||String(a.name||'');
+  if(cross&&_entry.darak!=='حواله')_entry.darak='حواله';
+  $('#txmTitle').textContent=linkedEdit?('Edit Hawala to '+(tgt||'branch')):(cross?('Hawala to '+(tgt||'branch')):(isEdit?'Edit Entry':(_entry.entryType===JAMA?'New Credit Entry':'New Debit Entry')));
   $('#txmAv').textContent=String(a.name||'A').trim().charAt(0).toUpperCase()||'A';
   $('#txmAcc').textContent=a.name||'—';
-  $('#txmMeta').textContent=(TYPE_LBL[a.type]||a.type||'')+(a.branch?' · '+a.branch:'')+(isEdit?' · editing':'');
+  $('#txmMeta').textContent=(TYPE_LBL[a.type]||a.type||'')+(a.branch?' · '+a.branch:'')+(linkedEdit?' · edit request':(cross?' · cross-branch':''))+(isEdit&&!linkedEdit?' · editing':'');
   $('#txmCr').className='cr'+(_entry.entryType===JAMA?' on':'');
   $('#txmDb').className='db'+(_entry.entryType===BANAM?' on':'');
   $('#txmDate').value=_entry.date;
@@ -6128,16 +6272,30 @@ function paintEntry(){
     const nm=SETTINGS.names[c]||((CURRS.find(x=>x.code===c)||{}).name||'');
     return '<option value="'+esc(c)+'"'+(_entry.currency===c?' selected':'')+'>'+esc(c)+(nm?' — '+esc(nm):'')+'</option>';
   }).join('');
-  $('#txmDarak').innerHTML=DARAKS.map(d=>'<button type="button" class="dchip'+(_entry.darak===d?' on':'')+'" onclick="setDarak(this.dataset.v)" data-v="'+esc(d)+'">'+esc(d)+'</button>').join('');
+  const dl=cross?['حواله']:DARAKS;
+  $('#txmDarak').innerHTML=dl.map(d=>'<button type="button" class="dchip'+(_entry.darak===d?' on':'')+'" onclick="setDarak(this.dataset.v)" data-v="'+esc(d)+'">'+esc(d)+'</button>').join('');
   $('#txmHwWrap').style.display=_entry.darak==='حواله'?'block':'none';
   $('#txmHw').value=_entry.hawala;
   $('#txmDetail').value=_entry.detail;
   const p=_entry.partyId?getAcc(_entry.partyId):null;
+  $('#txmPartyWrap').style.display=cross?'none':'block';
   $('#txmParty').className='partybox'+(p?' on':'');
   $('#txmPartyAv').textContent=p?String(p.name||'P').trim().charAt(0).toUpperCase():'+';
   $('#txmPartyNm').textContent=p?p.name:'No party — single entry';
   $('#txmPartyX').style.display=p?'grid':'none';
-  $('#txmSave').textContent=isEdit?'Save Changes':'Save Entry';
+  const cpName=_entry.counterpartId?_entry.counterpartName:'';
+  $('#txmCpartyWrap').style.display=(cross&&!linkedEdit)?'block':'none';
+  if(cross){
+    $('#txmCpartyLbl').textContent='Customer in '+(tgt||'the other branch')+' (optional)';
+    $('#txmCparty').className='partybox'+(cpName?' on':'');
+    $('#txmCpartyAv').textContent=cpName?String(cpName).trim().charAt(0).toUpperCase():'+';
+    $('#txmCpartyNm').textContent=cpName?cpName:'No customer — branch only';
+    $('#txmCpartyX').style.display=cpName?'grid':'none';
+    $('#txmCpartyNote').textContent=linkedEdit
+      ? 'This edit is sent to '+(tgt||'the other branch')+' for approval. Customer legs cannot be changed here yet.'
+      : (cpName?'Their book will get the mirror on '+String(sessionBookBranch())+' plus this customer leg.':'Their book will get only the mirror on '+String(sessionBookBranch())+'.');
+  }
+  $('#txmSave').textContent=linkedEdit?'Send Edit Request':(cross?'Send Hawala Request':(isEdit?'Save Changes':'Save Entry'));
   $('#txmSave').disabled=false;
   entryPreview();
 }
@@ -6145,10 +6303,13 @@ function setEntryType(et){
   if(!_entry)return;
   entrySyncForm();
   _entry.entryType=et===BANAM?BANAM:JAMA;
+  if(_entry.counterpartId)_entry.counterpartEntryType=_entry.entryType;
   paintEntry();
 }
 function setDarak(v){
   if(!_entry)return;
+  const a=getAcc(_entry.accountId);
+  if(isCrossBranchTarget(a)&&v!=='حواله'){toast('Another branch account only takes hawala','err');return}
   entrySyncForm();
   _entry.darak=v;
   if(v==='حواله'&&!_entry.hawala){
@@ -6178,16 +6339,31 @@ function entryPreview(){
   const det=($('#txmDetail')?$('#txmDetail').value:'').trim();
   const hw=($('#txmHw')?$('#txmHw').value:'').trim();
   const a=getAcc(_entry.accountId),p=_entry.partyId?getAcc(_entry.partyId):null;
+  const cross=isCrossBranchTarget(a);
+  const own=sessionBookBranch();
+  const tgt=branchNameOf(a)||String(a.name||'')||own;
   const cur=$('#txmCur')?$('#txmCur').value:_entry.currency;
   const cr=_entry.entryType===JAMA;
   const before=a?accStat(a.id,cur).bal:0;
   const sgn=cr?1:-1;
   const lines=[];
   if(a)lines.push('<div class="tpl"><b>'+esc(a.name||'')+'</b><span class="'+(cr?'ok':'bad')+'">'+(cr?'+':'−')+esc(cur)+' '+fmtN(amt)+'</span></div>');
-  if(p)lines.push('<div class="tpl"><b>'+esc(p.name||'')+'</b><span class="'+(cr?'bad':'ok')+'">'+(cr?'−':'+')+esc(cur)+' '+fmtN(amt)+'</span></div>');
-  if(!p)lines.push('<div class="tpl"><span>Single entry</span><span>—</span></div>');
+  if(cross){
+    const opp=_entry.entryType===JAMA?BANAM:JAMA;
+    lines.push('<div class="tpd">Sent to <b>'+esc(tgt)+'</b> for approval.<br>After approval: <b>'+esc(own)+'</b> '+esc(opp)+' '+esc(cur)+' '+fmtN(amt)+' in '+esc(tgt)+'’s book.</div>');
+    if(_entry.mode==='editLinked'){
+      lines.push('<div class="tpd">Your entry changes now; the edit request reaches '+esc(tgt)+' on Sync.</div>');
+    }else if(_entry.counterpartId){
+      lines.push('<div class="tpd">Customer <b>'+esc(_entry.counterpartName)+'</b>'+(_entry.counterpartType?' ('+esc(TYPE_LBL[_entry.counterpartType]||_entry.counterpartType)+')':'')+': '+esc(_entry.entryType)+' '+esc(cur)+' '+fmtN(amt)+'</div>');
+    }else{
+      lines.push('<div class="tpd">Branch only — no customer leg.</div>');
+    }
+  }else{
+    if(p)lines.push('<div class="tpl"><b>'+esc(p.name||'')+'</b><span class="'+(cr?'bad':'ok')+'">'+(cr?'−':'+')+esc(cur)+' '+fmtN(amt)+'</span></div>');
+    if(!p)lines.push('<div class="tpl"><span>Single entry</span><span>—</span></div>');
+  }
   const oldP=(_entry.mode==='edit'&&_entry.origSib)?getAcc(_entry.origSib.accountId):null;
-  if(_entry.mode==='edit'){
+  if(_entry.mode==='edit'&&!cross){
     if(oldP&&p&&String(oldP.id)!==String(p.id))lines.push('<div class="tpd">Party changes: '+esc(oldP.name||'')+' → '+esc(p.name||'')+'<br>The old party entry will be deleted.</div>');
     else if(oldP&&!p)lines.push('<div class="tpd">Party removed: '+esc(oldP.name||'')+' — its entry will be deleted.</div>');
     else if(!oldP&&p)lines.push('<div class="tpd">Party added: '+esc(p.name||'')+'</div>');
@@ -6267,12 +6443,29 @@ function saveEntry(){
   }
   const br=writeBranchFor(a);
   if(!br){toast('No branch selected for this write','err');return}
-  const wasEdit=_entry.mode==='edit';
+  const cross=isCrossBranchTarget(a);
+  if(cross&&_entry.darak!=='حواله'){toast('Another branch account only takes hawala','err');return}
+  if(cross&&_entry.partyId){toast('A cross-branch hawala cannot have a local party','err');return}
+  const wasEdit=_entry.mode==='edit'||_entry.mode==='editLinked';
   _entry._saving=true;
   const sbtn=$('#txmSave');if(sbtn)sbtn.disabled=true;
   const now=new Date().toISOString();
   const pageNo=Number(_entry.page)||null;
   const hw=_entry.darak==='حواله'?( _entry.hawala||null):null;
+  if(cross){
+    const linkedEdit=_entry.mode==='editLinked';
+    queueCrossBranchHawala(a,br,now,pageNo,hw,amt,linkedEdit).then(()=>{
+      const nm=String(a.name||'the other branch');
+      closeEntry();
+      toast(linkedEdit?'Edit request queued for '+nm:'Hawala request queued for '+nm);
+      if($('#view-ledger').classList.contains('active'))renderLedger();
+    }).catch(e=>{
+      toast('Could not queue the request','err');console.warn(e);
+      if(_entry)_entry._saving=false;
+      if(sbtn)sbtn.disabled=false;
+    });
+    return;
+  }
   const legs=[],audits=[];
   if(_entry.mode==='new'){
     const pairId='txn_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
@@ -6335,6 +6528,118 @@ function saveEntry(){
     if($('#view-ledger').classList.contains('active'))renderLedger();
   }).catch(e=>{toast('Could not queue the change','err');console.warn(e);if(_entry){_entry._saving=false}if(sbtn)sbtn.disabled=false});
 }
+function queueCrossBranchHawala(a,br,now,pageNo,hw,amt,linkedEdit){
+  const note=String(_entry.detail||'').trim();
+  const targetName=branchNameOf(a)||String(a.name||'');
+  const mainDetail=buildTxnDetail(_entry.entryType,'حواله','',hw||'',note);
+  const pid='pending_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+  const cp=_entry.counterpartId?{id:_entry.counterpartId,name:_entry.counterpartName||'',type:_entry.counterpartType||'',entryType:_entry.counterpartEntryType||_entry.entryType}:null;
+  if(linkedEdit){
+    const t=DATA.txns.find(x=>x.id===_entry.txnId&&x.deleted!==true);
+    if(!t)return Promise.reject(new Error('Entry not found'));
+    const before=linkSnap(t);
+    const patch={date:_entry.date,time:_entry.time||null,pageNo,currency:_entry.currency,amount:amt,
+      entryType:_entry.entryType,darak:'حواله',hawalaNo:hw||null,detail:mainDetail||null};
+    const after=linkSnap(Object.assign({},t,patch));
+    const pend={id:pid,type:'edit',fromBranch:br,toBranchAccountId:t.accountId,
+      toBranchAccountName:t.counterpartBranchName||targetName,linkedFromTxnId:t.linkedFromTxnId,
+      txnIds:[t.id],before,after,date:_entry.date,pageNo:pageNo||null,
+      entryType:_entry.entryType,darak:'حواله',currency:_entry.currency,amount:amt,
+      hawalaNo:hw||null,detail:mainDetail||null,status:'pending',createdAt:now,branch:br};
+    const qAdd=SYNCQ.some(o=>o.col==='txns'&&o.id===t.id&&o.type==='set');
+    const txnOp={type:qAdd?'set':'update',col:'txns',id:t.id,data:qAdd?Object.assign({},t,patch):patch};
+    return queueAny([txnOp,{type:'set',col:'pendingTxns',id:pid,data:pend,_new:true},
+      auditOp('edit',Object.assign({},t,patch),t),auditPending('add',pend,null)]);
+  }
+  const id1=uidTxn('a');
+  const txn=Object.assign({id:id1,date:_entry.date,time:_entry.time||null,pageNo,accountId:a.id,
+    entryType:_entry.entryType,darak:'حواله',currency:_entry.currency,amount:amt,
+    rate:null,currExch:null,currAmount:null,hawalaNo:hw||null,detail:mainDetail||null,
+    pairId:null,branch:br,linkedFromTxnId:pid,counterpartBranchName:targetName,
+    createdAt:now,updatedAt:now},cp?{counterpartCustomerId:cp.id,counterpartCustomerName:cp.name,counterpartCustomerType:cp.type}:{});
+  const pend=Object.assign({id:pid,fromBranch:br,toBranchAccountId:a.id,toBranchAccountName:targetName,
+    txnIds:[id1],date:_entry.date,pageNo:pageNo||null,entryType:_entry.entryType,darak:'حواله',
+    currency:_entry.currency,amount:amt,hawalaNo:hw||null,detail:note||null,entryDetail:mainDetail||null,
+    status:'pending',createdAt:now,branch:br},cp?{counterpartCustomerId:cp.id,counterpartCustomerName:cp.name,
+    counterpartCustomerType:cp.type,counterpartCustomerEntryType:cp.entryType}:{});
+  return queueAny([{type:'set',col:'txns',id:id1,data:txn,_new:true},
+    {type:'set',col:'pendingTxns',id:pid,data:pend,_new:true},
+    auditOp('add',txn,null),auditPending('add',pend,null)]);
+}
+function counterpartAccounts(branch,force){
+  const key=String(branch||'');
+  if(!key)return Promise.resolve([]);
+  if(!force&&_cpartyCache[key])return Promise.resolve(_cpartyCache[key]);
+  if(!fdb||!navigator.onLine)return Promise.resolve(null);
+  return ensureReadAuth().then(()=>readAllDocs('accounts',q=>q.where('branch','==',key))).then(docs=>{
+    const list=(docs||[]).filter(a=>a&&a.deleted!==true&&String(a.type||'')!=='branch'&&a.isSuperAdmin!==true&&String(a.branch||'')===key)
+      .map(a=>({id:a.id,name:a.name||'',type:a.type||'',contact:a.contact||a.phone||''}))
+      .sort((a,b)=>String(a.name||'').localeCompare(String(b.name||'')));
+    _cpartyCache[key]=list;
+    return list;
+  }).catch(e=>{console.warn('counterpart customers failed',e);return null});
+}
+function openCounterpartPicker(){
+  if(!_entry)return;
+  const a=getAcc(_entry.accountId);
+  if(!a||!isCrossBranchTarget(a))return;
+  entrySyncForm();
+  _cpartyBranch=branchNameOf(a)||String(a.name||'');
+  _cpartyErr='';
+  $('#cpartyBranch').textContent=_cpartyBranch||'branch';
+  $('#cpartySearch').value='';
+  $('#cpartyList').innerHTML='<div class="empty" style="padding:24px 14px"><p>Loading customers…</p></div>';
+  openModal('m-cparty');
+  loadCounterpartList(false);
+}
+function loadCounterpartList(force){
+  const br=_cpartyBranch;
+  $('#cpartyList').innerHTML='<div class="empty" style="padding:24px 14px"><p>Loading customers…</p></div>';
+  counterpartAccounts(br,force).then(list=>{
+    if(_cpartyBranch!==br)return;
+    if(!list){_cpartyErr='Connect to load customers of '+br+'.';renderCounterpartList();return}
+    _cpartyErr='';
+    renderCounterpartList();
+  });
+}
+function renderCounterpartList(){
+  const el=$('#cpartyList');if(!el)return;
+  if(_cpartyErr){
+    el.innerHTML='<div class="empty" style="padding:24px 14px"><p>'+esc(_cpartyErr)+'</p><p style="font-size:11.5px;color:var(--mut);margin-top:5px">You can still send branch-only, or press Refresh.</p></div>';
+    return;
+  }
+  const all=_cpartyCache[_cpartyBranch]||[];
+  const q=String(($('#cpartySearch')||{}).value||'').trim().toLowerCase();
+  let list=all;
+  if(q)list=list.filter(a=>String(a.name||'').toLowerCase().includes(q)||String(a.contact||'').toLowerCase().includes(q));
+  list=list.slice(0,150);
+  if(!list.length){
+    el.innerHTML='<div class="empty" style="padding:24px 14px"><p>No customers found</p><p style="font-size:11.5px;color:var(--mut);margin-top:5px">'+(all.length?'Try a different search.':'This branch has no customer accounts yet.')+'</p></div>';
+    return;
+  }
+  el.innerHTML=list.map(a=>'<button type="button" class="prow'+(_entry&&_entry.counterpartId===a.id?' on':'')+'" onclick="pickCounterpart(this.dataset.id)" data-id="'+esc(a.id)+'"><span class="pav">'+esc(String(a.name||'?').trim().charAt(0).toUpperCase())+'</span><span class="pinf"><b>'+esc(a.name||'')+'</b><span>'+esc(TYPE_LBL[a.type]||a.type||'')+(a.contact?' · '+esc(a.contact):'')+'</span></span></button>').join('');
+}
+function pickCounterpart(id){
+  if(!_entry)return;
+  entrySyncForm();
+  if(!id){
+    _entry.counterpartId='';_entry.counterpartName='';_entry.counterpartType='';_entry.counterpartEntryType=_entry.entryType;
+  }else{
+    const c=(_cpartyCache[_cpartyBranch]||[]).find(x=>String(x.id)===String(id));
+    if(!c)return;
+    _entry.counterpartId=c.id;_entry.counterpartName=c.name;_entry.counterpartType=c.type;_entry.counterpartEntryType=_entry.entryType;
+  }
+  closeModal('m-cparty');
+  paintEntry();
+}
+function clearCounterpart(e){
+  if(e){e.preventDefault();e.stopPropagation()}
+  if(!_entry)return;
+  entrySyncForm();
+  _entry.counterpartId='';_entry.counterpartName='';_entry.counterpartType='';_entry.counterpartEntryType=_entry.entryType;
+  paintEntry();
+}
+function cpartyRefresh(){loadCounterpartList(true)}
 function openEntryActions(id){
   if(!EDITOR)return;
   const t=DATA.txns.find(x=>x.id===id&&x.deleted!==true);
@@ -6342,7 +6647,12 @@ function openEntryActions(id){
   _actTxnId=id;
   const a=getAcc(t.accountId)||{};
   let why=writeBlockReason(a);
-  if(t.linkedFromTxnId||t.counterpartBranchName)why='This entry is linked to another branch. Cross-branch editing is not enabled yet.';
+  if(String(a.type||'')==='branch'){
+    if(!t.linkedFromTxnId)why='Only linked hawala entries can be changed here';
+    else if(linkedCustomer(t))why='This hawala has a customer leg; edit/delete from this device is not supported yet';
+  }else if(t.linkedFromTxnId||t.counterpartBranchName){
+    why='Linked entries can only be changed on their branch account';
+  }
   const cr=isCr(t);
   $('#txactBody').innerHTML='<div class="actsum"><b>'+esc(a.name||'—')+'</b><br>'+esc(fdate(t.date))+' · Page '+esc(t.pageNo||'—')+'<br>'
     +'<span style="font-size:16px;font-weight:800;font-family:var(--head);color:'+(cr?'var(--ok)':'var(--bad)')+'">'+(cr?'+':'−')+esc(t.currency||'PKR')+' '+esc(fmtN(Number(t.amount)||0))+'</span>'
@@ -6371,7 +6681,19 @@ function askDeleteTxn(id){
   const a=getAcc(t.accountId);
   const why=writeBlockReason(a);
   if(why){toast(why,'err');return}
-  if(t.linkedFromTxnId||t.counterpartBranchName){toast('Linked cross-branch entries cannot be deleted here yet','err');return}
+  if(String((a||{}).type||'')==='branch'){
+    if(!t.linkedFromTxnId){toast('Only linked hawala entries can be changed here','err');return}
+    if(linkedCustomer(t)){toast('This hawala has a customer leg; edit/delete from this device is not supported yet','err');return}
+    const br=String(t.counterpartBranchName||branchNameOf(a)||'the other branch');
+    openConfirm('Delete this hawala?','Your entry will be removed and a delete request will be sent to '+br+'. If they decline, it comes back for you to restore.',()=>{
+      queueLinkedDelete(t).then(()=>{
+        toast('Delete request queued for '+br);
+        if($('#view-ledger').classList.contains('active'))renderLedger();
+      }).catch(e=>{console.warn(e);toast('Could not queue the delete request','err')});
+    },'Send Delete');
+    return;
+  }
+  if(t.linkedFromTxnId||t.counterpartBranchName){toast('Linked entries can only be changed on their branch account','err');return}
   const sib=t.pairId?DATA.txns.find(x=>x.pairId===t.pairId&&x.id!==t.id&&x.deleted!==true):null;
   if(sib&&(sib.linkedFromTxnId||sib.counterpartBranchName)){toast('Linked cross-branch entries cannot be deleted here yet','err');return}
   const msg='This will delete '+(sib?'both linked entries':'this entry')+' from '+((a&&a.name)||'the ledger')+'. The change is queued and synced to Firestore.';
@@ -6388,6 +6710,23 @@ function askDeleteTxn(id){
       if($('#view-ledger').classList.contains('active'))renderLedger();
     });
   },'Delete');
+}
+function queueLinkedDelete(t){
+  const now=new Date().toISOString();
+  const a=getAcc(t.accountId)||{};
+  const br=String(t.branch||writeBranchFor(a)||sessionBookBranch());
+  const pid='pending_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+  const snap=JSON.parse(JSON.stringify(t));
+  const pend={id:pid,type:'delete',fromBranch:br,toBranchAccountId:t.accountId,
+    toBranchAccountName:t.counterpartBranchName||branchNameOf(a),linkedFromTxnId:t.linkedFromTxnId,
+    txnIds:[t.id],deletedData:snap,deletedDataList:[snap],fullPair:false,
+    date:t.date,pageNo:t.pageNo||null,entryType:t.entryType,darak:t.darak,
+    currency:t.currency,amount:Number(t.amount)||0,hawalaNo:t.hawalaNo||null,detail:t.detail||null,
+    status:'pending',createdAt:now,branch:br};
+  const del=Object.assign({},t,{deleted:true,deletedAt:now,updatedAt:now});
+  return queueAny([{type:'delete',col:'txns',id:t.id,data:del},
+    {type:'set',col:'pendingTxns',id:pid,data:pend,_new:true},
+    auditOp('delete',del,t),auditPending('add',pend,null)]);
 }
 
 /* ---------- boot ---------- */
@@ -6419,12 +6758,12 @@ function trimCacheToScope(){
   DATA.accounts=DATA.accounts.filter(a=>a&&(
     String(a.branch||'')===bn ||
     txnAcctIds.has(a.id) ||
-    ((a.type||'')==='branch'&&String(a.name||'')===bn)
+    String(a.type||'')==='branch'
   ));
   const ids=new Set(DATA.accounts.map(a=>a.id));
   DATA.txns=DATA.txns.filter(t=>t&&(String(t.branch||'')===bn||ids.has(t.accountId)));
   Object.keys(DATA.ob).forEach(id=>{if(!ids.has(id))delete DATA.ob[id]});
-  PENDING=PENDING.filter(p=>p&&(!p.status||p.status==='pending')&&(String(p.toBranchAccountName||'')===bn||String(p.fromBranch||'')===bn));
+  PENDING=PENDING.filter(p=>p&&keepPendingRec(p)&&(String(p.toBranchAccountName||'')===bn||String(p.fromBranch||'')===bn));
 }
 async function boot(){
   try{
@@ -6450,7 +6789,7 @@ async function boot(){
     try{localStorage.setItem(CACHE_SCOPE_KEY,wantScope)}catch(e){}
     const accs=await idbAll('accounts'),txsAwait=idbAll('txns'),obs=await idbAll('ob'),txs=await txsAwait,pend=await idbAll('pending');
     const isNewInstall=!(accs.length||txs.length)&&!localStorage.getItem(lfKey());
-    PENDING=(pend||[]).filter(p=>p&&(!p.status||p.status==='pending')).map(p=>Object.assign({},p));
+    PENDING=(pend||[]).filter(keepPendingRec).map(p=>Object.assign({},p));
     if(accs.length||txs.length){
       DATA.accounts=accs.map(x=>Object.assign({},x));
       DATA.txns=txs.map(x=>Object.assign({},x));
@@ -6493,6 +6832,7 @@ window.openRptSub=openRptSub;window.closeRptSub=closeRptSub;window.setRptKhatCur
 window.openEntry=openEntry;window.setEntryType=setEntryType;window.setDarak=setDarak;window.entryDateChanged=entryDateChanged;window.entryCurrencyChanged=entryCurrencyChanged;window.entryPreview=entryPreview;window.saveEntry=saveEntry;window.closeEntry=closeEntry;
 window.openPendingAction=openPendingAction;window.closePendingPreview=closePendingPreview;window.confirmPendingAction=confirmPendingAction;
 window.openPartyPicker=openPartyPicker;window.renderPartyList=renderPartyList;window.pickParty=pickParty;window.clearParty=clearParty;
+window.openCounterpartPicker=openCounterpartPicker;window.renderCounterpartList=renderCounterpartList;window.pickCounterpart=pickCounterpart;window.clearCounterpart=clearCounterpart;window.cpartyRefresh=cpartyRefresh;
 window.openEntryActions=openEntryActions;window.editFromActions=editFromActions;window.deleteFromActions=deleteFromActions;
 window.toggleEditor=toggleEditor;window.openSyncSheet=openSyncSheet;window.syncNow=syncNow;window.renderSyncList=renderSyncList;
 window.setSumMode=setSumMode;window.setSumRange=setSumRange;window.setSumCustom=setSumCustom;window.setSumCur=setSumCur;window.setSumType=setSumType;window.setSumTerms=setSumTerms;window.downloadSummaryPdf=downloadSummaryPdf;
