@@ -940,6 +940,42 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
 .curbranch .mail{font-size:10px;font-weight:500;color:var(--mut);overflow:hidden;text-overflow:ellipsis;max-width:110px;direction:ltr}
 @media(max-width:700px){.curbranch .mail{display:none}.curbranch b{max-width:90px}}
 #bizChips .chip-f.locked{cursor:default;background:var(--accSoft);color:var(--acc);border-color:var(--accSoftBrd)}
+
+/* ---------- account switcher ---------- */
+.logo{cursor:pointer}
+#m-switch .sheet{max-width:470px}
+.acclist{display:flex;flex-direction:column;gap:8px}
+.accgroup{font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--mut2);margin:13px 2px 1px}
+.accwrap{display:flex;align-items:center;gap:6px}
+.acmain{display:flex;align-items:center;gap:11px;flex:1;min-width:0;background:var(--card2);border:1px solid var(--brd);border-radius:14px;padding:10px 12px;font:inherit;color:var(--txt);text-align:left;cursor:pointer}
+.acmain.active{border-color:var(--accSoftBrd);background:var(--accSoft);cursor:default}
+.accav{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--accSoft);color:var(--acc);font-family:var(--head);font-weight:800;font-size:17px;flex:none}
+.acmain.active .accav{background:var(--grd);color:#fff}
+.accinfo{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.accinfo b{font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.accinfo span{font-size:10px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr;text-align:left}
+.accq{display:none;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--bad);color:#fff;font-size:9.5px;font-weight:800;flex:none}
+.accq.show{display:inline-flex}
+.acccheck{color:var(--ok);font-weight:900;font-size:15px;flex:none}
+.accrm{width:30px;height:30px;border-radius:9px;border:1px solid var(--brd);background:var(--card);color:var(--mut2);font-size:13px;line-height:1;cursor:pointer;flex:none;display:grid;place-items:center}
+.accrm svg{width:14px;height:14px}
+.accrm:hover{color:var(--bad);border-color:rgba(225,29,72,.35)}
+.accadd{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;margin-top:10px;padding:11px;border-radius:13px;border:1px dashed var(--brd);background:var(--card2);color:var(--acc);font:inherit;font-size:12.5px;font-weight:800;cursor:pointer}
+.accnote{font-size:10.5px;color:var(--mut2);line-height:1.55;margin-top:10px;text-align:center}
+.swErr{display:none;margin-bottom:10px;padding:9px 12px;border-radius:11px;background:rgba(251,113,133,.12);border:1px solid rgba(251,113,133,.35);color:var(--bad);font-size:11.5px;font-weight:600;line-height:1.4}
+.swErr.show{display:block}
+.swback{display:flex;align-items:center;gap:6px;background:none;border:none;color:var(--mut);font:inherit;font-size:11px;font-weight:700;padding:2px 0;margin-bottom:10px;cursor:pointer}
+.swback:hover{color:var(--acc)}
+#m-switch .field{margin-bottom:10px}
+#m-switch .field input{direction:ltr;text-align:left}
+#m-switch .lbtn{width:100%;padding:12px}
+#m-switch .accbranch{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--card2);border:1px solid var(--brd);border-radius:13px;padding:10px 11px;cursor:pointer;font:inherit;color:var(--txt);margin-bottom:7px}
+#m-switch .accbranch.added{opacity:.62;cursor:default}
+#m-switch .accbranch .brpic{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:var(--accSoft);color:var(--acc);font-size:15px;flex:none}
+#m-switch .accbranch .brpinfo{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+#m-switch .accbranch .brpinfo b{font-size:12.5px}
+#m-switch .accbranch .brpinfo span{font-size:10px;color:var(--mut);direction:ltr;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#m-switch .accbranch .brstate{font-size:10px;font-weight:800;color:var(--mut2);flex:none}
 @media(max-width:430px){.bottomnav button{padding:7px 7px;font-size:10px}.bottomnav button svg{width:19px;height:19px}}
 
 /* ---------- more sheet / approvals / settings ---------- */
@@ -1084,11 +1120,11 @@ html{scroll-behavior:auto!important}
 <div class="app">
   <header class="topbar">
     <div class="brand">
-      <div class="logo">S</div>
+      <div class="logo" id="brandLogo" role="button" onclick="openSwitchSheet()" title="Switch account">S</div>
       <div><h1 id="brandName">Sarafi</h1><p id="brandSub">Sami Jani Commission Accounts</p></div>
     </div>
     <div class="topctl">
-      <span class="curbranch" id="curBranchBadge" title="Signed in as"><span class="ico" id="curBranchRole">🏢</span><b id="curBranchName">—</b><span class="mail" id="curBranchMail"></span></span>
+      <span class="curbranch" id="curBranchBadge" title="Signed in as" onclick="openSwitchSheet()" style="cursor:pointer"><span class="ico" id="curBranchRole">🏢</span><b id="curBranchName">—</b><span class="mail" id="curBranchMail"></span></span>
       <button class="btn btn-g" id="syncBtn" onclick="openSyncSheet()" title="Unsynced changes on this device">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 16.5a4 4 0 0 0-.9-7.9 6 6 0 0 0-11.6 1.6A3.5 3.5 0 0 0 6 17"/><polyline points="8 13 12 9 16 13"/><line x1="12" y1="9" x2="12" y2="20"/></svg><span class="spinner"></span><span class="lbl">Sync</span><span class="syncbadge" id="syncCount">0</span>
       </button>
@@ -1400,6 +1436,14 @@ html{scroll-behavior:auto!important}
   </div>
 </div>
 
+<div class="modal" id="m-switch">
+  <div class="ovl" onclick="closeSwitchSheet()"></div>
+  <div class="sheet">
+    <div class="mhead"><h3 id="switchTitle">Accounts</h3><button class="x" onclick="closeSwitchSheet()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div id="switchBody"></div>
+  </div>
+</div>
+
 <div class="modal" id="m-sync">
   <div class="ovl" onclick="closeModal('m-sync')"></div>
   <div class="sheet">
@@ -1456,8 +1500,9 @@ html{scroll-behavior:auto!important}
     <div class="lhead"><h2 id="branchTitle">Choose an account</h2><p id="branchSub">Sign in as a branch or as the super admin.</p></div>
     <div class="lerr" id="branchErr"></div>
     <div id="branchStepList">
+      <button class="lswitch" type="button" id="probeBack" style="display:none;margin:0 0 10px;text-align:left;width:auto" onclick="returnFromProbe()">← Back</button>
       <div class="brpick" id="branchList"></div>
-      <button class="lswitch" type="button" onclick="changeAccessKey()">Use a different access key</button>
+      <button class="lswitch" type="button" id="resetKeyBtn" onclick="changeAccessKey()">Reset device &amp; use another key</button>
     </div>
     <div id="branchStepLogin" style="display:none">
       <button class="lswitch" type="button" style="margin:0 0 12px;text-align:left;width:auto" onclick="branchPickerBack()">← Back to accounts</button>
@@ -1589,14 +1634,202 @@ function clearSession(){SESSION=null;try{localStorage.removeItem(SESSION_KEY)}ca
 const isSuperSession=()=>{const s=getSession();return !!s&&s.mode==='super'};
 const isBranchSession=()=>{const s=getSession();return !!s&&s.mode==='branch'};
 function scopeKey(){const s=getSession();if(!s)return '';return s.mode==='super'?'__all__':String(s.branchName||'')}
-function lfKey(){return 'sarafi_lastFetched::'+scopeKey()}
 
+/* ---------- multi-account vault (device-local) ----------
+   Every logged-in branch/super admin is one account. Each account owns its own
+   IndexedDB database, its own queue and its own lastFetched marker, so switching
+   can never mix two books. */
+const VAULT_KEY='sarafi_accounts_v1';
+const ACTIVE_ACC_KEY='sarafi_active_account';
+const PROBE_KEY='sarafi_probe_key';
+const LEGACY_DB='sarafi_db';
+let ACTIVE_ACCOUNT=null;
+let DB_NAME=LEGACY_DB;
+let _switchGen=0,_fetching=false,_writing=0;
+
+function accHash(s){
+  s=String(s==null?'':s);
+  let h=2166136261;
+  for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}
+  return (h>>>0).toString(36);
+}
+function clientHash(key){return accHash('client:'+String(key||'default'))}
+function accountIdFor(clientKey,mode,branchId,branchName){
+  return clientHash(clientKey)+'_'+(mode==='super'?'sa':'br')+'_'+accHash(String(branchId||branchName||''));
+}
+function accountDbName(acc){
+  return 'sarafi_v2_'+clientHash(acc&&acc.clientKey)+'_'+(acc&&acc.mode==='super'?'sa':accHash(acc&&acc.branchId||acc&&acc.branchName));
+}
+function readVault(){
+  let r=null;try{r=readJSON(VAULT_KEY)}catch(e){}
+  const accounts=(r&&Array.isArray(r.accounts))?r.accounts.filter(a=>a&&a.id&&a.mode&&a.branchName):[];
+  let active='';try{active=localStorage.getItem(ACTIVE_ACC_KEY)||''}catch(e){}
+  if(!active&&r&&r.active)active=String(r.active||'');
+  return {accounts,active};
+}
+function writeVault(v){
+  try{localStorage.setItem(VAULT_KEY,JSON.stringify({accounts:(v&&v.accounts)||[],at:Date.now()}))}catch(e){}
+  try{localStorage.setItem(ACTIVE_ACC_KEY,String((v&&v.active)||''))}catch(e){}
+}
+function getActiveAccount(){
+  if(ACTIVE_ACCOUNT)return ACTIVE_ACCOUNT;
+  const v=readVault();
+  ACTIVE_ACCOUNT=v.accounts.find(a=>a.id===v.active)||null;
+  return ACTIVE_ACCOUNT;
+}
+function accountSession(acc){
+  if(!acc)return null;
+  const sup=acc.mode==='super';
+  return {
+    mode:acc.mode,
+    branchId:acc.branchId,
+    branchName:acc.branchName,
+    email:acc.email||'',
+    activeChip:sup?String(acc.chip||'All'):String(acc.branchId||''),
+    activeBranch:sup?String(acc.chipName||''):String(acc.branchName||''),
+    at:Date.now()
+  };
+}
+function upsertAccount(acc){
+  if(!acc||!acc.id)return null;
+  const v=readVault();
+  const i=v.accounts.findIndex(a=>a.id===acc.id);
+  if(i>=0)v.accounts[i]=Object.assign({},v.accounts[i],acc);
+  else v.accounts.push(acc);
+  v.active=acc.id;
+  writeVault(v);
+  ACTIVE_ACCOUNT=v.accounts.find(a=>a.id===acc.id)||acc;
+  return ACTIVE_ACCOUNT;
+}
+function rememberAccountChip(acc){
+  if(!acc)return;
+  const s=getSession();
+  if(!s||acc.mode!=='super'||s.mode!=='super')return;
+  acc.chip=s.activeChip||acc.chip||'All';
+  acc.chipName=s.activeBranch||acc.chipName||'';
+  const v=readVault();
+  const i=v.accounts.findIndex(a=>a.id===acc.id);
+  if(i>=0){v.accounts[i]=Object.assign({},v.accounts[i],{chip:acc.chip,chipName:acc.chipName});writeVault(v)}
+}
+function getProbe(){
+  let p=null;try{p=readJSON(PROBE_KEY)}catch(e){}
+  if(!p||!p.key)return null;
+  const co=getClientConfig();
+  if(!co||String(co.key)!==String(p.key))return null;
+  return p;
+}
+function perAccKey(base){const a=getActiveAccount();return base+'::'+(a?a.id:'legacy')}
+function settingsKey(){
+  const co=getClientConfig();
+  return SETTINGS_KEY+'::'+clientHash(co&&co.key||'default');
+}
+function lfKey(){
+  const a=getActiveAccount();
+  return 'sarafi_lastFetched::'+(a?a.id:scopeKey());
+}
+function legacyMigrated(){try{return localStorage.getItem('sarafi_db_migrated_global')==='1'}catch(e){return false}}
+function markLegacyMigrated(){try{localStorage.setItem('sarafi_db_migrated_global','1')}catch(e){}}
+async function dbExists(name){
+  try{const list=await indexedDB.databases();if(Array.isArray(list))return list.some(d=>d&&d.name===name)}catch(e){}
+  return true;
+}
+async function migrateLegacyTo(acc){
+  if(!acc||legacyMigrated())return;
+  const target=accountDbName(acc);
+  if(!target||target===LEGACY_DB){markLegacyMigrated();return}
+  if(!(await dbExists(LEGACY_DB))){markLegacyMigrated();return}
+  try{
+    const legacy=await readDbStores(LEGACY_DB,['accounts','txns','ob','pending','syncq']);
+    const has=legacy.accounts.length||legacy.txns.length||legacy.pending.length||legacy.syncq.length;
+    if(has){
+      const existing=await readDbStores(target,['accounts','txns']);
+      if(!existing.accounts.length&&!existing.txns.length){
+        await writeDbStores(target,legacy);
+        // The copied cache is already in the current schema. Keep the version
+        // marker so boot does not wipe a successful migration.
+        try{localStorage.setItem(CACHE_VER_KEY,CACHE_VER)}catch(e){}
+      }
+    }
+    markLegacyMigrated();
+  }catch(e){console.warn('legacy DB migration skipped',e)}
+}
+function migrateLegacyRegistry(acc){
+  try{
+    const k=REG_KEY+'::'+clientHash(acc&&acc.clientKey);
+    if(!localStorage.getItem(k)){
+      const old=localStorage.getItem(REG_KEY);
+      if(old)localStorage.setItem(k,old);
+    }
+  }catch(e){}
+}
+async function ensureVault(){
+  const co=getClientConfig();
+  if(!co)return null;
+  const probe=getProbe();
+  const v=readVault();
+  let acc=null;
+  if(v.active){
+    const a=v.accounts.find(x=>x.id===v.active);
+    if(a&&String(a.clientKey)===String(co.key))acc=a;
+  }
+  if(!acc&&!probe){
+    const same=v.accounts.filter(a=>String(a.clientKey)===String(co.key));
+    if(same.length)acc=same.slice().sort((a,b)=>Number(b.lastUsedAt||0)-Number(a.lastUsedAt||0))[0];
+  }
+  if(acc){
+    if(!acc.cfg)acc.cfg=co.cfg;
+    if(!acc.clientName)acc.clientName=co.name||'';
+    if(!acc.clientSubtitle)acc.clientSubtitle=co.subtitle||'';
+    if(v.active!==acc.id){v.active=acc.id;writeVault(v)}
+    ACTIVE_ACCOUNT=acc;
+    DB_NAME=accountDbName(acc);
+    migrateLegacyRegistry(acc);
+    await migrateLegacyTo(acc);
+    const cur=getSession();
+    if(!cur||String(cur.mode)!==String(acc.mode)||String(cur.branchId)!==String(acc.branchId)){
+      saveSession(accountSession(acc));
+    }else if(String(cur.branchName||'')!==String(acc.branchName||'')||String(cur.email||'')!==String(acc.email||'')){
+      cur.branchName=acc.branchName;cur.email=acc.email||'';saveSession(cur);
+    }
+    return acc;
+  }
+  if(probe)return null;
+  const s=getSession();
+  if(!s)return null;
+  const fresh={
+    id:accountIdFor(co.key,s.mode,s.branchId,s.branchName),
+    clientKey:co.key,clientName:co.name||'',clientSubtitle:co.subtitle||'',cfg:co.cfg,
+    mode:s.mode,branchId:s.branchId,branchName:String(s.branchName||''),email:s.email||'',
+    chip:s.mode==='super'?(s.activeChip||'All'):'',chipName:s.mode==='super'?(s.activeBranch||''):'',
+    createdAt:Date.now(),lastUsedAt:Date.now()
+  };
+  const vv=readVault();
+  vv.accounts.push(fresh);vv.active=fresh.id;writeVault(vv);
+  ACTIVE_ACCOUNT=fresh;
+  DB_NAME=accountDbName(fresh);
+  const oldScope=s.mode==='super'?'__all__':String(s.branchName||'');
+  try{
+    const oldLf=localStorage.getItem('sarafi_lastFetched::'+oldScope);
+    if(oldLf&&!localStorage.getItem('sarafi_lastFetched::'+fresh.id))localStorage.setItem('sarafi_lastFetched::'+fresh.id,oldLf);
+    const oldEd=localStorage.getItem('sarafi_editor_mode');
+    if(oldEd!=null&&localStorage.getItem('sarafi_editor_mode::'+fresh.id)==null)localStorage.setItem('sarafi_editor_mode::'+fresh.id,oldEd);
+    const oldAuto=localStorage.getItem('sarafi_autosync');
+    if(oldAuto!=null&&localStorage.getItem('sarafi_autosync::'+fresh.id)==null)localStorage.setItem('sarafi_autosync::'+fresh.id,oldAuto);
+    const oldMeta=localStorage.getItem('sarafi_lastsync_meta');
+    if(oldMeta&&!localStorage.getItem('sarafi_lastsync_meta::'+fresh.id))localStorage.setItem('sarafi_lastsync_meta::'+fresh.id,oldMeta);
+  }catch(e){}
+  migrateLegacyRegistry(fresh);
+  await migrateLegacyTo(fresh);
+  return fresh;
+}
+
+function regCacheKey(){const co=getClientConfig();return REG_KEY+'::'+clientHash(co&&co.key||'default')}
 function readRegCache(){
-  const r=readJSON(REG_KEY);
+  const r=readJSON(regCacheKey());
   if(!r||!Array.isArray(r.branches))return null;
   return {branches:r.branches.filter(b=>b&&String(b.name||'').trim()),superAdmin:(r.superAdmin&&String(r.superAdmin.name||'').trim())?r.superAdmin:null,at:r.at||0};
 }
-function saveRegCache(){try{localStorage.setItem(REG_KEY,JSON.stringify({branches:REG.branches,superAdmin:REG.superAdmin,at:Date.now()}))}catch(e){}}
+function saveRegCache(){try{localStorage.setItem(regCacheKey(),JSON.stringify({branches:REG.branches,superAdmin:REG.superAdmin,at:Date.now()}))}catch(e){}}
 function applyReg(reg){REG={branches:(reg&&reg.branches)||[],superAdmin:(reg&&reg.superAdmin)||null}}
 
 // Anonymous auth is only a Firestore credential — the real login is the branch
@@ -1618,6 +1851,10 @@ function ensureReadAuth(){
 async function loadBranchRegistry(force){
   let docs=null;
   const cachedReg=readRegCache();
+  if(!navigator.onLine){
+    if(force&&!cachedReg)throw new Error('Could not load the branch list. Check your connection.');
+    return cachedReg||{branches:[],superAdmin:null};
+  }
   if(fdb){
     await ensureReadAuth();
     try{docs=await readAllDocs('accounts',q=>q.where('type','==','branch'))}
@@ -1661,6 +1898,7 @@ function showBranchPicker(){
   l.classList.add('show');document.body.classList.add('locked');
   const cached=readRegCache();
   if(cached)applyReg(cached);
+  updateProbeBack();
   renderPickerList();
   ensureReadAuth()
     .then(()=>loadBranchRegistry())
@@ -1674,6 +1912,27 @@ function hideBranchPicker(){
   l.classList.remove('show');setBranchErr('');
   if(!$$('.modal.show').length)document.body.classList.remove('locked');
 }
+function updateProbeBack(){
+  const btn=$('#probeBack');if(!btn)return;
+  const p=getProbe();
+  const reset=$('#resetKeyBtn');
+  if(reset)reset.style.display=p?'none':'block';
+  if(!p||!p.returnId){btn.style.display='none';return}
+  const a=readVault().accounts.find(x=>x.id===p.returnId);
+  btn.style.display='block';
+  btn.textContent='← Back to '+(a&&a.branchName?a.branchName:'previous account');
+}
+function returnFromProbe(){
+  const p=getProbe();
+  const v=readVault();
+  const a=p&&p.returnId?v.accounts.find(x=>x.id===p.returnId):null;
+  if(!a){try{localStorage.removeItem(PROBE_KEY)}catch(e){};try{location.reload()}catch(e){};return}
+  saveClientConfig({key:a.clientKey,cfg:a.cfg,name:a.clientName||'',subtitle:a.clientSubtitle||''});
+  v.active=a.id;writeVault(v);
+  saveSession(accountSession(a));
+  try{localStorage.removeItem(PROBE_KEY)}catch(e){}
+  setTimeout(()=>{try{location.reload()}catch(e){}},80);
+}
 function renderPickerList(){
   const el=$('#branchList');if(!el)return;
   const all=[];
@@ -1685,7 +1944,9 @@ function renderPickerList(){
       +'<span class="brpic">'+(sup?'👑':'🏢')+'</span>'
       +'<span class="brpinfo"><b>'+esc(b.name||'')+'</b><span>'+(sup?'Super Admin · all branches':esc(b.email||'No email set'))+'</span></span>'
       +'<span class="brparrow">›</span></button>';
-  }).join(''):'<div class="brpempty">No branches found yet. Ask your super admin to create a branch first.</div>';
+  }).join(''):(getProbe()
+    ?'<div class="brpempty">Could not load this access key’s branches. Check the connection, or go back to the previous account.</div>'
+    :'<div class="brpempty">No branches found yet. Ask your super admin to create a branch first.</div>');
 }
 function pickBranch(id){
   const all=REG.branches.concat(REG.superAdmin?[REG.superAdmin]:[]);
@@ -1719,18 +1980,28 @@ async function doBranchLogin(){
   if(!wantEmail||!wantPass){setBranchErr('This '+(b.isSuperAdmin?'super admin account':'branch')+' has no email and password set. Ask the owner to add them.');return}
   if(email!==wantEmail||pass!==wantPass){setBranchErr('Wrong email or password.');return}
   if(btn){btn.disabled=true;btn.textContent='Signing in...'}
-  const nextScope=b.isSuperAdmin?'__all__':String(b.name||'');
-  let prevScope='';try{prevScope=localStorage.getItem(CACHE_SCOPE_KEY)||''}catch(e){}
-  if(prevScope!==nextScope)await wipeDataCache();
-  try{localStorage.setItem(CACHE_SCOPE_KEY,nextScope)}catch(e){}
-  saveSession({
-    mode:b.isSuperAdmin?'super':'branch',
-    branchId:b.id,branchName:String(b.name||''),email:b.email||'',
-    activeChip:b.isSuperAdmin?'All':String(b.id||''),
-    activeBranch:b.isSuperAdmin?'':String(b.name||''),
-    at:Date.now()
-  });
-  setTimeout(()=>{try{location.reload()}catch(e){}},140);
+  try{
+    const co=getClientConfig();
+    if(!co)throw new Error('This device is not connected to an access key.');
+    const mode=b.isSuperAdmin?'super':'branch';
+    const acc={
+      id:accountIdFor(co.key,mode,b.id,b.name),
+      clientKey:co.key,clientName:co.name||'',clientSubtitle:co.subtitle||'',cfg:co.cfg,
+      mode,branchId:b.id,branchName:String(b.name||''),email:b.email||'',
+      createdAt:Date.now(),lastUsedAt:Date.now()
+    };
+    upsertAccount(acc);
+    await migrateLegacyTo(acc);
+    saveSession(accountSession(acc));
+    try{
+      localStorage.removeItem(PROBE_KEY);
+      localStorage.setItem(CACHE_SCOPE_KEY,acc.id);
+    }catch(e){}
+    setTimeout(()=>{try{location.reload()}catch(e){}},140);
+  }catch(e){
+    if(btn){btn.disabled=false;btn.textContent='Sign In'}
+    setBranchErr((e&&e.message)||'Could not sign in. Try again.');
+  }
 }
 function applySessionScope(){
   const s=getSession();if(!s)return;
@@ -1744,6 +2015,11 @@ function updateSessionBadge(){
   if(nm)nm.textContent=s.mode==='super'?(branchName||'Super Admin'):(s.branchName||'Branch');
   if(ml)ml.textContent=s.email||'';
   el.title=(s.mode==='super'?'Super admin':'Branch')+': '+(s.branchName||'')+(s.email?' · '+s.email:'');
+  const lg=$('#brandLogo');
+  if(lg){
+    lg.textContent=s.mode==='super'?'👑':(String(s.branchName||'S').trim().charAt(0)||'S');
+    lg.title='Switch account — '+(s.branchName||'Super Admin');
+  }
 }
 async function startWithSession(){
   applySessionScope();
@@ -1752,6 +2028,7 @@ async function startWithSession(){
   await startApp();
   loadBranchRegistry().then(reg=>{
     const s=getSession();if(!s||!reg)return;
+    if(!navigator.onLine||!fdb)return;
     let stale=false;
     if(s.mode==='branch'&&reg.branches.length){
       stale=!reg.branches.some(b=>String(b.id)===String(s.branchId)||String(b.name||'')===String(s.branchName));
@@ -1759,9 +2036,17 @@ async function startWithSession(){
       stale=String(reg.superAdmin.id)!==String(s.branchId);
     }
     if(stale){
+      const acc=getActiveAccount();
+      if(acc){
+        const v=readVault();
+        v.accounts=v.accounts.filter(a=>a.id!==acc.id);
+        if(v.active===acc.id)v.active=v.accounts[0]?v.accounts[0].id:'';
+        writeVault(v);
+      }
       clearSession();
+      ACTIVE_ACCOUNT=null;
       try{localStorage.removeItem(CACHE_SCOPE_KEY)}catch(e){}
-      wipeDataCache().then(()=>{try{location.reload()}catch(e){}});
+      showBranchPicker();
     }
   }).catch(()=>{});
 }
@@ -1771,24 +2056,17 @@ function bootGate(){
   if(!co){showSetup();return}
   applyBranding(co);
   try{initFirebase(co.cfg)}catch(e){console.warn('firebase init error',e)}
-  const s=getSession();
   const reg=readRegCache();
   if(reg)applyReg(reg);
-  if(s){
-    // Reject a session whose branch/super admin no longer exists (when the
-    // cached registry can answer that question).
-    let stale=false;
-    if(s.mode==='branch'){
-      if(reg&&(REG.branches.length||REG.superAdmin))stale=!REG.branches.some(b=>String(b.id)===String(s.branchId)||String(b.name||'')===String(s.branchName));
-      if(!stale&&REG.superAdmin&&String(REG.superAdmin.id)===String(s.branchId))stale=true;
-    }else if(reg&&reg.superAdmin&&String(reg.superAdmin.id)!==String(s.branchId)){
-      stale=true;
-    }
-    if(stale){clearSession();showBranchPicker();return}
+  if(getProbe()||!getSession())showBranchPicker();
+  ensureVault().then(acc=>{
+    if(!acc){showBranchPicker();return}
+    if(!getSession())saveSession(accountSession(acc));
     startWithSession();
-    return;
-  }
-  showBranchPicker();
+  }).catch(e=>{
+    console.warn('account boot failed',e);
+    showBranchPicker();
+  });
 }
 function buildStampText(){
   const ok=pdfLibsReady();
@@ -1829,6 +2107,7 @@ async function doConnect(ev){
     if(data.measurementId)cfg.measurementId=data.measurementId;
     if(!cfg.apiKey||!cfg.projectId||!cfg.appId)throw new Error('This access key is not configured correctly. Please contact support.');
     saveClientConfig({key:key,cfg:cfg,name:data.name||'',subtitle:data.subtitle||''});
+    try{localStorage.removeItem(PROBE_KEY)}catch(e){}
     setTimeout(()=>{try{location.reload()}catch(e){}},200);
   }catch(e){
     if(btn){btn.disabled=false;btn.textContent='Connect'}
@@ -1836,17 +2115,26 @@ async function doConnect(ev){
   }
 }
 function changeAccessKey(){
-  openConfirm('Change access key?','This device will forget the current account and branch session. You will need the access key again. Unsaved queued changes will be removed too.',async()=>{
-    clearSession();
+  openConfirm('Reset this device?','All logged-in branches, access keys, local caches and unsynced queues on this device will be removed. Firestore is not changed. You will need the access key again.',async()=>{
+    if(_syncing){toast('Finish syncing first','err');return}
+    if(_fetching){toast('Finish fetching first','err');return}
+    if(_writing){toast('Finish the last save first','err');return}
+    const accs=readVault().accounts.slice();
+    if(_idb){try{_idb.close()}catch(e){};_idb=null}
+    for(const a of accs){try{await deleteDbNamed(accountDbName(a))}catch(e){}}
+    try{await deleteDbNamed(LEGACY_DB)}catch(e){}
+    clearSession();ACTIVE_ACCOUNT=null;SYNCQ=[];
     try{
-      [CLIENT_CFG_KEY,SESSION_KEY,REG_KEY,CACHE_SCOPE_KEY].forEach(k=>localStorage.removeItem(k));
-      localStorage.removeItem('sarafi_lastFetched');
+      const keep={'sarafi_theme':1};
+      for(let i=localStorage.length-1;i>=0;i--){
+        const k=localStorage.key(i);
+        if(!k||k.indexOf('sarafi_')!==0)continue;
+        if(keep[k]||k.indexOf('sarafi_web_')===0)continue;
+        localStorage.removeItem(k);
+      }
     }catch(e){}
-    await wipeDataCache();
-    try{await idbClear('syncq')}catch(e){}
-    SYNCQ=[];
     try{location.reload()}catch(e){}
-  },'Change');
+  },'Reset');
 }
 function wireSetup(){
   const f=$('#setupForm');if(f)f.addEventListener('submit',doConnect);
@@ -1858,18 +2146,10 @@ function wipeDataCache(){
   let jobs=[];
   try{jobs=[idbClear('accounts'),idbClear('txns'),idbClear('ob'),idbClear('pending')]}catch(e){}
   try{
-    for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k&&k.indexOf('sarafi_lastFetched')===0)localStorage.removeItem(k)}
+    localStorage.removeItem(lfKey());
+    localStorage.removeItem('sarafi_lastFetched');
   }catch(e){}
   return Promise.all(jobs).catch(()=>{});
-}
-function doLogout(){
-  const n=typeof unsyncedCount==='function'?unsyncedCount():0;
-  openConfirm('Switch account?','You will return to the branch / super admin picker. Data cached on this device for this branch will be cleared.'+(n?' '+n+' unsynced '+(n===1?'change stays':'changes stay')+' queued on this device and will sync the next time you sign in.':''),async()=>{
-    clearSession();
-    try{localStorage.removeItem(CACHE_SCOPE_KEY)}catch(e){}
-    await wipeDataCache();
-    try{location.reload()}catch(e){}
-  },'Switch');
 }
 let _confirmCb=null;
 function openConfirm(title,msg,cb,okLabel){
@@ -1911,10 +2191,14 @@ function applyMainSettings(s,persist){
   });
   if(!codes.length)return;
   SETTINGS={currencies:codes,names};
-  if(persist!==false){try{localStorage.setItem(SETTINGS_KEY,JSON.stringify({currencies:list}))}catch(e){}}
+  if(persist!==false){try{localStorage.setItem(settingsKey(),JSON.stringify({currencies:list}))}catch(e){}}
 }
 function loadMainSettings(){
-  try{const s=JSON.parse(localStorage.getItem(SETTINGS_KEY)||'null');if(s)applyMainSettings(s,false)}catch(e){}
+  try{
+    let s=JSON.parse(localStorage.getItem(settingsKey())||'null');
+    if(!s)s=JSON.parse(localStorage.getItem(SETTINGS_KEY)||'null');
+    if(s)applyMainSettings(s,false);
+  }catch(e){}
 }
 let _entry=null,_actTxnId=null;
 let branchSel='All',branchName='',typeSel='All',curSel='PKR';
@@ -2100,7 +2384,84 @@ function scopedTxns(){
 
 /* ---------- IndexedDB cache ---------- */
 let _idb=null;
-function initIDB(){return new Promise(res=>{try{const rq=indexedDB.open('sarafi_db',3);rq.onupgradeneeded=e=>{const d=e.target.result;if(!d.objectStoreNames.contains('accounts'))d.createObjectStore('accounts',{keyPath:'id'});if(!d.objectStoreNames.contains('txns'))d.createObjectStore('txns',{keyPath:'id'});if(!d.objectStoreNames.contains('ob'))d.createObjectStore('ob',{keyPath:'id'});if(!d.objectStoreNames.contains('pending'))d.createObjectStore('pending',{keyPath:'id'});if(!d.objectStoreNames.contains('syncq'))d.createObjectStore('syncq',{keyPath:'qid'})};rq.onsuccess=e=>{_idb=e.target.result;res(true)};rq.onerror=()=>res(false)}catch(e){res(false)}})}
+function openDbNamed(name){
+  return new Promise(res=>{
+    try{
+      const rq=indexedDB.open(String(name||DB_NAME),3);
+      rq.onupgradeneeded=e=>{
+        const d=e.target.result;
+        if(!d.objectStoreNames.contains('accounts'))d.createObjectStore('accounts',{keyPath:'id'});
+        if(!d.objectStoreNames.contains('txns'))d.createObjectStore('txns',{keyPath:'id'});
+        if(!d.objectStoreNames.contains('ob'))d.createObjectStore('ob',{keyPath:'id'});
+        if(!d.objectStoreNames.contains('pending'))d.createObjectStore('pending',{keyPath:'id'});
+        if(!d.objectStoreNames.contains('syncq'))d.createObjectStore('syncq',{keyPath:'qid'});
+      };
+      rq.onsuccess=()=>res(rq.result);
+      rq.onerror=()=>res(null);
+      rq.onblocked=()=>res(null);
+    }catch(e){res(null)}
+  });
+}
+function initIDB(){return new Promise(async res=>{
+  try{
+    if(_idb){try{_idb.close()}catch(e){};_idb=null}
+    const db=await openDbNamed(DB_NAME);
+    if(!db)return res(false);
+    _idb=db;res(true);
+  }catch(e){res(false)}
+})}
+function readDbStores(name,stores){
+  return openDbNamed(name).then(db=>{
+    if(!db)return {};
+    const out={};
+    return stores.reduce((p,st)=>p.then(()=>new Promise(res=>{
+      if(!db.objectStoreNames.contains(st))return res(out[st]=[]);
+      try{
+        const r=db.transaction(st,'readonly').objectStore(st).getAll();
+        r.onsuccess=()=>res(out[st]=r.result||[]);
+        r.onerror=()=>res(out[st]=[]);
+      }catch(e){res(out[st]=[])}
+    })),Promise.resolve()).then(()=>{try{db.close()}catch(e){};return out}).catch(()=>{try{db.close()}catch(e){};return out});
+  });
+}
+function writeDbStores(name,data){
+  return openDbNamed(name).then(db=>{
+    if(!db)return false;
+    const stores=Object.keys(data||{});
+    return stores.reduce((p,st)=>p.then(()=>new Promise(res=>{
+      const arr=data[st]||[];
+      if(!db.objectStoreNames.contains(st)||!arr.length)return res();
+      try{
+        const tx=db.transaction(st,'readwrite'),os=tx.objectStore(st);
+        arr.forEach(x=>{try{os.put(x)}catch(e){}});
+        tx.oncomplete=()=>res();tx.onerror=()=>res();
+      }catch(e){res()}
+    })),Promise.resolve()).then(()=>{try{db.close()}catch(e){};return true}).catch(()=>{try{db.close()}catch(e){};return false});
+  });
+}
+function deleteDbNamed(name){
+  return new Promise(res=>{
+    if(!name)return res();
+    try{
+      const rq=indexedDB.deleteDatabase(String(name));
+      rq.onsuccess=()=>res();rq.onerror=()=>res();rq.onblocked=()=>res();
+    }catch(e){res()}
+  });
+}
+function dbQueueCount(acc){
+  if(!acc)return Promise.resolve(0);
+  return openDbNamed(accountDbName(acc)).then(db=>{
+    if(!db)return 0;
+    return new Promise(res=>{
+      if(!db.objectStoreNames.contains('syncq')){try{db.close()}catch(e){};return res(0)}
+      try{
+        const r=db.transaction('syncq','readonly').objectStore('syncq').count();
+        r.onsuccess=()=>{try{db.close()}catch(e){};res(r.result||0)};
+        r.onerror=()=>{try{db.close()}catch(e){};res(0)};
+      }catch(e){try{db.close()}catch(e){};res(0)}
+    });
+  });
+}
 function idbAll(st){return new Promise(res=>{if(!_idb)return res([]);try{const r=_idb.transaction(st,'readonly').objectStore(st).getAll();r.onsuccess=()=>res(r.result||[]);r.onerror=()=>res([])}catch(e){res([])}})}
 function idbPut(st,arr){return new Promise(res=>{if(!_idb)return res();try{const tx=_idb.transaction(st,'readwrite'),os=tx.objectStore(st);arr.forEach(x=>os.put(x));tx.oncomplete=()=>res();tx.onerror=()=>res()}catch(e){res()}})}
 function idbClear(st){return new Promise(res=>{if(!_idb)return res();try{const tx=_idb.transaction(st,'readwrite'),rq=tx.objectStore(st).clear();tx.oncomplete=()=>res();tx.onerror=()=>res()}catch(e){res()}})}
@@ -2952,7 +3313,9 @@ async function readAccountsByIds(ids){
   }
   return out;
 }
-async function runFetch(){
+async function runFetch(opts){
+  opts=opts||{};
+  if(_fetching)return;
   if(!navigator.onLine){toast('No internet connection — showing cached data','err');return}
   const s=getSession();
   if(!s){toast('Sign in first','err');return}
@@ -2961,6 +3324,7 @@ async function runFetch(){
   if(btn){btn.disabled=true}
   if(sp){sp.style.display='inline-block'}
   if(upd)upd.textContent='Fetching…';
+  _fetching=true;
   try{
     await ensureReadAuth();
     if(AUTOSYNC&&SYNCQ.length){try{await flushQueue({silent:true})}catch(e){}}
@@ -3078,11 +3442,12 @@ async function runFetch(){
     localStorage.setItem(lfKey(),new Date().toISOString());
     renderAll();
     updateStamp();
-    toast('Data updated — '+DATA.accounts.length+' accounts · '+DATA.txns.length+' entries');
+    if(!opts.silent)toast('Data updated — '+DATA.accounts.length+' accounts · '+DATA.txns.length+' entries');
   }catch(e){
     console.warn('Fetch error',e);
     toast('Fetch failed: '+((e&&e.message)||'network error')+ ' — showing cached data','err');
   }finally{
+    _fetching=false;
     if(btn)btn.disabled=false;
     if(sp)sp.style.display='';
     updateStamp();
@@ -4690,6 +5055,8 @@ function auditPending(action,rec,before){
   }};
 }
 async function queueAny(ops){
+  _writing++;
+  try{
   const list=(ops||[]).filter(Boolean);
   if(!list.length)return;
   const keys=new Set(list.filter(o=>o.col==='txns'||o.col==='pendingTxns').map(o=>o.col+':'+o.id));
@@ -4711,6 +5078,7 @@ async function queueAny(ops){
   applyLocalOps(out);
   refreshAfterWrite();
   if(AUTOSYNC&&navigator.onLine)flushQueue({silent:true});
+  }finally{_writing--}
 }
 function execNormalAccept(p,pv,now){
   const target=pv.ctx.target,fromAcct=pv.ctx.fromAcct,cust=pv.ctx.cust;
@@ -4954,10 +5322,10 @@ function renderSettings(){
       '<div class="setrow"><span>Write queued changes to Firestore</span><button class="btn btn-p sm" onclick="syncNow()">Sync now</button></div>'+
       '<div class="setrow"><span>See what will be synced</span><button class="btn btn-g sm" onclick="openSyncSheet()">View queue</button></div>'+
     '</div>'+
-    '<div class="setcard"><h4>Account</h4><div class="setrow"><span>Signed in as</span><b>'+esc(who)+'</b></div>'+(mail?'<div class="setrow"><span>Email</span><b style="direction:ltr">'+esc(mail)+'</b></div>':'')+'<div class="setrow"><span>Switch account</span><button class="btn btn-g sm" onclick="doLogout()">Switch</button></div></div>'+
+    '<div class="setcard"><h4>Account</h4><div class="setrow"><span>Signed in as</span><b>'+esc(who)+'</b></div>'+(mail?'<div class="setrow"><span>Email</span><b style="direction:ltr">'+esc(mail)+'</b></div>':'')+'<div class="setrow"><span>Switch branch</span><button class="btn btn-g sm" onclick="openSwitchSheet()">Switch</button></div><div class="setrow"><span>Sign out of this branch</span><button class="btn btn-dg sm" onclick="doLogout()">Sign out</button></div></div>'+
     '<div class="setcard"><h4>Appearance</h4><div class="setrow"><span>Theme</span><button class="btn btn-g sm" onclick="toggleTheme()">'+(isDark()?'Light mode':'Dark mode')+'</button></div></div>'+
     '<div class="setcard"><h4>Data</h4><div class="setrow"><span>Pull latest from Firestore</span><button class="btn btn-p sm" onclick="runFetch()">Fetch now</button></div><div class="setrow"><span>Download JSON backup</span><button class="btn btn-g sm" onclick="openBackup()">Backup</button></div></div>'+
-    '<div class="setcard"><h4>Access</h4><div class="setrow"><span>Connect a different access key</span><button class="btn btn-dg sm" onclick="changeAccessKey()">Change key</button></div></div>'+
+    '<div class="setcard"><h4>Access</h4><div class="setrow"><span>Add a branch from another access key</span><button class="btn btn-g sm" onclick="openSwitchSheet(\'key\')">Add key</button></div><div class="setrow"><span>Reset this device</span><button class="btn btn-dg sm" onclick="changeAccessKey()">Reset</button></div></div>'+
     '<div class="setcard"><h4>About</h4><div class="setrow"><span>Build</span><b style="direction:ltr">'+esc(/^__/.test(BUILD_ID)?'dev':BUILD_ID)+'</b></div><div class="setrow"><span>PDF libraries</span><b>'+esc(pdfLibsReady()?'Ready':'Loading…')+'</b></div></div>'+
     '<p class="setnote">Approvals are live: accept or decline cross-branch requests from the Approvals tab.</p>';
   applyEditorUI();
@@ -4965,24 +5333,381 @@ function renderSettings(){
 function openMore(){openModal('m-more')}
 function moreGo(tab){closeModal('m-more');setTimeout(()=>{try{go(tab)}catch(e){}},160)}
 
+/* ---------- account switching ---------- */
+let _switchCtx={pane:'list'};
+let _switchBusy=false;
+
+function accInitial(a){
+  if(!a)return 'S';
+  if(a.mode==='super')return '👑';
+  const s=String(a.branchName||'').trim();
+  return s?s.charAt(0):'B';
+}
+function openSwitchSheet(pane){
+  _switchCtx={pane:pane==='key'?'key':'list'};
+  renderSwitchSheet();
+  openModal('m-switch');
+}
+function closeSwitchSheet(){
+  if(_switchBusy)return;
+  _switchCtx={pane:'list'};
+  closeModal('m-switch');
+}
+function findVaultAccount(clientKey,b){
+  if(!b)return null;
+  const mode=b.isSuperAdmin===true?'super':'branch';
+  return readVault().accounts.find(a=>String(a.clientKey)===String(clientKey)&&a.mode===mode&&
+    (String(a.branchId)===String(b.id)||(!a.branchId&&String(a.branchName)===String(b.name))))||null;
+}
+function switchError(msg){
+  const e=$('#addErr');if(!e)return;
+  if(msg){e.textContent=msg;e.classList.add('show')}
+  else{e.textContent='';e.classList.remove('show')}
+}
+function renderSwitchSheet(){
+  const body=$('#switchBody'),title=$('#switchTitle');
+  if(!body)return;
+  const c=_switchCtx||{pane:'list'};
+  if(c.pane==='branches')return renderAddBranches(body,title);
+  if(c.pane==='login')return renderAddLogin(body,title);
+  if(c.pane==='key')return renderAddKey(body,title);
+  return renderSwitchList(body,title);
+}
+function renderSwitchList(body,title){
+  if(title)title.textContent='Accounts';
+  const v=readVault();
+  const cur=getActiveAccount();
+  const list=v.accounts.slice().sort((a,b)=>{
+    if(cur){if(a.id===cur.id)return -1;if(b.id===cur.id)return 1}
+    return Number(b.lastUsedAt||0)-Number(a.lastUsedAt||0);
+  });
+  if(!list.length){
+    body.innerHTML='<div class="brpempty">No accounts on this device yet.<br>Add a branch to sign in.</div>'
+      +'<button class="accadd" onclick="openAddBranchPane()">＋ Add branch</button>';
+    return;
+  }
+  const keys=[...new Set(list.map(a=>a.clientKey))];
+  let html='<div class="acclist">',lastKey='';
+  list.forEach(a=>{
+    if(keys.length>1&&a.clientKey!==lastKey){
+      lastKey=a.clientKey;
+      html+='<div class="accgroup">'+esc(a.clientName||a.clientKey||'Access key')+'</div>';
+    }
+    const active=!!(cur&&cur.id===a.id);
+    const sub=a.mode==='super'?'Super Admin · all branches':(a.email||'Branch account');
+    html+='<div class="accwrap">'
+      +'<button class="acmain'+(active?' active':'')+'" onclick="switchAccount(this.dataset.id)" data-id="'+esc(a.id)+'">'
+      +'<span class="accav">'+esc(accInitial(a))+'</span>'
+      +'<span class="accinfo"><b>'+esc(a.branchName||'—')+'</b><span>'+esc(sub)+'</span></span>'
+      +'<span class="accq" id="accq_'+esc(a.id)+'"></span>'
+      +(active?'<span class="acccheck">✓</span>':'<span class="brparrow">›</span>')
+      +'</button>'
+      +'<button class="accrm" title="Remove from this device" onclick="askRemoveAccount(this.dataset.id)" data-id="'+esc(a.id)+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>'
+      +'</div>';
+  });
+  html+='</div>'
+    +'<button class="accadd" onclick="openAddBranchPane()">＋ Add branch</button>'
+    +'<div class="accnote">Switching never writes to Firestore. Every branch keeps its own cache, queue and approvals.</div>';
+  body.innerHTML=html;
+  list.forEach(a=>{
+    dbQueueCount(a).then(n=>{
+      const el=document.getElementById('accq_'+a.id);
+      if(!el)return;
+      if(n>0){el.textContent=String(n);el.classList.add('show')}
+    }).catch(()=>{});
+  });
+}
+function openAddBranchPane(){
+  const co=getClientConfig()||{};
+  _switchCtx={pane:'branches',loading:true,clientKey:co.key||'',clientName:co.name||''};
+  renderSwitchSheet();
+  loadBranchRegistry(true).catch(()=>loadBranchRegistry(false)).then(reg=>{
+    if(!_switchCtx||_switchCtx.pane!=='branches')return;
+    _switchCtx.loading=false;
+    if(!reg||(!(reg.branches||[]).length&&!reg.superAdmin))_switchCtx.err='No branches found. Check the connection and try again.';
+    renderSwitchSheet();
+  }).catch(()=>{
+    if(!_switchCtx||_switchCtx.pane!=='branches')return;
+    _switchCtx.loading=false;
+    _switchCtx.err='Could not load branches. Check the connection and try again.';
+    renderSwitchSheet();
+  });
+}
+function openAddKeyPane(){_switchCtx={pane:'key'};renderSwitchSheet()}
+function renderAddBranches(body,title){
+  const c=_switchCtx;
+  if(title)title.textContent='Add branch';
+  let html='<button class="swback" onclick="openSwitchSheet()">← Back to accounts</button>';
+  html+='<div class="accgroup">'+esc(c.clientName||'This access key')+'</div>';
+  if(c.err)html+='<div class="swErr show">'+esc(c.err)+'</div>';
+  if(c.loading){
+    html+='<div class="brpempty">Loading branches…</div>';
+    body.innerHTML=html;
+    return;
+  }
+  const all=[];
+  if(REG.superAdmin)all.push(REG.superAdmin);
+  (REG.branches||[]).forEach(b=>all.push(b));
+  if(!all.length){
+    html+='<div class="brpempty">No branches found.</div>';
+  }else{
+    html+=all.map(b=>{
+      const added=findVaultAccount(c.clientKey||getClientConfig().key,b);
+      const sup=b.isSuperAdmin===true;
+      return '<button class="accbranch'+(added?' added':'')+'" onclick="pickAddBranch(this.dataset.id)" data-id="'+esc(b.id)+'">'
+        +'<span class="brpic">'+(sup?'👑':'🏢')+'</span>'
+        +'<span class="brpinfo"><b>'+esc(b.name||'')+'</b><span>'+esc(sup?'Super Admin · all branches':(b.email||'No email set'))+'</span></span>'
+        +'<span class="brstate">'+(added?'Added':'Add')+'</span>'
+        +'</button>';
+    }).join('');
+  }
+  html+='<button class="accadd" onclick="openAddKeyPane()">＋ Add from another access key</button>';
+  body.innerHTML=html;
+}
+function renderAddKey(body,title){
+  if(title)title.textContent='Another access key';
+  body.innerHTML='<button class="swback" onclick="openAddBranchPane()">← Back</button>'
+    +'<p class="accnote" style="text-align:left;margin:0 0 12px">Add a branch from a different company. You will sign in to one of its branches, then you can switch between both companies anytime.</p>'
+    +'<div class="field"><label>Access key</label><input id="addKeyInput" type="text" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="your-access-key"></div>'
+    +'<div class="swErr" id="addErr"></div>'
+    +'<button class="btn btn-p lbtn" id="addKeyBtn" onclick="doAddKey()">Continue</button>';
+  setTimeout(()=>{try{$('#addKeyInput').focus()}catch(e){}},80);
+}
+async function doAddKey(){
+  const el=$('#addKeyInput');if(!el)return;
+  if(_writing){switchError('Finishing the last save — try again in a moment.');return}
+  const key=String(el.value||'').trim();
+  if(!key){switchError('Enter the access key.');return}
+  switchError('');
+  const btn=$('#addKeyBtn');if(btn){btn.disabled=true;btn.textContent='Connecting…'}
+  try{
+    const data=await lookupClient(key);
+    if(!data)throw new Error('That access key was not found.');
+    const cfg={apiKey:data.apiKey,authDomain:data.authDomain,projectId:data.projectId,storageBucket:data.storageBucket,messagingSenderId:data.messagingSenderId,appId:data.appId};
+    if(data.measurementId)cfg.measurementId=data.measurementId;
+    if(!cfg.apiKey||!cfg.projectId||!cfg.appId)throw new Error('This access key is not configured correctly.');
+    const cur=getActiveAccount();
+    const probe={key,cfg,name:data.name||'',subtitle:data.subtitle||'',returnId:cur?cur.id:''};
+    localStorage.setItem(PROBE_KEY,JSON.stringify(probe));
+    saveClientConfig({key,cfg,name:data.name||'',subtitle:data.subtitle||''});
+    clearSession();
+    try{location.reload()}catch(e){}
+  }catch(e){
+    if(btn){btn.disabled=false;btn.textContent='Continue'}
+    switchError((e&&e.message)||'Could not connect. Try again.');
+  }
+}
+function pickAddBranch(id){
+  const c=_switchCtx;if(!c||c.pane!=='branches')return;
+  const all=[];
+  if(REG.superAdmin)all.push(REG.superAdmin);
+  (REG.branches||[]).forEach(b=>all.push(b));
+  const b=all.find(x=>String(x.id)===String(id));if(!b)return;
+  const co=getClientConfig()||{};
+  const acc=findVaultAccount(c.clientKey||co.key,b);
+  if(acc){switchAccount(acc.id);return}
+  _switchCtx={pane:'login',clientKey:c.clientKey||co.key,clientName:c.clientName||co.name||'',branch:b};
+  renderSwitchSheet();
+}
+function renderAddLogin(body,title){
+  const c=_switchCtx,b=c.branch;
+  if(title)title.textContent='Sign in';
+  body.innerHTML='<button class="swback" onclick="openAddBranchPane()">← Back to branches</button>'
+    +'<div id="branchWho"><span class="whoic">'+(b.isSuperAdmin===true?'👑':'🏢')+'</span><span class="whoinfo"><b>'+esc(b.name||'')+'</b><span>'+esc(b.isSuperAdmin===true?'Super Admin — all branches':'Branch account')+'</span></span></div>'
+    +'<div class="field"><label>Email</label><input id="addEmail" type="email" autocapitalize="off" autocorrect="off" spellcheck="false" value="'+esc(b.email||'')+'"></div>'
+    +'<div class="field"><label>Password</label><input id="addPass" type="password" onkeydown="if(event.key===\'Enter\'){event.preventDefault();doAddBranchLogin()}"></div>'
+    +'<div class="swErr" id="addErr"></div>'
+    +'<button class="btn btn-p lbtn" id="addBtn" onclick="doAddBranchLogin()">Sign In</button>'
+    +'<div class="accnote">This branch gets its own cache, queue and approvals. Nothing is shared with the other branches.</div>';
+  setTimeout(()=>{try{(b.email?$('#addPass'):$('#addEmail')).focus()}catch(e){}},80);
+}
+async function doAddBranchLogin(){
+  const c=_switchCtx;if(!c||c.pane!=='login')return;
+  if(_writing){switchError('Finishing the last save — try again in a moment.');return}
+  const b=c.branch;
+  const email=((($('#addEmail')||{}).value)||'').trim().toLowerCase();
+  const pass=(($('#addPass')||{}).value)||'';
+  const wantEmail=String(b.email||'').trim().toLowerCase();
+  if(!wantEmail||!b.password){switchError('This branch has no email and password set. Ask the owner to add them.');return}
+  if(email!==wantEmail||pass!==String(b.password)){switchError('Wrong email or password.');return}
+  switchError('');
+  const btn=$('#addBtn');if(btn){btn.disabled=true;btn.textContent='Signing in…'}
+  try{
+    const co=getClientConfig();
+    if(!co)throw new Error('No access key on this device.');
+    const mode=b.isSuperAdmin===true?'super':'branch';
+    const acc={
+      id:accountIdFor(co.key,mode,b.id,b.name),
+      clientKey:co.key,clientName:co.name||'',clientSubtitle:co.subtitle||'',cfg:co.cfg,
+      mode,branchId:b.id,branchName:String(b.name||''),email:b.email||'',
+      createdAt:Date.now(),lastUsedAt:Date.now()
+    };
+    upsertAccount(acc);
+    await migrateLegacyTo(acc);
+    await activateAccount(acc,(_syncing||_fetching));
+  }catch(e){
+    if(btn){btn.disabled=false;btn.textContent='Sign In'}
+    switchError((e&&e.message)||'Could not add this branch. Try again.');
+  }
+}
+async function switchAccount(id){
+  if(_switchBusy)return;
+  const v=readVault();
+  const acc=v.accounts.find(a=>a.id===id);
+  if(!acc)return;
+  const cur=getActiveAccount();
+  if(cur&&cur.id===acc.id){closeSwitchSheet();return}
+  if(_syncing){toast('Finishing sync — try again in a moment','inf');return}
+  if(_fetching){toast('Finishing fetch — try again in a moment','inf');return}
+  if(_writing){toast('Finishing save — try again in a moment','inf');return}
+  _switchBusy=true;
+  try{await activateAccount(acc,false)}
+  catch(e){console.warn('switch failed',e);toast('Could not switch account','err')}
+  finally{_switchBusy=false}
+}
+async function activateAccount(acc,forceReload){
+  if(!acc)return;
+  if(_writing){toast('Finishing save — try again in a moment','inf');return}
+  const cur=getActiveAccount();
+  if(cur&&cur.id!==acc.id)rememberAccountChip(cur);
+  const v=readVault();
+  const i=v.accounts.findIndex(a=>a.id===acc.id);
+  if(i>=0)v.accounts[i]=Object.assign({},v.accounts[i],{lastUsedAt:Date.now()});
+  v.active=acc.id;
+  writeVault(v);
+  saveSession(accountSession(acc));
+  const differentKey=!!(cur&&String(cur.clientKey)!==String(acc.clientKey));
+  if(forceReload||differentKey){
+    saveClientConfig({key:acc.clientKey,cfg:acc.cfg,name:acc.clientName||'',subtitle:acc.clientSubtitle||''});
+    try{localStorage.removeItem(PROBE_KEY)}catch(e){}
+    try{location.reload()}catch(e){}
+    return;
+  }
+  ACTIVE_ACCOUNT=acc;
+  closeSwitchSheet();
+  await loadAccountIntoApp(acc);
+}
+async function loadAccountIntoApp(acc){
+  const gen=++_switchGen;
+  $$('.modal.show').forEach(m=>m.classList.remove('show'));
+  document.body.classList.remove('locked');
+  _entry=null;_actTxnId=null;_pendAction=null;_pendBusy=false;
+  curAccId=null;ledCurr='';branchSel='All';branchName='';
+  _IX=null;_sCK=null;_sC=null;
+  DATA={accounts:[],txns:[],ob:{}};PENDING=[];SYNCQ=[];SETTINGS={currencies:[],names:{}};
+  DB_NAME=accountDbName(acc);
+  if(_idb){try{_idb.close()}catch(e){};_idb=null}
+  await initIDB();
+  if(gen!==_switchGen)return;
+  applySessionScope();
+  loadEditor();
+  loadMainSettings();
+  updateSessionBadge();
+  const accs=await idbAll('accounts');
+  const txs=await idbAll('txns');
+  const obs=await idbAll('ob');
+  const pend=await idbAll('pending');
+  const q=await idbAll('syncq');
+  if(gen!==_switchGen)return;
+  DATA.accounts=(accs||[]).map(x=>Object.assign({},x));
+  DATA.txns=(txs||[]).map(x=>Object.assign({},x));
+  (obs||[]).forEach(o=>{const{id,...rest}=o;DATA.ob[id]=rest});
+  SYNCQ=(q||[]).filter(o=>o&&o.qid&&o.col&&o.id);
+  PENDING=(pend||[]).filter(p=>p&&(!p.status||p.status==='pending')).map(p=>Object.assign({},p));
+  applyQueueLocal();
+  trimCacheToScope();
+  applyBookData();
+  const cs=allCurrencies();
+  if(cs.length&&cs.indexOf(curSel)<0)curSel=cs.indexOf('PKR')>=0?'PKR':cs[0];
+  renderAll();
+  applyEditorUI();
+  updateSyncBadge();
+  updatePendingBadge();
+  try{go('dashboard')}catch(e){}
+  if(AUTOSYNC&&SYNCQ.length&&navigator.onLine)setTimeout(()=>{if(gen===_switchGen)flushQueue({silent:true})},900);
+}
+async function askRemoveAccount(id){
+  const v=readVault();
+  const acc=v.accounts.find(a=>a.id===id);if(!acc)return;
+  const cur=getActiveAccount();
+  const isActive=!!(cur&&cur.id===id);
+  const n=await dbQueueCount(acc);
+  const msg='This removes '+String(acc.branchName||'this branch')+' from this device'+(n?' and discards '+n+' unsynced change'+(n===1?'':'s'):'')+'. Firestore is not changed.';
+  openConfirm('Remove branch?',msg,async()=>{
+    if(isActive){await removeActiveAccount(id);return}
+    const vv=readVault();
+    vv.accounts=vv.accounts.filter(a=>a.id!==id);
+    if(vv.active===id)vv.active=vv.accounts[0]?vv.accounts[0].id:'';
+    writeVault(vv);
+    await deleteDbNamed(accountDbName(acc));
+    _switchCtx={pane:'list'};
+    renderSwitchSheet();
+    toast('Removed '+String(acc.branchName||'branch'));
+  },'Remove');
+}
+async function removeActiveAccount(id){
+  if(_syncing){toast('Finish syncing before signing out','err');return}
+  if(_fetching){toast('Finish fetching before signing out','err');return}
+  if(_writing){toast('Finish the last save before signing out','err');return}
+  const v=readVault();
+  const acc=v.accounts.find(a=>a.id===id)||getActiveAccount();
+  if(!acc)return;
+  v.accounts=v.accounts.filter(a=>a.id!==acc.id);
+  v.active=v.accounts[0]?v.accounts[0].id:'';
+  writeVault(v);
+  if(_idb){try{_idb.close()}catch(e){};_idb=null}
+  ACTIVE_ACCOUNT=null;
+  await deleteDbNamed(accountDbName(acc));
+  const next=v.accounts.find(a=>a.id===v.active)||null;
+  if(!next){
+    clearSession();
+    try{localStorage.removeItem(CACHE_SCOPE_KEY)}catch(e){}
+    try{location.reload()}catch(e){}
+    return;
+  }
+  if(String(next.clientKey)===String((getClientConfig()||{}).key)){
+    await activateAccount(next,false);
+    toast('Signed out of '+String(acc.branchName||'branch'));
+  }else{
+    saveClientConfig({key:next.clientKey,cfg:next.cfg,name:next.clientName||'',subtitle:next.clientSubtitle||''});
+    saveSession(accountSession(next));
+    try{localStorage.removeItem(PROBE_KEY)}catch(e){}
+    try{location.reload()}catch(e){}
+  }
+}
+function doLogout(){
+  const acc=getActiveAccount();
+  if(!acc){openSwitchSheet();return}
+  const n=typeof unsyncedCount==='function'?unsyncedCount():0;
+  openConfirm('Sign out of '+String(acc.branchName||'this branch')+'?',
+    'Its local cache will be removed from this device.'+(n?' '+n+' unsynced change'+(n===1?'':'s')+' will be discarded — sync first if you need them.':' Other logged-in branches stay available.'),
+    async()=>{await removeActiveAccount(acc.id)},'Sign out');
+}
+
 /* ---------- editor mode + write queue ---------- */
 const WRITABLE_TYPES={customer:1,tijari:1,cash:1};
 const DARAKS=['نغدي','چيک','حواله','انلاين'];
 function loadEditor(){
-  try{EDITOR=localStorage.getItem(EDITOR_KEY)==='1'}catch(e){EDITOR=false}
-  try{AUTOSYNC=localStorage.getItem(AUTOSYNC_KEY)==='1'}catch(e){AUTOSYNC=false}
-  try{LASTMETA=JSON.parse(localStorage.getItem(LASTMETA_KEY)||'{}')||{}}catch(e){LASTMETA={}}
+  try{
+    const ev=localStorage.getItem(perAccKey(EDITOR_KEY));
+    EDITOR=ev!=null?ev==='1':localStorage.getItem(EDITOR_KEY)==='1';
+  }catch(e){EDITOR=false}
+  try{
+    const av=localStorage.getItem(perAccKey(AUTOSYNC_KEY));
+    AUTOSYNC=av!=null?av==='1':localStorage.getItem(AUTOSYNC_KEY)==='1';
+  }catch(e){AUTOSYNC=false}
+  try{LASTMETA=JSON.parse(localStorage.getItem(perAccKey(LASTMETA_KEY))||localStorage.getItem(LASTMETA_KEY)||'{}')||{}}catch(e){LASTMETA={}}
 }
 function toggleAutoSync(){
   AUTOSYNC=!AUTOSYNC;
-  try{localStorage.setItem(AUTOSYNC_KEY,AUTOSYNC?'1':'0')}catch(e){}
+  try{localStorage.setItem(perAccKey(AUTOSYNC_KEY),AUTOSYNC?'1':'0')}catch(e){}
   if(AUTOSYNC&&SYNCQ.length&&navigator.onLine)flushQueue({silent:true});
   toast(AUTOSYNC?'Auto-sync on':'Auto-sync off — changes wait for Sync');
   if($('#view-settings').classList.contains('active'))renderSettings();
 }
 function setEditor(on){
   EDITOR=!!on;
-  try{localStorage.setItem(EDITOR_KEY,EDITOR?'1':'0')}catch(e){}
+  try{localStorage.setItem(perAccKey(EDITOR_KEY),EDITOR?'1':'0')}catch(e){}
   applyEditorUI();
   if($('#view-settings').classList.contains('active'))renderSettings();
 }
@@ -5201,6 +5926,8 @@ function refreshAfterWrite(){
   if($('#view-settings').classList.contains('active'))renderSettings();
 }
 async function queueTxnWrites(legs,audits){
+  _writing++;
+  try{
   const ids=new Set(legs.map(l=>l.id));
   const stale=SYNCQ.filter(o=>o.col==='txns'&&ids.has(o.id));
   if(stale.length){
@@ -5220,6 +5947,7 @@ async function queueTxnWrites(legs,audits){
   applyLocalOps(ops);
   refreshAfterWrite();
   if(AUTOSYNC&&navigator.onLine)flushQueue({silent:true});
+  }finally{_writing--}
 }
 async function flushQueue(opts){
   opts=opts||{};
@@ -5271,7 +5999,7 @@ async function flushQueue(opts){
   _syncing=false;
   if(btn)btn.classList.remove('loading');
   LASTMETA={at:new Date().toISOString(),err:SYNCQ.length?'Some changes could not be written':''};
-  try{localStorage.setItem(LASTMETA_KEY,JSON.stringify(LASTMETA))}catch(e){}
+  try{localStorage.setItem(perAccKey(LASTMETA_KEY),JSON.stringify(LASTMETA))}catch(e){}
   updateSyncBadge();
   if($('#m-sync')&&$('#m-sync').classList.contains('show'))renderSyncList();
   if(!opts.silent){
@@ -5718,9 +6446,7 @@ async function boot(){
       await wipeDataCache();
       try{localStorage.setItem(CACHE_VER_KEY,CACHE_VER)}catch(e){}
     }
-    const wantScope=scopeKey();
-    let cachedScope='';try{cachedScope=localStorage.getItem(CACHE_SCOPE_KEY)||''}catch(e){}
-    if(wantScope&&cachedScope&&cachedScope!==wantScope)await wipeDataCache();
+    const wantScope=getActiveAccount()?getActiveAccount().id:scopeKey();
     try{localStorage.setItem(CACHE_SCOPE_KEY,wantScope)}catch(e){}
     const accs=await idbAll('accounts'),txsAwait=idbAll('txns'),obs=await idbAll('ob'),txs=await txsAwait,pend=await idbAll('pending');
     const isNewInstall=!(accs.length||txs.length)&&!localStorage.getItem(lfKey());
@@ -5797,6 +6523,10 @@ if(window.Capacitor===undefined&&window.location.protocol==='file:'){
 let APP_STARTED=false;
 function startApp(){if(APP_STARTED)return;APP_STARTED=true;return boot();}
 window.branchPickerBack=branchPickerBack;window.pickBranch=pickBranch;window.doBranchLogin=doBranchLogin;
+window.openSwitchSheet=openSwitchSheet;window.closeSwitchSheet=closeSwitchSheet;window.switchAccount=switchAccount;
+window.openAddBranchPane=openAddBranchPane;window.pickAddBranch=pickAddBranch;window.doAddBranchLogin=doAddBranchLogin;
+window.openAddKeyPane=openAddKeyPane;window.doAddKey=doAddKey;window.askRemoveAccount=askRemoveAccount;window.doLogout=doLogout;
+window.returnFromProbe=returnFromProbe;
 bootGate();
 
 </script>
