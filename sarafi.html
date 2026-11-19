@@ -1385,6 +1385,22 @@ html{scroll-behavior:auto!important}
   <div class="sheet">
     <div class="mhead"><h3 id="txmTitle">New Entry</h3><button class="x" onclick="closeEntry()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     <div class="txacc"><span class="av" id="txmAv">A</span><span class="inf"><b id="txmAcc">—</b><span id="txmMeta"></span></span></div>
+    <div class="field" id="txmCpartyWrap" style="display:none"><label id="txmCpartyLbl">Customer in the other branch (optional)</label>
+      <button type="button" class="partybox" id="txmCparty" onclick="openCounterpartPicker()">
+        <span class="pav" id="txmCpartyAv">+</span>
+        <span class="pnm" id="txmCpartyNm">No customer — branch only</span>
+        <span class="px" id="txmCpartyX" style="display:none" onclick="clearCounterpart(event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
+      </button>
+      <p class="cpnote" id="txmCpartyNote"></p>
+    </div>
+    <div class="field" id="txmLcustWrap" style="display:none"><label id="txmLcustLbl">My account (optional)</label>
+      <button type="button" class="partybox" id="txmLcust" onclick="openLocalCustomerPicker()">
+        <span class="pav" id="txmLcustAv">+</span>
+        <span class="pnm" id="txmLcustNm">No account — none of mine</span>
+        <span class="px" id="txmLcustX" style="display:none" onclick="clearLocalCustomer(event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
+      </button>
+      <p class="cpnote" id="txmLcustNote"></p>
+    </div>
     <div class="tswitch">
       <button type="button" id="txmCr" class="cr" onclick="setEntryType('جمع')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="7" x2="7" y2="17"/><polyline points="17 17 7 17 7 7"/></svg>جمع</button>
       <button type="button" id="txmDb" class="db" onclick="setEntryType('بنام')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="7" x2="17" y2="17"/><polyline points="7 7 17 7 17 17"/></svg>بنام</button>
@@ -1406,14 +1422,6 @@ html{scroll-behavior:auto!important}
         <span class="pnm" id="txmPartyNm">No party — single entry</span>
         <span class="px" id="txmPartyX" style="display:none" onclick="clearParty(event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
       </button>
-    </div>
-    <div class="field" id="txmCpartyWrap" style="display:none"><label id="txmCpartyLbl">Customer in the other branch (optional)</label>
-      <button type="button" class="partybox" id="txmCparty" onclick="openCounterpartPicker()">
-        <span class="pav" id="txmCpartyAv">+</span>
-        <span class="pnm" id="txmCpartyNm">No customer — branch only</span>
-        <span class="px" id="txmCpartyX" style="display:none" onclick="clearCounterpart(event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
-      </button>
-      <p class="cpnote" id="txmCpartyNote"></p>
     </div>
     <div class="field"><label>Details</label><input id="txmDetail" autocomplete="off" placeholder="Optional note" oninput="entryPreview()"></div>
     <div class="txprev" id="txmPrev"></div>
@@ -1440,10 +1448,10 @@ html{scroll-behavior:auto!important}
 <div class="modal" id="m-party">
   <div class="ovl" onclick="closeModal('m-party')"></div>
   <div class="sheet">
-    <div class="mhead"><h3>Party Account</h3><button class="x" onclick="closeModal('m-party')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="mhead"><h3 id="partyTitle">Party Account</h3><button class="x" onclick="closeModal('m-party')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     <div class="search" style="margin-bottom:9px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input id="partySearch" placeholder="Search name or contact..." oninput="renderPartyList()"></div>
     <div class="plist" id="partyList"></div>
-    <div class="mfoot" style="margin-top:10px"><button class="btn btn-g wide" onclick="pickParty(null)">Clear — single entry</button></div>
+    <div class="mfoot" style="margin-top:10px"><button class="btn btn-g wide" id="partyClear" onclick="pickParty(null)">Clear — single entry</button></div>
   </div>
 </div>
 
@@ -4998,7 +5006,7 @@ async function previewCancel(p){
     const d=p.deletedData,before=accStat(d.accountId,d.currency).bal;
     items.push(pvItem('create',(getAcc(d.accountId)||{}).name||d.accountId,d.entryType,d.currency,d.amount,before,before+pvDelta(d.entryType,d.amount),{detail:d.detail,date:d.date,pageNo:d.pageNo,hawalaNo:d.hawalaNo}));
   }else{
-    let list=await resolveTxnsByIds(p.txnIds||[]);
+    let list=await resolveTxnsByIds((p.txnIds||[]).concat(p.localTxnIds||[]));
     if(!list.length){
       const aid=p.originalAccountId||p.toBranchAccountId;
       const alt=DATA.txns.find(t=>t&&t.deleted!==true&&t.accountId===aid&&Number(t.amount)===Number(p.amount)&&t.currency===p.currency&&String(t.date||'')===String(p.date||'')&&String(t.hawalaNo||'')===String(p.hawalaNo||''));
@@ -5158,12 +5166,15 @@ function execNormalDecline(p,pv,now){
   const cid='pending_'+Date.now()+'_'+Math.random().toString(36).slice(2);
   const cancel={id:cid,type:'cancellation',fromBranch:target,toBranchAccountId:fromAcct.id,
     toBranchAccountName:p.fromBranch,originalAccountId:p.toBranchAccountId,txnIds:p.txnIds||[],
+    localTxnIds:p.localTxnIds||[],
     date:p.date,pageNo:p.pageNo!=null?p.pageNo:null,entryType:p.entryType,darak:p.darak,
     currency:p.currency,amount:Number(p.amount)||0,hawalaNo:p.hawalaNo||null,detail:p.detail||null,
     entryDetail:p.entryDetail||p.detail||null,
     ...(p.counterpartCustomerId||p.counterpartCustomerName?{counterpartCustomerId:p.counterpartCustomerId||'',
       counterpartCustomerName:p.counterpartCustomerName||'',counterpartCustomerType:p.counterpartCustomerType||'',
       counterpartCustomerEntryType:p.counterpartCustomerEntryType||p.entryType}:{}),
+    ...(p.senderCustomerId||p.senderCustomerName?{senderCustomerId:p.senderCustomerId||'',
+      senderCustomerName:p.senderCustomerName||'',senderCustomerType:p.senderCustomerType||''}:{}),
     relatedPendingId:p.id,status:'pending',createdAt:now,branch:target};
   const patch=pendStatusPatch(p,'rejected',now);
   return [
@@ -5272,7 +5283,7 @@ async function execCancelAccept(p,pv,now){
     const d=p.deletedData;
     if(d&&d.id){ops.push({type:'set',col:'txns',id:d.id,data:d,_new:false});ops.push(auditOp('add',d,null))}
   }else{
-    let ids=(p.txnIds||[]).slice();
+    let ids=(p.txnIds||[]).concat(p.localTxnIds||[]).slice();
     if(!ids.length){
       const aid=p.originalAccountId||p.toBranchAccountId;
       const alt=DATA.txns.find(t=>t&&t.deleted!==true&&t.accountId===aid&&Number(t.amount)===Number(p.amount)&&t.currency===p.currency&&String(t.date||'')===String(p.date||'')&&String(t.hawalaNo||'')===String(p.hawalaNo||''));
@@ -5309,12 +5320,15 @@ function execCancelDecline(p,pv,now){
       detail:p.detail||null,status:'pending',createdAt:now,id:nid,branch:target};
   }else{
     re={fromBranch:target,toBranchAccountId:fromAcct.id,toBranchAccountName:p.fromBranch,txnIds:p.txnIds||[],
+      localTxnIds:p.localTxnIds||[],
       date:p.date,pageNo:p.pageNo!=null?p.pageNo:null,entryType:p.entryType,darak:p.darak,currency:p.currency,
       amount:Number(p.amount)||0,hawalaNo:p.hawalaNo||null,detail:p.detail||null,
       entryDetail:p.entryDetail||p.detail||null,
       ...(p.counterpartCustomerId||p.counterpartCustomerName?{counterpartCustomerId:p.counterpartCustomerId||'',
         counterpartCustomerName:p.counterpartCustomerName||'',counterpartCustomerType:p.counterpartCustomerType||'',
         counterpartCustomerEntryType:p.counterpartCustomerEntryType||p.entryType}:{}),
+      ...(p.senderCustomerId||p.senderCustomerName?{senderCustomerId:p.senderCustomerId||'',
+        senderCustomerName:p.senderCustomerName||'',senderCustomerType:p.senderCustomerType||''}:{}),
       status:'pending',createdAt:now,id:nid,branch:target};
   }
   const ops=[
@@ -5326,7 +5340,7 @@ function execCancelDecline(p,pv,now){
   // A re-sent normal request gets a new pending id. Point the sender's own entry
   // at it so later edits/deletes and the status label resolve the new mirror.
   if(!p.editPendingId&&!p.deletedData&&!(Array.isArray(p.deletedDataList)&&p.deletedDataList.length)){
-    (p.txnIds||[]).forEach(tid=>{
+    (p.txnIds||[]).concat(p.localTxnIds||[]).forEach(tid=>{
       if(!tid)return;
       const t=DATA.txns.find(x=>x.id===tid);
       const qAdd=SYNCQ.some(o=>o.col==='txns'&&o.id===tid&&o.type==='set');
@@ -5772,8 +5786,10 @@ function linkSnap(o){
 function linkedCustomer(t){
   if(!t)return null;
   if(t.counterpartCustomerId||t.counterpartCustomerName)return {id:t.counterpartCustomerId||'',name:t.counterpartCustomerName||''};
+  if(t.localCustomerId||t.localCustomerName)return {id:t.localCustomerId||'',name:t.localCustomerName||''};
   const p=linkPending(t);
   if(p&&(p.counterpartCustomerId||p.counterpartCustomerName))return {id:p.counterpartCustomerId||'',name:p.counterpartCustomerName||''};
+  if(p&&(p.senderCustomerId||p.senderCustomerName))return {id:p.senderCustomerId||'',name:p.senderCustomerName||''};
   return null;
 }
 function linkStateLabel(t){
@@ -6212,7 +6228,8 @@ function openEntry(type){
   _entry={mode:'new',txnId:null,pairTxnId:null,accountId:a.id,entryType:type==='بنام'?BANAM:JAMA,
     date:ds,time:nowHM(),page:autoPageNo(ds,a.id),currency:entryDefaultCurrency(a),amount:'',
     darak:cross?'حواله':'نغدي',hawala:'',detail:'',partyId:'',
-    counterpartId:'',counterpartName:'',counterpartType:'',counterpartEntryType:type==='بنام'?BANAM:JAMA,orig:null};
+    counterpartId:'',counterpartName:'',counterpartType:'',counterpartEntryType:type==='بنام'?BANAM:JAMA,
+    localCustId:'',localCustName:'',localCustType:'',orig:null};
   if(cross&&!_entry.hawala){const h=nextHawalaNo(a.id,_entry.currency,_entry.entryType);if(h)_entry.hawala=h}
   paintEntry();
   openModal('m-tx');
@@ -6233,6 +6250,7 @@ function openEntryEdit(id){
       amount:String(Number(t.amount)||''),darak:'حواله',hawala:t.hawalaNo!=null?String(t.hawalaNo):'',
       detail:detailNote(t.detail,t.entryType,t.darak,'',t.hawalaNo),partyId:'',
       counterpartId:'',counterpartName:'',counterpartType:'',counterpartEntryType:t.entryType||JAMA,
+      localCustId:t.localCustomerId||'',localCustName:t.localCustomerName||'',localCustType:t.localCustomerId?((getAcc(t.localCustomerId)||{}).type||''):'',
       orig:JSON.parse(JSON.stringify(t)),origSib:null};
     paintEntry();
     openModal('m-tx');
@@ -6284,8 +6302,12 @@ function paintEntry(){
   $('#txmPartyNm').textContent=p?p.name:'No party — single entry';
   $('#txmPartyX').style.display=p?'grid':'none';
   const cpName=_entry.counterpartId?_entry.counterpartName:'';
+  const lc=_entry.localCustId?getAcc(_entry.localCustId):null;
+  const lcName=lc?String(lc.name||''):String(_entry.localCustName||'');
   $('#txmCpartyWrap').style.display=(cross&&!linkedEdit)?'block':'none';
+  $('#txmLcustWrap').style.display=(cross&&!linkedEdit)?'block':'none';
   if(cross){
+    const own=String(sessionBookBranch()||'');
     $('#txmCpartyLbl').textContent='Customer in '+(tgt||'the other branch')+' (optional)';
     $('#txmCparty').className='partybox'+(cpName?' on':'');
     $('#txmCpartyAv').textContent=cpName?String(cpName).trim().charAt(0).toUpperCase():'+';
@@ -6293,7 +6315,15 @@ function paintEntry(){
     $('#txmCpartyX').style.display=cpName?'grid':'none';
     $('#txmCpartyNote').textContent=linkedEdit
       ? 'This edit is sent to '+(tgt||'the other branch')+' for approval. Customer legs cannot be changed here yet.'
-      : (cpName?'Their book will get the mirror on '+String(sessionBookBranch())+' plus this customer leg.':'Their book will get only the mirror on '+String(sessionBookBranch())+'.');
+      : (cpName?'Their book gets '+cpName+' plus the mirror on '+own+'.':'Their book gets only the mirror on '+own+'.');
+    $('#txmLcustLbl').textContent='My account in '+(own||'my branch')+' (optional)';
+    $('#txmLcust').className='partybox'+(lcName?' on':'');
+    $('#txmLcustAv').textContent=lcName?lcName.trim().charAt(0).toUpperCase():'+';
+    $('#txmLcustNm').textContent=lcName||'No account — none of mine';
+    $('#txmLcustX').style.display=lcName?'grid':'none';
+    $('#txmLcustNote').textContent=linkedEdit?''
+      :(lcName?'Created in your book now, opposite of the '+String(tgt||'other branch')+' entry, and paired with this hawala.'
+        :'Pick one of your customer or tijari accounts to book your side right away.');
   }
   $('#txmSave').textContent=linkedEdit?'Send Edit Request':(cross?'Send Hawala Request':(isEdit?'Save Changes':'Save Entry'));
   $('#txmSave').disabled=false;
@@ -6350,13 +6380,19 @@ function entryPreview(){
   if(a)lines.push('<div class="tpl"><b>'+esc(a.name||'')+'</b><span class="'+(cr?'ok':'bad')+'">'+(cr?'+':'−')+esc(cur)+' '+fmtN(amt)+'</span></div>');
   if(cross){
     const opp=_entry.entryType===JAMA?BANAM:JAMA;
-    lines.push('<div class="tpd">Sent to <b>'+esc(tgt)+'</b> for approval.<br>After approval: <b>'+esc(own)+'</b> '+esc(opp)+' '+esc(cur)+' '+fmtN(amt)+' in '+esc(tgt)+'’s book.</div>');
+    const cpn=_entry.counterpartId?_entry.counterpartName:'';
+    if(_entry.localCustId){
+      const lcn=_entry.localCustName||(getAcc(_entry.localCustId)||{}).name||'';
+      lines.push('<div class="tpl"><b>'+esc(lcn)+'</b><span class="'+(opp===JAMA?'ok':'bad')+'">'+(opp===JAMA?'+':'−')+esc(cur)+' '+fmtN(amt)+'</span></div>');
+    }
+    lines.push('<div class="tpd">Sent to <b>'+esc(tgt)+'</b> for approval.'+(cpn?' Your side is booked now against <b>'+esc(cpn)+'</b>.':'')+'</div>');
     if(_entry.mode==='editLinked'){
       lines.push('<div class="tpd">Your entry changes now; the edit request reaches '+esc(tgt)+' on Sync.</div>');
-    }else if(_entry.counterpartId){
-      lines.push('<div class="tpd">Customer <b>'+esc(_entry.counterpartName)+'</b>'+(_entry.counterpartType?' ('+esc(TYPE_LBL[_entry.counterpartType]||_entry.counterpartType)+')':'')+': '+esc(_entry.entryType)+' '+esc(cur)+' '+fmtN(amt)+'</div>');
     }else{
-      lines.push('<div class="tpd">Branch only — no customer leg.</div>');
+      const recv=[];
+      if(cpn)recv.push('<b>'+esc(cpn)+'</b> '+esc(_entry.entryType)+' '+esc(cur)+' '+fmtN(amt));
+      recv.push('<b>'+esc(own)+'</b> '+esc(opp)+' '+esc(cur)+' '+fmtN(amt));
+      lines.push('<div class="tpd">After approval, '+esc(tgt)+'’s book gets '+recv.join(' and ')+'.</div>');
     }
   }else{
     if(p)lines.push('<div class="tpl"><b>'+esc(p.name||'')+'</b><span class="'+(cr?'bad':'ok')+'">'+(cr?'−':'+')+esc(cur)+' '+fmtN(amt)+'</span></div>');
@@ -6378,34 +6414,65 @@ function entrySyncForm(){
   const m=$('#m-tx');
   if(m&&m.classList.contains('show'))entryReadForm();
 }
+let _partyMode='party';
 function entryPartyCandidates(){
   const acctId=_entry?_entry.accountId:null;
   const s=getSession()||{};
   return DATA.accounts.filter(a=>a&&a.deleted!==true&&a.id!==acctId&&isWritableAccount(a)&&
     (s.mode==='branch'||!branchName||String(a.branch||'')===String(branchName)));
 }
+function localCustomerCandidates(){
+  const acctId=_entry?_entry.accountId:null;
+  const own=String(sessionBookBranch()||'');
+  return DATA.accounts.filter(a=>a&&a.deleted!==true&&a.id!==acctId&&isWritableAccount(a)&&
+    String(a.type||'')!=='branch'&&String(a.branch||'')===own);
+}
 function openPartyPicker(){
   if(!_entry)return;
+  _partyMode='party';
+  $('#partyTitle').textContent='Party Account';
+  if($('#partyClear'))$('#partyClear').textContent='Clear — single entry';
+  $('#partySearch').value='';
+  renderPartyList();
+  openModal('m-party');
+}
+function openLocalCustomerPicker(){
+  if(!_entry)return;
+  _partyMode='local';
+  const own=String(sessionBookBranch()||'');
+  $('#partyTitle').textContent='My account'+(own?' in '+own:'');
+  if($('#partyClear'))$('#partyClear').textContent='Clear — no account';
   $('#partySearch').value='';
   renderPartyList();
   openModal('m-party');
 }
 function renderPartyList(){
   const el=$('#partyList');if(!el)return;
+  const local=_partyMode==='local';
   const q=String(($('#partySearch')||{}).value||'').trim().toLowerCase();
-  let list=entryPartyCandidates();
+  let list=local?localCustomerCandidates():entryPartyCandidates();
   if(q)list=list.filter(a=>String(a.name||'').toLowerCase().includes(q)||String(a.contact||a.phone||'').toLowerCase().includes(q));
   list=list.slice(0,120);
+  const sel=_entry?(local?_entry.localCustId:_entry.partyId):'';
   if(!list.length){
-    el.innerHTML='<div class="empty" style="padding:24px 14px"><p>No accounts found</p><p style="font-size:11.5px;color:var(--mut);margin-top:5px">Only accounts of this branch can be a party.</p></div>';
+    el.innerHTML='<div class="empty" style="padding:24px 14px"><p>No accounts found</p><p style="font-size:11.5px;color:var(--mut);margin-top:5px">'+(local?'This branch has no customer accounts yet.':'Only accounts of this branch can be a party.')+'</p></div>';
     return;
   }
-  el.innerHTML=list.map(a=>'<button type="button" class="prow'+(_entry&&_entry.partyId===a.id?' on':'')+'" onclick="pickParty(this.dataset.id)" data-id="'+esc(a.id)+'"><span class="pav">'+esc(String(a.name||'?').trim().charAt(0).toUpperCase())+'</span><span class="pinf"><b>'+esc(a.name||'')+'</b><span>'+esc(TYPE_LBL[a.type]||a.type||'')+(a.contact?' · '+esc(a.contact):'')+'</span></span></button>').join('');
+  el.innerHTML=list.map(a=>'<button type="button" class="prow'+(sel===a.id?' on':'')+'" onclick="pickParty(this.dataset.id)" data-id="'+esc(a.id)+'"><span class="pav">'+esc(String(a.name||'?').trim().charAt(0).toUpperCase())+'</span><span class="pinf"><b>'+esc(a.name||'')+'</b><span>'+esc(TYPE_LBL[a.type]||a.type||'')+(a.contact?' · '+esc(a.contact):'')+'</span></span></button>').join('');
 }
 function pickParty(id){
   if(!_entry)return;
   entrySyncForm();
-  _entry.partyId=id||'';
+  if(_partyMode==='local'){
+    if(!id){_entry.localCustId='';_entry.localCustName='';_entry.localCustType=''}
+    else{
+      const c=(localCustomerCandidates()).find(x=>String(x.id)===String(id));
+      if(!c)return;
+      _entry.localCustId=c.id;_entry.localCustName=c.name||'';_entry.localCustType=c.type||'';
+    }
+  }else{
+    _entry.partyId=id||'';
+  }
   closeModal('m-party');
   paintEntry();
 }
@@ -6414,6 +6481,13 @@ function clearParty(e){
   if(!_entry)return;
   entrySyncForm();
   _entry.partyId='';
+  paintEntry();
+}
+function clearLocalCustomer(e){
+  if(e){e.preventDefault();e.stopPropagation()}
+  if(!_entry)return;
+  entrySyncForm();
+  _entry.localCustId='';_entry.localCustName='';_entry.localCustType='';
   paintEntry();
 }
 function entryReadForm(){
@@ -6446,6 +6520,15 @@ function saveEntry(){
   const cross=isCrossBranchTarget(a);
   if(cross&&_entry.darak!=='حواله'){toast('Another branch account only takes hawala','err');return}
   if(cross&&_entry.partyId){toast('A cross-branch hawala cannot have a local party','err');return}
+  let localCust=null;
+  if(cross&&_entry.localCustId){
+    localCust=getAcc(_entry.localCustId);
+    if(!localCust||!isWritableAccount(localCust)||String(localCust.type||'')==='branch'||
+      String(localCust.branch||'')!==String(sessionBookBranch()||'')){
+      toast('Pick one of your own customer accounts','err');return;
+    }
+    if(String(localCust.id)===String(a.id)){toast('My account must be different from the target account','err');return}
+  }
   const wasEdit=_entry.mode==='edit'||_entry.mode==='editLinked';
   _entry._saving=true;
   const sbtn=$('#txmSave');if(sbtn)sbtn.disabled=true;
@@ -6534,6 +6617,7 @@ function queueCrossBranchHawala(a,br,now,pageNo,hw,amt,linkedEdit){
   const mainDetail=buildTxnDetail(_entry.entryType,'حواله','',hw||'',note);
   const pid='pending_'+Date.now()+'_'+Math.random().toString(36).slice(2);
   const cp=_entry.counterpartId?{id:_entry.counterpartId,name:_entry.counterpartName||'',type:_entry.counterpartType||'',entryType:_entry.counterpartEntryType||_entry.entryType}:null;
+  const localCust=(!linkedEdit&&_entry.localCustId)?getAcc(_entry.localCustId):null;
   if(linkedEdit){
     const t=DATA.txns.find(x=>x.id===_entry.txnId&&x.deleted!==true);
     if(!t)return Promise.reject(new Error('Entry not found'));
@@ -6552,19 +6636,37 @@ function queueCrossBranchHawala(a,br,now,pageNo,hw,amt,linkedEdit){
       auditOp('edit',Object.assign({},t,patch),t),auditPending('add',pend,null)]);
   }
   const id1=uidTxn('a');
+  const pairId=localCust?('txn_'+Date.now()+'_'+Math.random().toString(36).slice(2,7)):null;
   const txn=Object.assign({id:id1,date:_entry.date,time:_entry.time||null,pageNo,accountId:a.id,
     entryType:_entry.entryType,darak:'حواله',currency:_entry.currency,amount:amt,
     rate:null,currExch:null,currAmount:null,hawalaNo:hw||null,detail:mainDetail||null,
-    pairId:null,branch:br,linkedFromTxnId:pid,counterpartBranchName:targetName,
-    createdAt:now,updatedAt:now},cp?{counterpartCustomerId:cp.id,counterpartCustomerName:cp.name,counterpartCustomerType:cp.type}:{});
+    pairId,branch:br,linkedFromTxnId:pid,counterpartBranchName:targetName,
+    createdAt:now,updatedAt:now},cp?{counterpartCustomerId:cp.id,counterpartCustomerName:cp.name,counterpartCustomerType:cp.type}:{},
+    localCust?{localCustomerId:localCust.id,localCustomerName:localCust.name||'',localCustomerType:localCust.type||''}:{});
   const pend=Object.assign({id:pid,fromBranch:br,toBranchAccountId:a.id,toBranchAccountName:targetName,
     txnIds:[id1],date:_entry.date,pageNo:pageNo||null,entryType:_entry.entryType,darak:'حواله',
     currency:_entry.currency,amount:amt,hawalaNo:hw||null,detail:note||null,entryDetail:mainDetail||null,
     status:'pending',createdAt:now,branch:br},cp?{counterpartCustomerId:cp.id,counterpartCustomerName:cp.name,
     counterpartCustomerType:cp.type,counterpartCustomerEntryType:cp.entryType}:{});
-  return queueAny([{type:'set',col:'txns',id:id1,data:txn,_new:true},
+  const ops=[{type:'set',col:'txns',id:id1,data:txn,_new:true},
     {type:'set',col:'pendingTxns',id:pid,data:pend,_new:true},
-    auditOp('add',txn,null),auditPending('add',pend,null)]);
+    auditOp('add',txn,null),auditPending('add',pend,null)];
+  if(localCust){
+    const opp=_entry.entryType===JAMA?BANAM:JAMA;
+    const lcId=uidTxn('c');
+    const lcDetail=buildTxnDetail(opp,'حواله',String(a.name||targetName),hw||'',note);
+    const lcTxn={id:lcId,date:_entry.date,time:_entry.time||null,pageNo,accountId:localCust.id,
+      entryType:opp,darak:'حواله',currency:_entry.currency,amount:amt,
+      rate:null,currExch:null,currAmount:null,hawalaNo:hw||null,detail:lcDetail||null,
+      pairId,branch:writeBranchFor(localCust),linkedFromTxnId:pid,counterpartBranchName:targetName,
+      createdAt:now,updatedAt:now};
+    pend.localTxnIds=[lcId];
+    pend.senderCustomerId=localCust.id;
+    pend.senderCustomerName=localCust.name||'';
+    pend.senderCustomerType=localCust.type||'';
+    ops.push({type:'set',col:'txns',id:lcId,data:lcTxn,_new:true},auditOp('add',lcTxn,null));
+  }
+  return queueAny(ops);
 }
 function counterpartAccounts(branch,force){
   const key=String(branch||'');
