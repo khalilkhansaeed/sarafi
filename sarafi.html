@@ -567,6 +567,23 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
 #txList .tx .tinfo b{font-size:12.5px;white-space:normal;overflow:visible;text-overflow:clip;word-break:break-word}
 #txList .tx .tmeta{display:flex;flex-wrap:wrap;gap:5px;justify-content:flex-start;margin-top:5px}
 #txList .tx .tmeta .plink{margin-top:0}
+/* ledger multi-select (long press to start) */
+#txList .tx{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#txList .tx .txck{display:none;width:21px;height:21px;border-radius:50%;border:1.6px solid var(--brd2);flex:none;place-items:center;color:transparent;background:var(--elev);transition:background .15s,border-color .15s,color .15s}
+#txList .tx .txck svg{width:11px;height:11px}
+body.txsel #txList .tx .txck{display:grid}
+body.txsel #txList .tx:hover{transform:none}
+#txList .tx.lpsel{border-color:rgba(79,70,229,.55);background:var(--accSoft2);box-shadow:inset 0 0 0 1px var(--accSoftBrd)}
+#txList .tx.lpsel .txck{background:var(--acc);border-color:var(--acc);color:#fff}
+body.txsel #txList .tx .tedit{display:none}
+body.txsel #txFab{display:none!important}
+.txselbar{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translate(-50%,130px);z-index:70;display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--brd2);border-radius:99px;padding:7px 8px 7px 17px;box-shadow:0 16px 44px rgba(16,24,40,.24);opacity:0;pointer-events:none;transition:transform .3s cubic-bezier(.34,1.56,.64,1),opacity .25s;max-width:calc(100vw - 24px)}
+body.txsel .txselbar{transform:translate(-50%,0);opacity:1;pointer-events:auto}
+.txselbar>span{font-size:12.5px;font-weight:600;white-space:nowrap}
+.txselbar b{font-family:var(--head);font-size:14px;font-weight:800;color:var(--acc)}
+.txselbar .btn{padding:6px 11px;font-size:11.5px;border-radius:99px;flex:none}
+body.txsel .app{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+body.txsel .toast{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
 .partyfield{display:flex;align-items:center;gap:10px;width:100%;background:var(--inset);border:1px solid var(--brd);border-radius:11px;padding:9px 11px;font-size:13px;transition:.25s;text-align:left;cursor:pointer;position:relative;overflow:hidden}
 .partyfield:hover{border-color:rgba(79,70,229,.45);background:var(--elev)}
 .partyfield.on{border-color:rgba(79,70,229,.5);background:var(--elev);box-shadow:0 0 0 3px rgba(79,70,229,.08)}
@@ -1215,6 +1232,11 @@ html{scroll-behavior:auto!important}
       <div class="txbtns" id="txFab">
         <button class="txb cr" onclick="openEntry('جمع')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="7" x2="7" y2="17"/><polyline points="17 17 7 17 7 7"/></svg>جمع</button>
         <button class="txb db" onclick="openEntry('بنام')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="7" x2="17" y2="17"/><polyline points="7 7 17 7 17 17"/></svg>بنام</button>
+      </div>
+      <div class="txselbar" id="txSelBar" aria-live="polite">
+        <span><b id="txSelCount">0</b> selected</span>
+        <button class="btn btn-g sm" id="txSelAllBtn" onclick="toggleSelectAllTx()">Select all</button>
+        <button class="btn btn-p sm" onclick="exitTxSelection()">Done</button>
       </div>
       <div class="txsub rptsub" id="rptSub">
         <div class="rpthead">
@@ -2523,6 +2545,7 @@ document.addEventListener('keydown',e=>{
   if(e.key!=='Escape')return;
   const open=$$('.modal.show');
   if(open.length){closeModal(open[open.length-1].id);return}
+  if(TX_SEL_MODE&&$('#view-ledger').classList.contains('active')){exitTxSelection();return}
   if($('#view-ledger').classList.contains('active')){
     if($('#view-ledger').classList.contains('reportmode'))closeAccReport();else go('accounts',true);return;
   }
@@ -2530,10 +2553,44 @@ document.addEventListener('keydown',e=>{
   if($('#view-reports')&&$('#view-reports').classList.contains('submode')){if(rptMnCur){closeRptMnCur();return}closeRptSub();return}
 });
 
+/* Ledger row gestures: long press starts multi-select, taps toggle it. */
+let _txLp={t:null,id:null,x:0,y:0,fired:false,sup:false};
+function ledgerLpCancel(){if(_txLp.t){clearTimeout(_txLp.t);_txLp.t=null}}
+document.addEventListener('pointerdown',e=>{
+  if(e.pointerType==='mouse'&&e.button!==0)return;
+  const row=e.target&&e.target.closest?e.target.closest('#txList .tx[data-txid]'):null;
+  if(!row)return;
+  ledgerLpCancel();
+  _txLp.id=row.getAttribute('data-txid');
+  _txLp.x=e.clientX;_txLp.y=e.clientY;_txLp.fired=false;
+  _txLp.t=setTimeout(()=>{
+    _txLp.t=null;if(!_txLp.id)return;
+    _txLp.fired=true;
+    enterTxSelection(_txLp.id);
+    try{if(navigator.vibrate)navigator.vibrate(12)}catch(err){}
+  },420);
+},{passive:true});
+document.addEventListener('pointermove',e=>{
+  if(!_txLp.t)return;
+  if(Math.abs(e.clientX-_txLp.x)>9||Math.abs(e.clientY-_txLp.y)>9)ledgerLpCancel();
+},{passive:true});
+document.addEventListener('pointerup',()=>{
+  ledgerLpCancel();
+  if(_txLp.fired){_txLp.fired=false;_txLp.sup=true;setTimeout(()=>{_txLp.sup=false},650)}
+},{passive:true});
+document.addEventListener('pointercancel',()=>{ledgerLpCancel();_txLp.fired=false},{passive:true});
+document.addEventListener('scroll',ledgerLpCancel,{passive:true});
+document.addEventListener('contextmenu',e=>{
+  if(e.target&&e.target.closest&&e.target.closest('#txList .tx[data-txid]'))e.preventDefault();
+});
 document.addEventListener('click',e=>{
+  if(_txLp.sup){_txLp.sup=false;e.preventDefault();e.stopPropagation();return}
+  const row=e.target&&e.target.closest?e.target.closest('#txList .tx[data-txid]'):null;
+  if(!row)return;
+  const id=row.getAttribute('data-txid');
+  if(TX_SEL_MODE){e.preventDefault();toggleTxSelection(id);return}
   if(!EDITOR)return;
-  const row=e.target.closest('#txList .tx[data-txid]');
-  if(row){openEntryActions(row.getAttribute('data-txid'))}
+  openEntryActions(id);
 });
 window.addEventListener('online',()=>{updateSyncBadge();if(AUTOSYNC&&SYNCQ.length)flushQueue({silent:true})});
 window.addEventListener('offline',updateSyncBadge);
@@ -2543,6 +2600,7 @@ try{
     CAPAPP.addListener('backButton',()=>{
       const open=$$('.modal.show');
       if(open.length){closeModal(open[open.length-1].id);return}
+      if(TX_SEL_MODE&&$('#view-ledger').classList.contains('active')){exitTxSelection();return}
       if($('#view-ledger').classList.contains('active')){go('accounts',true);return}
       if($('#view-accounts').classList.contains('active')&&$('#view-accounts').classList.contains('allrptmode')){closeAllAccountsReport();return}
       if($('#view-reports')&&$('#view-reports').classList.contains('submode')){if(rptMnCur){closeRptMnCur();return}closeRptSub();return}
@@ -2556,6 +2614,7 @@ try{
 function go(tab,instant){
   document.body.classList.toggle('on-ledger',tab==='ledger');
   if(tab!=='ledger'){
+    exitTxSelection();
     document.body.classList.remove('txmode');document.body.classList.remove('reportmode');
     const lv=$('#view-ledger');if(lv)lv.classList.remove('reportmode');
   }
@@ -2809,6 +2868,7 @@ function renderTypeChipsGuard(){renderTypeChips()}
 
 /* ---------- ledger ---------- */
 function openLedger(accId){
+  exitTxSelection();
   if($('#view-accounts')&&$('#view-accounts').classList.contains('active'))accListScroll=window.scrollY;
   curAccId=accId;
   const cs=acctCurrencies(accId);
@@ -2817,6 +2877,46 @@ function openLedger(accId){
   go('ledger');
 }
 function setLedCurr(code){ledCurr=code;renderLedger()}
+/* ---------- ledger selection ---------- */
+let TX_SEL_MODE=false;
+const TX_SEL=new Set();
+function txSelIdOf(el){return el?el.getAttribute('data-txid'):null}
+function syncTxSelUI(){
+  const on=TX_SEL_MODE&&$('#view-ledger')&&$('#view-ledger').classList.contains('active');
+  document.body.classList.toggle('txsel',!!on);
+  const c=$('#txSelCount');if(c)c.textContent=String(TX_SEL.size);
+  const rows=$$('#txList .tx[data-txid]');
+  rows.forEach(el=>el.classList.toggle('lpsel',TX_SEL.has(txSelIdOf(el))));
+  const all=$('#txSelAllBtn');
+  if(all)all.textContent=(rows.length&&rows.every(el=>TX_SEL.has(txSelIdOf(el))))?'Clear all':'Select all';
+}
+function enterTxSelection(id){
+  TX_SEL_MODE=true;
+  if(id)TX_SEL.add(id);
+  syncTxSelUI();
+}
+function toggleTxSelection(id){
+  if(!id)return;
+  if(TX_SEL.has(id))TX_SEL.delete(id);else TX_SEL.add(id);
+  if(!TX_SEL.size){exitTxSelection();return}
+  TX_SEL_MODE=true;syncTxSelUI();
+}
+function exitTxSelection(){
+  TX_SEL_MODE=false;TX_SEL.clear();syncTxSelUI();
+}
+function toggleSelectAllTx(){
+  const ids=$$('#txList .tx[data-txid]').map(txSelIdOf);
+  if(!ids.length)return;
+  if(ids.every(id=>TX_SEL.has(id))){exitTxSelection();return}
+  TX_SEL_MODE=true;ids.forEach(id=>TX_SEL.add(id));syncTxSelUI();
+}
+function pruneTxSelection(ids){
+  if(!TX_SEL_MODE)return;
+  const keep=new Set(ids);
+  [...TX_SEL].forEach(id=>{if(!keep.has(id))TX_SEL.delete(id)});
+  if(!TX_SEL.size)TX_SEL_MODE=false;
+  syncTxSelUI();
+}
 function renderLedCurChips(a){
   const el=$('#ledCurChips');if(!el)return;
   const cs=acctCurrencies(a.id);
@@ -2846,10 +2946,11 @@ function renderLedger(){
   });
   const wrap=$('#txList');
   if(!txs.length){
+    if(TX_SEL_MODE)exitTxSelection();
     wrap.innerHTML='<div class="empty"><div class="eic">'+IC.wallet+'</div><h3>'+(q?'No matches found':'No entries in '+ledCurr)+'</h3><p>'+(q?'Try a different search.':'This currency has no transactions')+'</p></div>';
     return;
   }
-  const view=txs.length>400?txs.slice(0,400):txs;
+  const view=txs.length>400?txs.slice(0,400):txs;
   let html=view.map(t=>{
     const cr=isCr(t);
     const rb=balMap[t.id]||0;
@@ -2861,12 +2962,13 @@ function renderLedger(){
       const ls=linkStateLabel(t);
       if(ls)meta+='<span class="plink" style="color:'+(ls.c==='ok'?'var(--ok)':ls.c==='bad'?'var(--bad)':'var(--mut)')+'">'+esc(ls.l)+'</span>';
     }
-    if(EDITOR)meta+='<span class="plink" style="color:var(--acc)">tap to edit</span>';
-    const eattr=EDITOR?' data-txid="'+esc(t.id)+'" title="Tap to edit or delete"':'';
-    return '<div class="tx"'+eattr+'><div class="tinfo"><span>'+ftstampLocal(t)+'</span><b>'+(det?esc(det):(cr?'Credit':'Debit'))+'</b>'+(meta?'<div class="tmeta">'+meta+'</div>':'')+'</div><div class="amts"><div class="amt '+(cr?'credit':'debit')+'">'+(cr?'+':'−')+fmtN(Number(t.amount)||0)+'</div><div class="rbal '+(rb>0?'pos':rb<0?'neg':'zero')+'">Bal '+fmtN(rb)+'</div></div></div>';
+    if(EDITOR)meta+='<span class="plink tedit" style="color:var(--acc)">tap to edit</span>';
+    const eattr=' data-txid="'+esc(t.id)+'"'+(EDITOR?' title="Tap to edit or delete"':'');
+    return '<div class="tx"'+eattr+'><div class="txck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="tinfo"><span>'+ftstampLocal(t)+'</span><b>'+(det?esc(det):(cr?'Credit':'Debit'))+'</b>'+(meta?'<div class="tmeta">'+meta+'</div>':'')+'</div><div class="amts"><div class="amt '+(cr?'credit':'debit')+'">'+(cr?'+':'−')+fmtN(Number(t.amount)||0)+'</div><div class="rbal '+(rb>0?'pos':rb<0?'neg':'zero')+'">Bal '+fmtN(rb)+'</div></div></div>';
   }).join('');
   if(txs.length>view.length)html+='<div class="txsub" style="text-align:center;color:var(--mut);padding:10px">Showing latest '+view.length+' of '+txs.length+' entries — use search or the report for older ones</div>';
   wrap.innerHTML=html;
+  pruneTxSelection(view.map(t=>t.id));
 }
 const _stampMemo=new WeakMap();
 function ftstampLocal(t){
@@ -2895,6 +2997,7 @@ function ledgerLastEntry(id){
 /* ---------- ledger report ---------- */
 function openAccReport(){
   if(!curAccId)return;
+  exitTxSelection();
   const a=getAcc(curAccId);
   rptReturnScroll=window.scrollY;
   $('#rptTitle').textContent='Ledger Report';
@@ -7043,6 +7146,7 @@ async function boot(){
   }
 }
 window.go=go;window.setBranch=setBranch;window.setType=setType;window.openLedger=openLedger;window.setLedCurr=setLedCurr;
+window.exitTxSelection=exitTxSelection;window.toggleSelectAllTx=toggleSelectAllTx;
 window.runFetch=runFetch;window.openAllActivity=openAllActivity;
 window.openAllAccountsReport=openAllAccountsReport;window.closeAllAccountsReport=closeAllAccountsReport;window.toggleAllRptSort=toggleAllRptSort;window.renderAllAccountsReport=renderAllAccountsReport;
 window.openAccReport=openAccReport;window.closeAccReport=closeAccReport;window.toggleRptSort=toggleRptSort;window.renderAccReport=renderAccReport;
