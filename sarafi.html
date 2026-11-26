@@ -2398,15 +2398,15 @@ function isNetworkBranchAccount(a){return !!(a&&(a.type||'')==='branch'&&a.isSup
 function visibleAccounts(){
   return DATA.accounts.filter(a=>{
     if(branchName&&String(a.branch||'')!==branchName){
-      // A branch user also sees the branch accounts its entries reference
-      // (cross-branch hawala legs), just like the main Sarafi app does.
-      if(!(isNetworkBranchAccount(a)&&isBranchSession()))return false;
+      // Branch accounts are branch-neutral: a branch login and the super admin
+      // both see the whole branch network, just like the main Sarafi app.
+      if(!(isNetworkBranchAccount(a)&&(isBranchSession()||isSuperSession())))return false;
     }
     if(typeSel!=='All'&&(a.type||'')!==typeSel)return false;
     if(curSel&&!acctHasCurrency(a.id,curSel)){
       // Branch accounts are shown even with no balance in the selected
       // currency, so the branch network is always visible.
-      if(!(isNetworkBranchAccount(a)&&isBranchSession()))return false;
+      if(!(isNetworkBranchAccount(a)&&(isBranchSession()||isSuperSession())))return false;
     }
     return true;
   });
@@ -2418,9 +2418,10 @@ function inBranchScope(a){
   if(!a)return false;
   if(String(a.branch||'')===branchName)return true;
   if((a.type||'')==='branch'){
-    // Branch users see the network's branch accounts; a super admin's chip
-    // only adds the selected branch's own doc.
-    if(isBranchSession())return true;
+    // Branch accounts ARE the branch network, not a member of one branch.
+    // Branch logins and the super admin's branch chip both show all of them,
+    // matching the main Sarafi app.
+    if(isBranchSession()||isSuperSession())return true;
     return String(a.name||'')===branchName;
   }
   return false;
@@ -2431,7 +2432,10 @@ function scopedAccounts(){
 function scopedTxns(){
   const all=DATA.txns.filter(t=>t&&t.deleted!==true);
   if(!branchName)return all;
-  const ids=new Set(scopedAccounts().map(a=>a.id));
+  // Only non-branch accounts join by accountId. Branch accounts can carry
+  // legs tagged with another branch; counting those here inflated the
+  // super admin's per-branch totals compared with a real branch login.
+  const ids=new Set(scopedAccounts().filter(a=>(a.type||'')!=='branch').map(a=>a.id));
   return all.filter(t=>String(t.branch||'')===branchName||ids.has(t.accountId));
 }
 
