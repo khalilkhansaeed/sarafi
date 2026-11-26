@@ -1,0 +1,13 @@
+# Cloudflare Workers static-assets deployment for the Sarafi web app.
+# Cloudflare builds this repo with:
+#   Build command:  node scripts/build-www.js
+#   Deploy command: npx wrangler deploy
+# The build step regenerates www/index.html from sarafi.html, then Wrangler
+# uploads the whole www/ folder as static assets.
+
+name = "sarafi"
+compatibility_date = "2026-11-26"
+
+[assets]
+directory = "./www"
+not_found_handling = "single-page-application"
