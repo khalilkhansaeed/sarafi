@@ -2704,8 +2704,9 @@ function renderBranchChips(){
     el.innerHTML='<button type="button" class="chip-f locked" title="Signed in to this branch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'+esc(s.branchName||'Branch')+'</button>';
     return;
   }
+  const list=branches().filter(b=>!branchName||branchActivitySet().has(b.id));
   el.innerHTML='<button class="chip-f'+(branchSel==='All'?' active':'')+'" onclick="setBranch(\'All\')">All branches</button>'
-    +branches().map(b=>'<button class="chip-f'+(branchSel===b.id?' active':'')+'" onclick="setBranch(\''+b.id+'\')">'+esc(b.name||b.id)+'</button>').join('');
+    +list.map(b=>'<button class="chip-f'+(branchSel===b.id?' active':'')+'" onclick="setBranch(\''+b.id+'\')">'+esc(b.name||b.id)+'</button>').join('');
 }
 function setBranch(id){
   if(!isSuperSession())return;
