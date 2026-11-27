@@ -2399,10 +2399,9 @@ function acctHasCurrency(id,code){
   return cs?cs.indexOf(code)>=0:false;
 }
 function isNetworkBranchAccount(a){return !!(a&&(a.type||'')==='branch'&&a.isSuperAdmin!==true)}
-function visibleAccounts(){
+function currencyScopedAccounts(){
   return DATA.accounts.filter(a=>{
     if(!inBranchScope(a))return false;
-    if(typeSel!=='All'&&(a.type||'')!==typeSel)return false;
     if(curSel&&curSel!=='All'&&!acctHasCurrency(a.id,curSel)){
       // Branch accounts are shown even with no balance in the selected
       // currency, so the branch network is always visible.
@@ -2410,6 +2409,9 @@ function visibleAccounts(){
     }
     return true;
   });
+}
+function visibleAccounts(){
+  return currencyScopedAccounts().filter(a=>typeSel==='All'||(a.type||'')===typeSel);
 }
 /* Which other branch accounts are actually connected to the selected branch?
    A branch account is shown in a branch chip only when the two branches have
@@ -2715,7 +2717,7 @@ function setBranch(id){
 }
 function renderTypeChips(){
   const el=$('#accTypeSel');if(!el)return;
-  const base=DATA.accounts.filter(a=>!branchName||String(a.branch||'')===branchName||(isNetworkBranchAccount(a)&&isBranchSession()));
+  const base=currencyScopedAccounts();
   const types=ORDERED_TYPES.filter(t=>base.some(a=>(a.type||'')===t));
   let opts='<option value="All"'+(typeSel==='All'?' selected':'')+'>All · '+base.length+'</option>';
   types.forEach(t=>{
@@ -2897,22 +2899,23 @@ function accCard(a){
 }
 function renderAccounts(){
   renderBranchChips();
-  renderTypeChips();
   renderCurChips();
+  renderTypeChips();
   const list=visibleAccounts();
   const listSet=new Set(list.map(a=>a.id));
   const _bals=IX().bal;
   const setSum=(el,key,colored)=>{
-    if(!sumRows.length){el.classList.remove('multi');el.textContent='—';el.style.color='';return}
-    if(sumRows.length===1){
-      const r=sumRows[0];
+    const rows=sumRows.filter(r=>Number(r[key])!==0);
+    if(!rows.length){el.classList.remove('multi');el.textContent='—';el.style.color='';return}
+    if(rows.length===1){
+      const r=rows[0];
       el.classList.remove('multi');
       el.textContent=money(r.c,r[key]);
       el.style.color=colored?(r.bal>0?'var(--ok)':r.bal<0?'var(--bad)':'var(--mut)'):'';
       return;
     }
     el.classList.add('multi');
-    el.innerHTML=sumRows.map(r=>'<span'+(colored?' style="color:'+(r.bal>0?'var(--ok)':r.bal<0?'var(--bad)':'var(--mut)')+'"':'')+'>'+esc(money(r.c,r[key]))+'</span>').join('');
+    el.innerHTML=rows.map(r=>'<span'+(colored?' style="color:'+(r.bal>0?'var(--ok)':r.bal<0?'var(--bad)':'var(--mut)')+'"':'')+'>'+esc(money(r.c,r[key]))+'</span>').join('');
     el.style.color='';
   };
   let sumRows=[];
