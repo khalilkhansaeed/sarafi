@@ -374,6 +374,8 @@ body.on-ledger .lastUpd{display:none}
 .acccard .ph svg{width:10px;height:10px;flex:none}
 .acccard .abal{flex:none;text-align:left;direction:ltr}
 .acccard .bal{font-family:var(--head);font-size:14.5px;font-weight:700;white-space:nowrap}
+.acccard .bals{display:flex;flex-direction:column;align-items:flex-end;gap:1px}
+.acccard .bals .bal{font-size:13px;line-height:1.25}
 .acccard .bal.ok{color:var(--ok)}.acccard .bal.bad{color:var(--bad)}.acccard .bal.zero{color:var(--mut)}
 .acccard .txc{font-size:10.5px;color:var(--mut2);margin-top:2px;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .acccard .pinb{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:var(--mut2);flex:none;border:1px solid transparent}
@@ -542,6 +544,8 @@ body.txfloat #txSub .txsubhead,body.txfloat #txSub .panel{max-width:1180px;margi
 .s-b{background:var(--inset);border:1px solid var(--brd);border-radius:12px;padding:7px 9px}
 .s-b span{font-size:9.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;font-weight:700;white-space:nowrap}
 .s-b b{display:block;font-family:var(--head);font-size:13.5px;font-weight:700;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.s-b b.multi{display:flex;flex-direction:column;gap:1px;white-space:normal;overflow:visible;text-overflow:clip;font-size:12.5px;line-height:1.25}
+.s-b b.multi span{display:block;white-space:nowrap}
 .s-b.ok b{color:var(--ok)}.s-b.bad b{color:var(--bad)}
 
 .tx{display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--brd);border-radius:17px;padding:12px 15px;margin-bottom:6px;cursor:pointer;transition:border-color .25s,transform .25s}
@@ -2397,19 +2401,63 @@ function acctHasCurrency(id,code){
 function isNetworkBranchAccount(a){return !!(a&&(a.type||'')==='branch'&&a.isSuperAdmin!==true)}
 function visibleAccounts(){
   return DATA.accounts.filter(a=>{
-    if(branchName&&String(a.branch||'')!==branchName){
-      // Branch accounts are branch-neutral: a branch login and the super admin
-      // both see the whole branch network, just like the main Sarafi app.
-      if(!(isNetworkBranchAccount(a)&&(isBranchSession()||isSuperSession())))return false;
-    }
+    if(!inBranchScope(a))return false;
     if(typeSel!=='All'&&(a.type||'')!==typeSel)return false;
-    if(curSel&&!acctHasCurrency(a.id,curSel)){
+    if(curSel&&curSel!=='All'&&!acctHasCurrency(a.id,curSel)){
       // Branch accounts are shown even with no balance in the selected
       // currency, so the branch network is always visible.
       if(!(isNetworkBranchAccount(a)&&(isBranchSession()||isSuperSession())))return false;
     }
     return true;
   });
+}
+/* Which other branch accounts are actually connected to the selected branch?
+   A branch account is shown in a branch chip only when the two branches have
+   an entry together (including pending hawala), not just because it exists. */
+let _branchAct={key:'',ix:null,len:-1,set:null};
+function branchActivitySet(){
+  const ix=IX();
+  const key=String(branchName||'');
+  if(_branchAct.key===key&&_branchAct.ix===ix&&_branchAct.len===PENDING.length)return _branchAct.set;
+  const set=new Set();
+  if(!key){
+    DATA.accounts.forEach(a=>{if(a&&a.deleted!==true&&String(a.type||'')==='branch')set.add(a.id)});
+  }else{
+    const selAcc=DATA.accounts.find(a=>a&&a.deleted!==true&&String(a.type||'')==='branch'&&String(a.name||'')===key);
+    const selId=selAcc?selAcc.id:'';
+    const tx=DATA.txns;
+    const byId=new Map();
+    for(const t of tx){if(t&&t.id)byId.set(t.id,t)}
+    const branchAccs=DATA.accounts.filter(a=>a&&a.deleted!==true&&String(a.type||'')==='branch');
+    for(const b of branchAccs){
+      const bName=String(b.name||'');
+      if(bName===key){set.add(b.id);continue}
+      let hit=false;
+      for(const t of tx){
+        if(!t||t.deleted===true)continue;
+        const tb=String(t.branch||''),aid=String(t.accountId||''),cp=String(t.counterpartBranchName||'');
+        if(tb===key&&(aid===b.id||cp===bName)){hit=true;break}
+        if(tb===bName&&(aid===selId||cp===key)){hit=true;break}
+        if(t.linkedFromTxnId){
+          const l=byId.get(t.linkedFromTxnId);
+          if(l){
+            const lb=String(l.branch||''),la=String(l.accountId||'');
+            if(tb===key&&(la===b.id||lb===bName)){hit=true;break}
+            if(tb===bName&&(la===selId||lb===key)){hit=true;break}
+          }
+        }
+      }
+      if(!hit){
+        for(const p of PENDING){
+          const from=String(p.fromBranch||''),to=String(p.toBranchAccountName||'');
+          if((from===key&&to===bName)||(from===bName&&to===key)){hit=true;break}
+        }
+      }
+      if(hit)set.add(b.id);
+    }
+  }
+  _branchAct={key,ix,len:PENDING.length,set};
+  return set;
 }
 /* Active branch scope. branchName is locked to the signed-in branch for a
    branch session, and follows the selected chip for a super admin. */
@@ -2418,10 +2466,9 @@ function inBranchScope(a){
   if(!a)return false;
   if(String(a.branch||'')===branchName)return true;
   if((a.type||'')==='branch'){
-    // Branch accounts ARE the branch network, not a member of one branch.
-    // Branch logins and the super admin's branch chip both show all of them,
-    // matching the main Sarafi app.
-    if(isBranchSession()||isSuperSession())return true;
+    // Branch accounts are branch-neutral but a branch chip only shows the
+    // branches this branch has actually transacted with (plus its own).
+    if(isBranchSession()||isSuperSession())return branchActivitySet().has(a.id);
     return String(a.name||'')===branchName;
   }
   return false;
@@ -2682,9 +2729,10 @@ function renderCurChips(){
   const el=$('#accCurSel');if(!el)return;
   let cs=allCurrencies();
   if(!cs.length)cs=['PKR'];
-  if(cs.indexOf(curSel)<0)curSel=cs.indexOf('PKR')>=0?'PKR':cs[0];
+  if(curSel!=='All'&&cs.indexOf(curSel)<0)curSel=cs.indexOf('PKR')>=0?'PKR':cs[0];
   const nm=c=>{const x=CURRS.find(y=>y.code===c);return x?x.name+' ('+c+')':c};
-  el.innerHTML=cs.map(c=>'<option value="'+c+'"'+(curSel===c?' selected':'')+'>'+esc(nm(c))+'</option>').join('');
+  el.innerHTML='<option value="All"'+(curSel==='All'?' selected':'')+'>All currencies</option>'
+    +cs.map(c=>'<option value="'+c+'"'+(curSel===c?' selected':'')+'>'+esc(nm(c))+'</option>').join('');
 }
 function setCur(c){curSel=c;renderAccounts()}
 
@@ -2755,7 +2803,7 @@ function branchAccounts(b){
 function renderBranchCards(){
   const el=$('#bizGrid');if(!el)return;
   const _ix=IX(),c0=primCurr(),br=isBranchSession();
-  const bs=branches();
+  const bs=branches().filter(b=>!branchName||branchActivitySet().has(b.id));
   if(!bs.length){el.innerHTML='<p style="color:var(--mut);font-size:13px">No branch accounts yet.</p>';return}
   el.innerHTML=bs.map(b=>{
     const list=branchAccounts(b);
@@ -2822,14 +2870,30 @@ function openAllActivity(){
 /* ---------- accounts tab ---------- */
 function accCardBal(a){
   const bals=accBals(a.id);
-  const p=curSel?{c:curSel,v:Number(bals[curSel]||0)}:{c:'PKR',v:0};
+  const code=(curSel&&curSel!=='All')?curSel:'PKR';
+  const p={c:code,v:Number(bals[code]||0)};
   const cls=p.v>0?'ok':p.v<0?'bad':'zero';
   return {code:p.c,val:p.v,cls};
 }
+function accCardBals(a){
+  const set=new Set(acctCurrencies(a.id));
+  const om=DATA.ob[a.id]||{};
+  Object.keys(om).forEach(c=>{if(c!=='branch'&&Number(om[c]))set.add(c)});
+  const list=[...set];
+  if(!list.length)list.push(primCurr());
+  list.sort((x,y)=>curOrder(x)-curOrder(y));
+  const bals=accBals(a.id);
+  return list.map(c=>{
+    const v=Number(bals[c]||0);
+    return {code:c,val:v,cls:v>0?'ok':v<0?'bad':'zero'};
+  });
+}
 function accCard(a){
-  const st=accCardBal(a);
+  const all=curSel==='All';
+  const bals=all?accCardBals(a):[accCardBal(a)];
   const sub=[a.contact,a.city].filter(Boolean).join(' · ');
-  return '<div class="acccard" onclick="openLedger(\''+a.id+'\')"><div class="ainfo"><h3>'+esc(a.name||'—')+'</h3>'+(sub?'<div class="ph">'+IC.phone+esc(sub)+'</div>':'')+'</div><div class="abal"><div class="bal '+st.cls+'">'+money(st.code,st.val)+'</div><div class="txc">'+esc(lastEntryOf(a.id))+'</div></div></div>';
+  const balHtml=bals.map(st=>'<div class="bal '+st.cls+'">'+money(st.code,st.val)+'</div>').join('');
+  return '<div class="acccard" onclick="openLedger(\''+a.id+'\')"><div class="ainfo"><h3>'+esc(a.name||'—')+'</h3>'+(sub?'<div class="ph">'+IC.phone+esc(sub)+'</div>':'')+'</div><div class="abal">'+(bals.length>1?'<div class="bals">'+balHtml+'</div>':balHtml)+'<div class="txc">'+esc(lastEntryOf(a.id))+'</div></div></div>';
 }
 function renderAccounts(){
   renderBranchChips();
@@ -2837,15 +2901,40 @@ function renderAccounts(){
   renderCurChips();
   const list=visibleAccounts();
   const listSet=new Set(list.map(a=>a.id));
-  let tc=0,td=0,ob=0;
   const _bals=IX().bal;
-  list.forEach(a=>{const s=_bals[a.id]&&_bals[a.id][curSel];if(s){tc+=s.c;td+=s.d}});
-  list.forEach(a=>{ob+=obOf(a.id,curSel)});
-  const tb=tc-td+ob;
-  $('#sumCredit').textContent=money(curSel,tc);
-  $('#sumDebit').textContent=money(curSel,td);
-  $('#sumBalance').textContent=money(curSel,tb);
-  $('#sumBalance').style.color=tb>0?'var(--ok)':tb<0?'var(--bad)':'var(--mut)';
+  const setSum=(el,key,colored)=>{
+    if(!sumRows.length){el.classList.remove('multi');el.textContent='—';el.style.color='';return}
+    if(sumRows.length===1){
+      const r=sumRows[0];
+      el.classList.remove('multi');
+      el.textContent=money(r.c,r[key]);
+      el.style.color=colored?(r.bal>0?'var(--ok)':r.bal<0?'var(--bad)':'var(--mut)'):'';
+      return;
+    }
+    el.classList.add('multi');
+    el.innerHTML=sumRows.map(r=>'<span'+(colored?' style="color:'+(r.bal>0?'var(--ok)':r.bal<0?'var(--bad)':'var(--mut)')+'"':'')+'>'+esc(money(r.c,r[key]))+'</span>').join('');
+    el.style.color='';
+  };
+  let sumRows=[];
+  if(curSel==='All'){
+    sumRows=allCurrencies().map(c=>{
+      let tc=0,td=0,ob=0;
+      list.forEach(a=>{const s=_bals[a.id]&&_bals[a.id][c];if(s){tc+=s.c;td+=s.d} ob+=obOf(a.id,c)});
+      return {c,tc,td,bal:tc-td+ob};
+    }).filter(x=>x.tc||x.td||x.bal);
+    setSum($('#sumCredit'),'tc',false);
+    setSum($('#sumDebit'),'td',false);
+    setSum($('#sumBalance'),'bal',true);
+  }else{
+    let tc=0,td=0,ob=0;
+    list.forEach(a=>{const s=_bals[a.id]&&_bals[a.id][curSel];if(s){tc+=s.c;td+=s.d}});
+    list.forEach(a=>{ob+=obOf(a.id,curSel)});
+    const tb=tc-td+ob;
+    sumRows=[{c:curSel,tc,td,bal:tb}];
+    setSum($('#sumCredit'),'tc',false);
+    setSum($('#sumDebit'),'td',false);
+    setSum($('#sumBalance'),'bal',true);
+  }
   const q=($('#accSearch').value||'').toLowerCase();
   const lastAct=id=>{
     const v=IX().lastTs[id];
@@ -2876,7 +2965,7 @@ function openLedger(accId){
   if($('#view-accounts')&&$('#view-accounts').classList.contains('active'))accListScroll=window.scrollY;
   curAccId=accId;
   const cs=acctCurrencies(accId);
-  ledCurr=curSel&&cs.indexOf(curSel)>=0?curSel:(cs[0]||'PKR');
+  ledCurr=curSel&&curSel!=='All'&&cs.indexOf(curSel)>=0?curSel:(cs[0]||'PKR');
   const s=$('#txSearch');if(s)s.value='';
   go('ledger');
 }
@@ -2932,7 +3021,7 @@ function renderLedger(){
   const a=getAcc(curAccId);
   if(!a){curAccId=null;go('accounts');return}
   const cs=acctCurrencies(a.id);
-  if(cs.length&&cs.indexOf(ledCurr)<0)ledCurr=curSel&&cs.indexOf(curSel)>=0?curSel:cs[0];
+  if(cs.length&&cs.indexOf(ledCurr)<0)ledCurr=curSel&&curSel!=='All'&&cs.indexOf(curSel)>=0?curSel:cs[0];
   const st=accStat(a.id,ledCurr);
   const q=($('#txSearch')?$('#txSearch').value:'').trim().toLowerCase();
   $('#ledName').textContent=a.name||'—';
@@ -3581,7 +3670,7 @@ async function runFetch(opts){
     PENDING.sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
     applyQueueLocal();
     const cs=allCurrencies();
-    if(cs.length&&cs.indexOf(curSel)<0)curSel=cs.indexOf('PKR')>=0?'PKR':cs[0];
+    if(cs.length&&curSel!=='All'&&cs.indexOf(curSel)<0)curSel=cs.indexOf('PKR')>=0?'PKR':cs[0];
     DATA.txns.sort((a,b)=>txTs(b)-txTs(a)||String(b.date||'').localeCompare(String(a.date||'')));
     DATA.accounts.sort((a,b)=>String(a.name||'').localeCompare(String(b.name||'')));
     buildIdx();
@@ -5865,7 +5954,7 @@ async function loadAccountIntoApp(acc){
   trimCacheToScope();
   applyBookData();
   const cs=allCurrencies();
-  if(cs.length&&cs.indexOf(curSel)<0)curSel=cs.indexOf('PKR')>=0?'PKR':cs[0];
+  if(cs.length&&curSel!=='All'&&cs.indexOf(curSel)<0)curSel=cs.indexOf('PKR')>=0?'PKR':cs[0];
   renderAll();
   applyEditorUI();
   updateSyncBadge();
@@ -6397,7 +6486,7 @@ function entryDefaultCurrency(a){
   if(cs.indexOf('PKR')>=0)return 'PKR';
   if(cs.length)return cs[0];
   const all=(SETTINGS.currencies.length?SETTINGS.currencies:CURRS.map(x=>x.code));
-  if(curSel&&all.indexOf(curSel)>=0)return curSel;
+  if(curSel&&curSel!=='All'&&all.indexOf(curSel)>=0)return curSel;
   if(all.indexOf('PKR')>=0)return 'PKR';
   return all[0]||'PKR';
 }
@@ -7126,7 +7215,7 @@ async function boot(){
       trimCacheToScope();
       applyBookData();
       const cs=allCurrencies();
-      if(cs.length)curSel=cs.indexOf('PKR')>=0?'PKR':cs[0];
+      if(cs.length&&curSel!=='All'&&cs.indexOf(curSel)<0)curSel=cs.indexOf('PKR')>=0?'PKR':cs[0];
       renderBranchChips();
       renderTypeChips();
       updateStamp();
